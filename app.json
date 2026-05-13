@@ -1,0 +1,20 @@
+{
+  "expo": {
+    "name": "folders-app",
+    "slug": "folders-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "bundleIdentifier": "com.sknk.foldersapp",
+      "supportsTablet": false
+    },
+    "android": {
+      "package": "com.sknk.foldersapp"
+    },
+    "plugins": [
+      "expo-sqlite",
+      "expo-web-browser"
+    ]
+  }
+}
