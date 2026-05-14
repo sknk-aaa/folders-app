@@ -15,6 +15,12 @@
     "plugins": [
       "expo-sqlite",
       "expo-web-browser"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "df21cc8c-6420-4d64-86d5-07d76249ab28"
+      }
+    },
+    "owner": "sknk-aaa"
   }
 }
