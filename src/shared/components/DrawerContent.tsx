@@ -1,15 +1,22 @@
 import { View, Text, TouchableOpacity, Switch, StyleSheet, ScrollView, Alert } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { DrawerActions, useNavigation } from '@react-navigation/native'
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import type { RootStackParamList } from '../types'
 import { useSettingsStore } from '../../features/settings/store'
 import { colors, spacing } from '../theme'
 
 export function DrawerContent() {
   const insets = useSafeAreaInsets()
-  const navigation = useNavigation()
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
   const { settings, set } = useSettingsStore()
 
   const close = () => navigation.dispatch(DrawerActions.closeDrawer())
+
+  const openTutorial = () => {
+    close()
+    navigation.navigate('Tutorial')
+  }
 
   const handleBrowserChange = () => {
     Alert.alert('デフォルトブラウザ', '使用するブラウザを選択してください', [
@@ -32,7 +39,7 @@ export function DrawerContent() {
         <Text style={styles.appName}>ブックマーク</Text>
 
         <View style={styles.section}>
-          <DrawerItem label="使い方" onPress={close} />
+          <DrawerItem label="使い方" onPress={openTutorial} />
           <DrawerItem label="アプリを評価" onPress={close} />
           <DrawerItem
             label="プレミアム版を購入"

@@ -52,6 +52,7 @@ export type RootStackParamList = {
   AddBookmark: { folderId?: string; url?: string; title?: string; thumbnailUri?: string }
   Trim: { imageUri: string }
   Search: { folderId?: string }
+  Tutorial: undefined
 }
 
 export type DrawerParamList = {

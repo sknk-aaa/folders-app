@@ -6,6 +6,7 @@ import { AllBookmarksScreen } from '../features/bookmarks/screens/AllBookmarksSc
 import { AddBookmarkScreen } from '../features/bookmarks/screens/AddBookmarkScreen'
 import { TrimScreen } from '../features/bookmarks/screens/TrimScreen'
 import { SearchScreen } from '../features/bookmarks/screens/SearchScreen'
+import { TutorialScreen } from '../features/tutorial/TutorialScreen'
 import { DrawerContent } from '../shared/components/DrawerContent'
 import type { RootStackParamList, DrawerParamList } from '../shared/types'
 
@@ -32,6 +33,11 @@ function MainStack() {
         name="Search"
         component={SearchScreen}
         options={{ presentation: 'modal' }}
+      />
+      <Stack.Screen
+        name="Tutorial"
+        component={TutorialScreen}
+        options={{ presentation: 'fullScreenModal' }}
       />
     </Stack.Navigator>
   )

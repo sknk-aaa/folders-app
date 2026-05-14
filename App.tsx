@@ -58,6 +58,12 @@ export default function App() {
   }, [])
 
   const handleNavigationReady = () => {
+    // チュートリアル未完了なら最初に表示
+    const { settings } = useSettingsStore.getState()
+    if (!settings.tutorial_completed) {
+      navigationRef.navigate('Tutorial')
+    }
+    // Share Extension から来た URL があれば AddBookmark へ
     if (pendingUrl.current) {
       handleIncomingUrl(pendingUrl.current)
       pendingUrl.current = null
