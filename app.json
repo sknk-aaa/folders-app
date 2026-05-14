@@ -4,17 +4,29 @@
     "slug": "folders-app",
     "version": "1.0.0",
     "orientation": "portrait",
+    "scheme": "foldersapp",
     "userInterfaceStyle": "light",
     "ios": {
       "bundleIdentifier": "com.sknk.foldersapp",
-      "supportsTablet": false
+      "supportsTablet": false,
+      "entitlements": {
+        "com.apple.security.application-groups": ["group.com.sknk.foldersapp"]
+      }
     },
     "android": {
       "package": "com.sknk.foldersapp"
     },
     "plugins": [
       "expo-sqlite",
-      "expo-web-browser"
+      "expo-web-browser",
+      [
+        "expo-share-extension",
+        {
+          "activationRules": [
+            { "type": "url", "max": 1 }
+          ]
+        }
+      ]
     ],
     "extra": {
       "eas": {
