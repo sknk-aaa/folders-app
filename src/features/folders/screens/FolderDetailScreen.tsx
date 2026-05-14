@@ -26,7 +26,8 @@ export function FolderDetailScreen() {
 
   const folder = useFoldersStore((s) => s.folders.find((f) => f.id === folderId))
   const { update: updateFolder } = useFoldersStore()
-  const { byFolder, reorder, remove } = useBookmarksStore()
+  const folders = useFoldersStore((s) => s.folders)
+  const { byFolder, reorder, remove, move } = useBookmarksStore()
   const bookmarks = folder ? byFolder(folder.id) : []
 
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
@@ -52,10 +53,9 @@ export function FolderDetailScreen() {
         return (
           <BookmarkListItem
             bookmark={item}
-            allFolders={[]}
+            allFolders={folders}
             onDelete={() => remove(item.id)}
-            onMove={() => {}}
-            onEdit={() => {}}
+            onMove={(fId) => move(item.id, fId)}
           />
         )
       }
@@ -64,10 +64,9 @@ export function FolderDetailScreen() {
           <View style={{ width: cardW }}>
             <BookmarkCard
               bookmark={item}
-              allFolders={[]}
+              allFolders={folders}
               onDelete={() => remove(item.id)}
-              onMove={() => {}}
-              onEdit={() => {}}
+              onMove={(fId) => move(item.id, fId)}
               drag={drag}
               isActive={isActive}
             />
@@ -75,7 +74,7 @@ export function FolderDetailScreen() {
         </ScaleDecorator>
       )
     },
-    [viewMode, cardW, remove]
+    [viewMode, cardW, folders, remove, move]
   )
 
   return (

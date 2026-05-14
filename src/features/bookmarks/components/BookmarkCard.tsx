@@ -1,7 +1,12 @@
-import { View, Text, TouchableOpacity, StyleSheet, Alert, Dimensions } from 'react-native'
+import { useState } from 'react'
+import { View, Text, TouchableOpacity, StyleSheet, Alert, Dimensions, Linking } from 'react-native'
 import { Image } from 'expo-image'
 import { PlaceholderImage } from '../../../shared/components/PlaceholderImage'
 import { colors, spacing, radius, getFaviconColor, getFaviconLetter, getDomain } from '../../../shared/theme'
+import { openInBrowser } from '../../../shared/utils/url'
+import { useBookmarksStore } from '../store'
+import { useSettingsStore } from '../../settings/store'
+import { BookmarkEditModal } from './BookmarkEditModal'
 import type { Bookmark, Folder } from '../../../shared/types'
 
 const { width: SCREEN_W } = Dimensions.get('window')
@@ -12,61 +17,81 @@ type Props = {
   allFolders: Folder[]
   onDelete: () => void
   onMove: (folderId: string) => void
-  onEdit: () => void
   drag?: () => void
   isActive?: boolean
 }
 
-export function BookmarkCard({ bookmark, allFolders, onDelete, onMove, onEdit, drag, isActive }: Props) {
+export function BookmarkCard({ bookmark, allFolders, onDelete, onMove, drag, isActive }: Props) {
   const imageH = CARD_W * 0.72
+  const { update } = useBookmarksStore()
+  const { settings } = useSettingsStore()
+  const [editVisible, setEditVisible] = useState(false)
+
+  const handlePress = () => {
+    const target = openInBrowser(bookmark.url, settings.default_browser)
+    Linking.openURL(target)
+  }
 
   const handleMore = () => {
     Alert.alert(bookmark.name, undefined, [
-      { text: '編集', onPress: onEdit },
-      ...(allFolders.length > 0
+      { text: '編集', onPress: () => setEditVisible(true) },
+      ...(allFolders.length > 1
         ? [{ text: '移動', onPress: () => showMoveSheet(allFolders, onMove) }]
         : []),
-      { text: '削除', style: 'destructive' as const, onPress: () => {
-        Alert.alert('削除', `「${bookmark.name}」を削除しますか？`, [
-          { text: 'キャンセル', style: 'cancel' },
-          { text: '削除', style: 'destructive', onPress: onDelete },
-        ])
-      }},
+      {
+        text: '削除',
+        style: 'destructive' as const,
+        onPress: () => {
+          Alert.alert('削除', `「${bookmark.name}」を削除しますか？`, [
+            { text: 'キャンセル', style: 'cancel' },
+            { text: '削除', style: 'destructive', onPress: onDelete },
+          ])
+        },
+      },
       { text: 'キャンセル', style: 'cancel' },
     ])
   }
 
   return (
-    <TouchableOpacity
-      onLongPress={drag}
-      activeOpacity={isActive ? 1 : 0.85}
-      style={[styles.card, isActive && styles.cardActive]}
-    >
-      {/* Thumbnail */}
-      {bookmark.thumbnailPath ? (
-        <Image
-          source={{ uri: bookmark.thumbnailPath }}
-          style={[styles.image, { height: imageH }]}
-          contentFit="cover"
-        />
-      ) : (
-        <PlaceholderImage width={CARD_W} height={imageH} style={styles.image} />
-      )}
+    <>
+      <TouchableOpacity
+        onPress={handlePress}
+        onLongPress={drag}
+        activeOpacity={isActive ? 1 : 0.85}
+        style={[styles.card, isActive && styles.cardActive]}
+      >
+        {/* Thumbnail */}
+        {bookmark.thumbnailPath ? (
+          <Image
+            source={{ uri: bookmark.thumbnailPath }}
+            style={[styles.image, { height: imageH }]}
+            contentFit="cover"
+          />
+        ) : (
+          <PlaceholderImage width={CARD_W} height={imageH} style={styles.image} />
+        )}
 
-      {/* Meta row */}
-      <View style={styles.meta}>
-        <View style={styles.metaLeft}>
-          <FaviconCircle url={bookmark.url} />
-          <View style={styles.textBlock}>
-            <Text style={styles.name} numberOfLines={2}>{bookmark.name}</Text>
-            <Text style={styles.domain} numberOfLines={1}>{getDomain(bookmark.url)}</Text>
+        {/* Meta row */}
+        <View style={styles.meta}>
+          <View style={styles.metaLeft}>
+            <FaviconCircle url={bookmark.url} />
+            <View style={styles.textBlock}>
+              <Text style={styles.name} numberOfLines={2}>{bookmark.name}</Text>
+              <Text style={styles.domain} numberOfLines={1}>{getDomain(bookmark.url)}</Text>
+            </View>
           </View>
+          <TouchableOpacity onPress={handleMore} hitSlop={8} style={styles.moreBtn}>
+            <Text style={styles.moreDots}>•••</Text>
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity onPress={handleMore} hitSlop={8} style={styles.moreBtn}>
-          <Text style={styles.moreDots}>•••</Text>
-        </TouchableOpacity>
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+
+      <BookmarkEditModal
+        bookmark={editVisible ? bookmark : null}
+        onClose={() => setEditVisible(false)}
+        onSave={(name, url) => update(bookmark.id, name, url)}
+      />
+    </>
   )
 }
 
@@ -91,14 +116,10 @@ function FaviconCircle({ url, size = 22 }: { url: string; size?: number }) {
 }
 
 function showMoveSheet(folders: Folder[], onMove: (id: string) => void) {
-  Alert.alert(
-    '移動先フォルダ',
-    undefined,
-    [
-      ...folders.map((f) => ({ text: f.name, onPress: () => onMove(f.id) })),
-      { text: 'キャンセル', style: 'cancel' as const },
-    ]
-  )
+  Alert.alert('移動先フォルダ', undefined, [
+    ...folders.map((f) => ({ text: f.name, onPress: () => onMove(f.id) })),
+    { text: 'キャンセル', style: 'cancel' as const },
+  ])
 }
 
 const styles = StyleSheet.create({

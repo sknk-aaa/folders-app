@@ -66,7 +66,6 @@ export function AllBookmarksScreen() {
                 allFolders={folders}
                 onDelete={() => remove(item.id)}
                 onMove={(fId) => move(item.id, fId)}
-                onEdit={() => {}}
               />
             )
           }
@@ -77,7 +76,6 @@ export function AllBookmarksScreen() {
                 allFolders={folders}
                 onDelete={() => remove(item.id)}
                 onMove={(fId) => move(item.id, fId)}
-                onEdit={() => {}}
               />
             </View>
           )

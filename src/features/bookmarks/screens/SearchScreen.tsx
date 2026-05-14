@@ -76,7 +76,6 @@ export function SearchScreen() {
               allFolders={folders}
               onDelete={() => remove(item.id)}
               onMove={(fId) => move(item.id, fId)}
-              onEdit={() => {}}
             />
           </View>
         )}
