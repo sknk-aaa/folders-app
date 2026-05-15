@@ -166,24 +166,23 @@ export function FolderEditModal({
           </View>
         </View>
       </KeyboardAvoidingView>
-    </Modal>
 
-    {pinModalMode === 'set' && folder && (
-      <PinEntryModal
-        mode="set"
-        onSet={(pin) => { setPin(folder.id, pin); setPinModalMode(null) }}
-        onCancel={() => setPinModalMode(null)}
-      />
-    )}
-    {pinModalMode === 'unlock' && folder?.pinCode && (
-      <PinEntryModal
-        mode="unlock"
-        correctPin={folder.pinCode}
-        onSuccess={() => { removePin(folder.id); setPinModalMode(null) }}
-        onCancel={() => setPinModalMode(null)}
-      />
-    )}
-    </>
+      {pinModalMode === 'set' && folder && (
+        <PinEntryModal
+          mode="set"
+          onSet={(pin) => { setPin(folder.id, pin); setPinModalMode(null) }}
+          onCancel={() => setPinModalMode(null)}
+        />
+      )}
+      {pinModalMode === 'unlock' && folder?.pinCode && (
+        <PinEntryModal
+          mode="unlock"
+          correctPin={folder.pinCode}
+          onSuccess={() => { removePin(folder.id); setPinModalMode(null) }}
+          onCancel={() => setPinModalMode(null)}
+        />
+      )}
+    </Modal>
   )
 }
 
