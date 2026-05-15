@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 2,
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.separator,
+    borderColor: colors.divider,
     borderRadius: 12,
     backgroundColor: 'rgba(255,255,255,0.92)',
   },

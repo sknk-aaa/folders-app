@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
   wrapper: {
     backgroundColor: colors.headerBg,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.separator,
+    borderBottomColor: colors.divider,
   },
   wrapperNoBorder: {
     borderBottomWidth: 0,
@@ -203,8 +203,8 @@ const styles = StyleSheet.create({
     fontWeight: '300',
   },
   title: {
-    fontSize: 19,
-    fontWeight: '700',
+    fontSize: 18,
+    fontWeight: '600',
     color: colors.text,
   },
   addIcon: {
