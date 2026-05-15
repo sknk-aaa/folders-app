@@ -21,8 +21,16 @@ function MainStack({ initialRouteName }: MainStackProps) {
   return (
     <Stack.Navigator initialRouteName={initialRouteName} screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="AllBookmarks" component={AllBookmarksScreen} />
-      <Stack.Screen name="FolderDetail" component={FolderDetailScreen} />
+      <Stack.Screen
+        name="AllBookmarks"
+        component={AllBookmarksScreen}
+        options={{ fullScreenGestureEnabled: true }}
+      />
+      <Stack.Screen
+        name="FolderDetail"
+        component={FolderDetailScreen}
+        options={{ fullScreenGestureEnabled: true }}
+      />
       <Stack.Screen
         name="AddBookmark"
         component={AddBookmarkScreen}

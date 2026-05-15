@@ -56,11 +56,11 @@ export function Header({
         {/* Left */}
         <View style={[styles.left, hasContentSlot && styles.leftCompact]}>
           {showBack ? (
-            <TouchableOpacity onPress={handleBack} style={styles.iconBtn} hitSlop={8}>
+            <TouchableOpacity activeOpacity={0.75} onPress={handleBack} style={styles.iconBtn} hitSlop={8}>
               <Text style={styles.backArrow}>‹</Text>
             </TouchableOpacity>
           ) : (
-            <TouchableOpacity onPress={handleMenu} style={styles.iconBtn} hitSlop={8}>
+            <TouchableOpacity activeOpacity={0.75} onPress={handleMenu} style={styles.iconBtn} hitSlop={8}>
               <HamburgerIcon />
             </TouchableOpacity>
           )}
@@ -80,17 +80,17 @@ export function Header({
         {/* Right */}
         <View style={[styles.right, hasContentSlot && styles.rightCompact]}>
           {showSearch && (
-            <TouchableOpacity onPress={onSearch} style={styles.iconBtn} hitSlop={8}>
+            <TouchableOpacity activeOpacity={0.75} onPress={onSearch} style={styles.iconBtn} hitSlop={8}>
               <SearchIcon />
             </TouchableOpacity>
           )}
           {showAdd && (
-            <TouchableOpacity onPress={onAdd} style={styles.iconBtn} hitSlop={8}>
+            <TouchableOpacity activeOpacity={0.75} onPress={onAdd} style={styles.iconBtn} hitSlop={8}>
               <Text style={styles.addIcon}>+</Text>
             </TouchableOpacity>
           )}
           {showMore && (
-            <TouchableOpacity onPress={onMore} style={styles.iconBtn} hitSlop={8}>
+            <TouchableOpacity activeOpacity={0.75} onPress={onMore} style={styles.iconBtn} hitSlop={8}>
               <Text style={styles.moreIcon}>•••</Text>
             </TouchableOpacity>
           )}
@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 62,
+    height: 50,
     paddingHorizontal: spacing.lg,
   },
   left: {

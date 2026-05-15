@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   Text,
 } from 'react-native'
+import { Gesture, GestureDetector } from 'react-native-gesture-handler'
+import { runOnJS } from 'react-native-reanimated'
 import { useNavigation } from '@react-navigation/native'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useBookmarksStore } from '../store'
@@ -24,6 +26,7 @@ export function AllBookmarksScreen() {
   const { bookmarks, remove, move } = useBookmarksStore()
   const { folders } = useFoldersStore()
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
+  const [columns, setColumns] = useState(2)
   const [searchVisible, setSearchVisible] = useState(false)
   const [query, setQuery] = useState('')
   const searchInputRef = useRef<TextInput>(null)
@@ -33,6 +36,14 @@ export function AllBookmarksScreen() {
       requestAnimationFrame(() => searchInputRef.current?.focus())
     }
   }, [searchVisible])
+
+  const pinchGesture = useMemo(
+    () =>
+      Gesture.Pinch().onEnd((e) => {
+        runOnJS(setColumns)(e.scale < 0.85 ? 3 : 2)
+      }),
+    [],
+  )
 
   const sortedBookmarks = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -93,17 +104,20 @@ export function AllBookmarksScreen() {
         </View>
       )}
 
-      <BookmarkCollectionList
-        bookmarks={sortedBookmarks}
-        allFolders={folders}
-        viewMode={viewMode}
-        onGridPress={() => setViewMode('grid')}
-        onListPress={() => setViewMode('list')}
-        onDelete={(bookmark) => remove(bookmark.id)}
-        onMove={(bookmark, folderId) => move(bookmark.id, folderId)}
-        title="すべてのブックマーク"
-        emptyText={query.trim() ? '検索結果がありません' : 'ブックマークがまだありません'}
-      />
+      <GestureDetector gesture={pinchGesture}>
+        <BookmarkCollectionList
+          bookmarks={sortedBookmarks}
+          allFolders={folders}
+          viewMode={viewMode}
+          onGridPress={() => setViewMode('grid')}
+          onListPress={() => setViewMode('list')}
+          onDelete={(bookmark) => remove(bookmark.id)}
+          onMove={(bookmark, folderId) => move(bookmark.id, folderId)}
+          title="すべてのブックマーク"
+          emptyText={query.trim() ? '検索結果がありません' : 'ブックマークがまだありません'}
+          columns={columns}
+        />
+      </GestureDetector>
     </View>
   )
 }

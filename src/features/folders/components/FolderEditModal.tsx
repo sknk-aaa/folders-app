@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import {
+  Alert,
+  FlatList,
   Modal,
   View,
   Text,
@@ -9,8 +11,10 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native'
+import { Image } from 'expo-image'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import type { Folder, FolderIconId } from '../../../shared/types'
+import { PlaceholderImage } from '../../../shared/components/PlaceholderImage'
+import type { Bookmark, Folder, FolderIconId } from '../../../shared/types'
 import { colors, spacing, radius } from '../../../shared/theme'
 
 type Props = {
@@ -18,14 +22,25 @@ type Props = {
   folder?: Folder
   onSave: (name: string, iconId: FolderIconId) => void
   onClose: () => void
+  bookmarks?: Bookmark[]
+  onDeleteBookmarks?: (ids: string[]) => void
 }
 
-export function FolderEditModal({ visible, folder, onSave, onClose }: Props) {
+export function FolderEditModal({
+  visible,
+  folder,
+  onSave,
+  onClose,
+  bookmarks,
+  onDeleteBookmarks,
+}: Props) {
   const insets = useSafeAreaInsets()
   const [name, setName] = useState(folder?.name ?? '')
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
 
   const handleOpen = () => {
     setName(folder?.name ?? '')
+    setSelectedIds(new Set())
   }
 
   const handleSave = () => {
@@ -33,6 +48,39 @@ export function FolderEditModal({ visible, folder, onSave, onClose }: Props) {
     onSave(name.trim(), folder?.iconId ?? 'default')
     onClose()
   }
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) {
+        next.delete(id)
+      } else {
+        next.add(id)
+      }
+      return next
+    })
+  }
+
+  const handleDeleteSelected = () => {
+    const count = selectedIds.size
+    Alert.alert(
+      `${count}件を削除`,
+      'この操作は取り消せません。',
+      [
+        { text: 'キャンセル', style: 'cancel' },
+        {
+          text: '削除',
+          style: 'destructive',
+          onPress: () => {
+            onDeleteBookmarks?.(Array.from(selectedIds))
+            setSelectedIds(new Set())
+          },
+        },
+      ],
+    )
+  }
+
+  const hasBookmarks = bookmarks && bookmarks.length > 0
 
   return (
     <Modal
@@ -46,7 +94,6 @@ export function FolderEditModal({ visible, folder, onSave, onClose }: Props) {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <View style={[styles.container, { paddingBottom: insets.bottom + 16 }]}>
-          {/* Handle bar */}
           <View style={styles.handle} />
 
           <Text style={styles.title}>{folder ? 'フォルダを編集' : '新しいフォルダ'}</Text>
@@ -61,6 +108,32 @@ export function FolderEditModal({ visible, folder, onSave, onClose }: Props) {
             returnKeyType="done"
             onSubmitEditing={handleSave}
           />
+
+          {hasBookmarks && onDeleteBookmarks ? (
+            <View style={styles.bookmarkSection}>
+              <View style={styles.bookmarkHeader}>
+                <Text style={styles.bookmarkSectionTitle}>ブックマーク管理</Text>
+                {selectedIds.size > 0 && (
+                  <TouchableOpacity onPress={handleDeleteSelected} style={styles.deleteBtn}>
+                    <Text style={styles.deleteBtnText}>{selectedIds.size}件を削除</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+              <FlatList
+                data={bookmarks}
+                keyExtractor={(b) => b.id}
+                style={styles.bookmarkList}
+                renderItem={({ item }) => (
+                  <BookmarkRow
+                    bookmark={item}
+                    selected={selectedIds.has(item.id)}
+                    onToggle={() => toggleSelect(item.id)}
+                  />
+                )}
+                ItemSeparatorComponent={() => <View style={styles.separator} />}
+              />
+            </View>
+          ) : null}
 
           <View style={styles.buttons}>
             <TouchableOpacity style={styles.cancelBtn} onPress={onClose}>
@@ -77,6 +150,36 @@ export function FolderEditModal({ visible, folder, onSave, onClose }: Props) {
         </View>
       </KeyboardAvoidingView>
     </Modal>
+  )
+}
+
+function BookmarkRow({
+  bookmark,
+  selected,
+  onToggle,
+}: {
+  bookmark: Bookmark
+  selected: boolean
+  onToggle: () => void
+}) {
+  return (
+    <TouchableOpacity activeOpacity={0.7} onPress={onToggle} style={styles.bookmarkRow}>
+      {bookmark.thumbnailPath ? (
+        <Image
+          source={{ uri: bookmark.thumbnailPath }}
+          style={styles.bookmarkThumb}
+          contentFit="cover"
+        />
+      ) : (
+        <PlaceholderImage width={40} height={40} style={styles.bookmarkThumb} />
+      )}
+      <Text style={styles.bookmarkName} numberOfLines={1}>
+        {bookmark.name}
+      </Text>
+      <View style={[styles.checkbox, selected && styles.checkboxSelected]}>
+        {selected && <Text style={styles.checkmark}>✓</Text>}
+      </View>
+    </TouchableOpacity>
   )
 }
 
@@ -110,11 +213,85 @@ const styles = StyleSheet.create({
     color: colors.text,
     marginBottom: 24,
   },
+  bookmarkSection: {
+    flex: 1,
+    minHeight: 0,
+    marginBottom: 16,
+  },
+  bookmarkHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+  },
+  bookmarkSectionTitle: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: colors.text,
+  },
+  deleteBtn: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: radius.sm,
+    backgroundColor: '#FF3B30',
+  },
+  deleteBtnText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#fff',
+  },
+  bookmarkList: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: colors.separator,
+    borderRadius: radius.sm,
+  },
+  bookmarkRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    gap: 10,
+  },
+  bookmarkThumb: {
+    width: 40,
+    height: 40,
+    borderRadius: 6,
+    backgroundColor: colors.placeholderBg,
+  },
+  bookmarkName: {
+    flex: 1,
+    fontSize: 14,
+    color: colors.text,
+  },
+  checkbox: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 1.5,
+    borderColor: colors.separator,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkboxSelected: {
+    backgroundColor: colors.text,
+    borderColor: colors.text,
+  },
+  checkmark: {
+    fontSize: 12,
+    color: colors.background,
+    fontWeight: '700',
+  },
+  separator: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: colors.separator,
+    marginLeft: 62,
+  },
   buttons: {
     flexDirection: 'row',
     gap: 12,
     marginTop: 'auto',
-    paddingTop: 24,
+    paddingTop: 16,
   },
   cancelBtn: {
     flex: 1,

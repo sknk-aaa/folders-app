@@ -1,6 +1,8 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { View, Text, StyleSheet } from 'react-native'
 import { Image } from 'expo-image'
+import { Gesture, GestureDetector } from 'react-native-gesture-handler'
+import { runOnJS } from 'react-native-reanimated'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import type {
   NativeStackNavigationProp,
@@ -38,6 +40,15 @@ export function FolderDetailScreen() {
 
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
   const [editModalVisible, setEditModalVisible] = useState(false)
+  const [columns, setColumns] = useState(2)
+
+  const pinchGesture = useMemo(
+    () =>
+      Gesture.Pinch().onEnd((e) => {
+        runOnJS(setColumns)(e.scale < 0.85 ? 3 : 2)
+      }),
+    [],
+  )
 
   if (!folder) return null
 
@@ -63,30 +74,35 @@ export function FolderDetailScreen() {
         hideBorder
       />
 
-      <BookmarkCollectionList
-        bookmarks={bookmarks}
-        allFolders={folders}
-        viewMode={viewMode}
-        onGridPress={() => setViewMode('grid')}
-        onListPress={() => setViewMode('list')}
-        onDelete={(bookmark) => remove(bookmark.id)}
-        onMove={(bookmark, targetFolderId) => move(bookmark.id, targetFolderId)}
-        onReorder={(nextBookmarks) => reorder(folderId, nextBookmarks)}
-        emptyText="このフォルダにはまだブックマークがありません"
-        headerAccessory={
-          <FolderHeaderSummary
-            folder={folder}
-            thumbnail={mosaicThumbnails[0]}
-            bookmarkCount={bookmarks.length}
-          />
-        }
-      />
+      <GestureDetector gesture={pinchGesture}>
+        <BookmarkCollectionList
+          bookmarks={bookmarks}
+          allFolders={folders}
+          viewMode={viewMode}
+          onGridPress={() => setViewMode('grid')}
+          onListPress={() => setViewMode('list')}
+          onDelete={(bookmark) => remove(bookmark.id)}
+          onMove={(bookmark, targetFolderId) => move(bookmark.id, targetFolderId)}
+          onReorder={(nextBookmarks) => reorder(folderId, nextBookmarks)}
+          emptyText="このフォルダにはまだブックマークがありません"
+          columns={columns}
+          headerAccessory={
+            <FolderHeaderSummary
+              folder={folder}
+              thumbnail={mosaicThumbnails[0]}
+              bookmarkCount={bookmarks.length}
+            />
+          }
+        />
+      </GestureDetector>
 
       <FolderEditModal
         visible={editModalVisible}
         folder={folder}
         onSave={handleFolderSave}
         onClose={() => setEditModalVisible(false)}
+        bookmarks={bookmarks}
+        onDeleteBookmarks={(ids) => ids.forEach((id) => remove(id))}
       />
     </View>
   )

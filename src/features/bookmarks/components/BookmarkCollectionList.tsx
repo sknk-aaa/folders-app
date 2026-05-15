@@ -10,7 +10,6 @@ import { BookmarkListItem } from './BookmarkListItem'
 const { width: SCREEN_W } = Dimensions.get('window')
 const PADDING = spacing.lg
 const GAP = spacing.sm
-const COLUMNS = 2
 
 type Props = {
   bookmarks: Bookmark[]
@@ -24,6 +23,7 @@ type Props = {
   emptyText: string
   headerAccessory?: ReactNode
   onReorder?: (bookmarks: Bookmark[]) => void
+  columns?: number
 }
 
 export function BookmarkCollectionList({
@@ -38,11 +38,12 @@ export function BookmarkCollectionList({
   emptyText,
   headerAccessory,
   onReorder,
+  columns: columnsProp = 2,
 }: Props) {
-  const cardW = (SCREEN_W - PADDING * 2 - GAP * (COLUMNS - 1)) / COLUMNS
+  const columns = viewMode === 'grid' ? columnsProp : 1
+  const cardW = (SCREEN_W - PADDING * 2 - GAP * (columnsProp - 1)) / columnsProp
   const isDraggable = Boolean(onReorder)
-  const listKey = `${viewMode}-${isDraggable ? 'draggable' : 'static'}`
-  const columns = viewMode === 'grid' ? COLUMNS : 1
+  const listKey = `${viewMode}-${columnsProp}-${isDraggable ? 'draggable' : 'static'}`
   const columnWrapperStyle =
     viewMode === 'grid' && columns > 1 ? styles.columnWrapper : undefined
 

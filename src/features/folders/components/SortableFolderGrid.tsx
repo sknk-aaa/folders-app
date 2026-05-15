@@ -10,6 +10,7 @@ type Props = {
   getBookmarks: (folderId: string) => Bookmark[]
   cardWidth: number
   gap: number
+  columns?: number
   onPressFolder: (folder: Folder) => void
   onEditFolder: (folder: Folder) => void
   onDeleteFolder: (folder: Folder) => void
@@ -23,7 +24,6 @@ type DragOrigin = {
 }
 
 const CARD_ASPECT_RATIO = 1.05
-const COLUMNS = 2
 const LONG_PRESS_MS = 180
 
 export function SortableFolderGrid({
@@ -31,6 +31,7 @@ export function SortableFolderGrid({
   getBookmarks,
   cardWidth,
   gap,
+  columns = 2,
   onPressFolder,
   onEditFolder,
   onDeleteFolder,
@@ -59,8 +60,8 @@ export function SortableFolderGrid({
 
   const getPosition = useCallback(
     (index: number) => ({
-      x: (index % COLUMNS) * columnWidth,
-      y: Math.floor(index / COLUMNS) * rowHeight,
+      x: (index % columns) * columnWidth,
+      y: Math.floor(index / columns) * rowHeight,
     }),
     [columnWidth, rowHeight],
   )
@@ -88,12 +89,12 @@ export function SortableFolderGrid({
       const origin = originRef.current
       if (!origin) return
 
-      const rows = Math.max(1, Math.ceil(orderedRef.current.length / COLUMNS))
+      const rows = Math.max(1, Math.ceil(orderedRef.current.length / columns))
       const centerX = origin.x + cardWidth / 2 + translationX
       const centerY = origin.y + cardHeight / 2 + translationY
-      const col = clamp(Math.round((centerX - cardWidth / 2) / columnWidth), 0, COLUMNS - 1)
+      const col = clamp(Math.round((centerX - cardWidth / 2) / columnWidth), 0, columns - 1)
       const row = clamp(Math.round((centerY - cardHeight / 2) / rowHeight), 0, rows - 1)
-      const targetIndex = Math.min(row * COLUMNS + col, orderedRef.current.length - 1)
+      const targetIndex = Math.min(row * columns + col, orderedRef.current.length - 1)
 
       moveActiveFolder(targetIndex)
     },
@@ -158,7 +159,7 @@ export function SortableFolderGrid({
     [folders, onDragStateChange, onReorder],
   )
 
-  const rows = Math.ceil(orderedFolders.length / COLUMNS)
+  const rows = Math.ceil(orderedFolders.length / columns)
   const height = rows > 0 ? rows * cardHeight + (rows - 1) * gap : 0
   const activeFolder = activeId
     ? orderedFolders.find((folder) => folder.id === activeId) ?? null
