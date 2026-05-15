@@ -22,7 +22,7 @@ type DragOrigin = {
   y: number
 }
 
-const CARD_ASPECT_RATIO = 1.34
+const CARD_ASPECT_RATIO = 1.05
 const COLUMNS = 2
 const LONG_PRESS_MS = 180
 

@@ -124,23 +124,33 @@ function showMoveSheet(folders: Folder[], onMove: (id: string) => void) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: colors.background,
+    backgroundColor: '#fff',
+    borderRadius: radius.md,
     overflow: 'hidden',
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.separator,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 2,
   },
   cardActive: {
     opacity: 0.85,
   },
   image: {
     width: '100%',
-    borderRadius: radius.sm,
     overflow: 'hidden',
   },
   meta: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    paddingTop: spacing.xs,
-    paddingBottom: spacing.xs,
+    minHeight: 82,
+    paddingHorizontal: spacing.sm,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.sm,
     gap: spacing.xs,
+    backgroundColor: '#fff',
   },
   metaLeft: {
     flex: 1,
@@ -163,11 +173,15 @@ const styles = StyleSheet.create({
     marginTop: 1,
   },
   moreBtn: {
-    paddingTop: 2,
+    alignSelf: 'center',
+    paddingHorizontal: 4,
+    paddingVertical: 10,
+    marginRight: -2,
   },
   moreDots: {
-    fontSize: 9,
+    fontSize: 11,
     color: colors.textSecondary,
     letterSpacing: 1,
+    lineHeight: 12,
   },
 })

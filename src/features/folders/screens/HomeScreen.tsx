@@ -11,6 +11,7 @@ import {
   Dimensions,
   FlatList,
   Platform,
+  Linking,
 } from 'react-native'
 import { Image } from 'expo-image'
 import { useNavigation } from '@react-navigation/native'
@@ -26,7 +27,9 @@ import { SortableFolderGrid } from '../components/SortableFolderGrid'
 import { PlaceholderImage } from '../../../shared/components/PlaceholderImage'
 import { colors, spacing, radius, getDomain } from '../../../shared/theme'
 import { MOCK_BOOKMARKS } from '../../../shared/mockVisuals'
+import { openInBrowser } from '../../../shared/utils/url'
 import type { RootStackParamList, Folder, FolderIconId, ViewMode } from '../../../shared/types'
+import { useSettingsStore } from '../../settings/store'
 
 const { width: SCREEN_W } = Dimensions.get('window')
 const GRID_PADDING = spacing.lg
@@ -236,24 +239,36 @@ function RecentItem({
 }: {
   item: { thumbnailPath: string | null; name: string; url: string }
 }) {
+  const { settings } = useSettingsStore()
   const ITEM_W = 72
+  const IMAGE_H = 86
+  const handlePress = () => {
+    Linking.openURL(openInBrowser(item.url, settings.default_browser))
+  }
+
   return (
-    <TouchableOpacity style={{ width: ITEM_W, marginRight: 10 }}>
+    <TouchableOpacity
+      activeOpacity={0.86}
+      onPress={handlePress}
+      style={[styles.recentCard, { width: ITEM_W }]}
+    >
       {item.thumbnailPath ? (
         <Image
           source={{ uri: item.thumbnailPath }}
-          style={{ width: ITEM_W, height: ITEM_W, borderRadius: radius.sm }}
+          style={styles.recentImage}
           contentFit="cover"
         />
       ) : (
-        <PlaceholderImage width={ITEM_W} height={ITEM_W} style={{ borderRadius: radius.sm }} />
+        <PlaceholderImage width={ITEM_W} height={IMAGE_H} style={styles.recentImage} />
       )}
-      <Text style={styles.recentName} numberOfLines={2}>
-        {item.name}
-      </Text>
-      <Text style={styles.recentDomain} numberOfLines={1}>
-        {getDomain(item.url)}
-      </Text>
+      <View style={styles.recentMeta}>
+        <Text style={styles.recentName} numberOfLines={2}>
+          {item.name}
+        </Text>
+        <Text style={styles.recentDomain} numberOfLines={1}>
+          {getDomain(item.url)}
+        </Text>
+      </View>
     </TouchableOpacity>
   )
 }
@@ -409,11 +424,35 @@ const styles = StyleSheet.create({
   recentList: {
     paddingHorizontal: GRID_PADDING,
   },
+  recentCard: {
+    marginRight: 10,
+    minHeight: 150,
+    borderRadius: radius.sm,
+    backgroundColor: '#fff',
+    overflow: 'hidden',
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.separator,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 2,
+  },
+  recentImage: {
+    width: '100%',
+    height: 86,
+    backgroundColor: colors.placeholderBg,
+  },
+  recentMeta: {
+    minHeight: 64,
+    paddingHorizontal: 6,
+    paddingTop: 7,
+    paddingBottom: 7,
+  },
   recentName: {
     fontSize: 11,
     fontWeight: '600',
     color: colors.text,
-    marginTop: 7,
     lineHeight: 15,
   },
   recentDomain: {
