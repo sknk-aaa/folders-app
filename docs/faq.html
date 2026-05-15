@@ -4,315 +4,143 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>よくある質問 — Bookrest</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,500;1,300&family=DM+Sans:opsz,wght@9..40,300;9..40,400&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --bg: #FAFAF7;
-      --text: #1C1C1E;
-      --sub: #9A9590;
-      --line: #E8E3DA;
-      --warm: #B8A48A;
-    }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      font-weight: 300;
-      min-height: 100vh;
-      padding: 0 24px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      background: #fff;
+      color: #1c1c1e;
+      padding: 0 20px;
+      max-width: 640px;
+      margin: 0 auto;
     }
 
-    /* ── Header ── */
-    .site-header {
+    header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 28px 0 0;
-      max-width: 640px;
-      margin: 0 auto;
+      padding: 20px 0 0;
     }
 
-    .back-link {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
-      font-weight: 400;
-      color: var(--sub);
-      text-decoration: none;
-      letter-spacing: 0.02em;
-      transition: color 0.2s;
-    }
-    .back-link:hover { color: var(--text); }
+    .back { font-size: 15px; color: #8e8e93; text-decoration: none; }
+    .back:hover { color: #1c1c1e; }
+    .logo { font-size: 15px; font-weight: 600; color: #1c1c1e; }
 
-    .site-name {
-      font-family: 'Cormorant', serif;
-      font-size: 17px;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      color: var(--text);
-    }
-
-    /* ── Hero ── */
-    .hero {
-      max-width: 640px;
-      margin: 0 auto;
-      padding: 64px 0 48px;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .hero-label {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 10px;
-      font-weight: 400;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--warm);
-      margin-bottom: 16px;
-    }
-
-    .hero-title {
-      font-family: 'Cormorant', serif;
-      font-size: clamp(42px, 10vw, 58px);
-      font-weight: 300;
-      line-height: 1.1;
-      color: var(--text);
-      letter-spacing: -0.01em;
-    }
-
-    .hero-title em {
-      font-style: italic;
-      color: var(--warm);
-    }
-
-    /* ── FAQ List ── */
-    .faq-list {
-      max-width: 640px;
-      margin: 0 auto;
-      padding-bottom: 80px;
+    h1 {
+      font-size: 32px;
+      font-weight: 700;
+      margin: 40px 0 32px;
+      letter-spacing: -0.5px;
     }
 
     details {
-      border-bottom: 1px solid var(--line);
-      opacity: 0;
-      transform: translateY(12px);
-      animation: fadeUp 0.5s ease forwards;
+      border-top: 1px solid #e5e5ea;
     }
-
-    details:nth-child(1) { animation-delay: 0.05s; }
-    details:nth-child(2) { animation-delay: 0.10s; }
-    details:nth-child(3) { animation-delay: 0.15s; }
-    details:nth-child(4) { animation-delay: 0.20s; }
-    details:nth-child(5) { animation-delay: 0.25s; }
-    details:nth-child(6) { animation-delay: 0.30s; }
-
-    @keyframes fadeUp {
-      to { opacity: 1; transform: translateY(0); }
+    details:last-of-type {
+      border-bottom: 1px solid #e5e5ea;
     }
 
     summary {
       display: flex;
-      align-items: flex-start;
-      gap: 20px;
-      padding: 28px 0;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 0;
       cursor: pointer;
       list-style: none;
-      user-select: none;
       -webkit-tap-highlight-color: transparent;
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 1.4;
     }
     summary::-webkit-details-marker { display: none; }
 
-    .q-num {
-      font-family: 'Cormorant', serif;
-      font-size: 13px;
-      font-weight: 300;
-      font-style: italic;
-      color: var(--warm);
-      min-width: 20px;
-      padding-top: 3px;
-      letter-spacing: 0.05em;
-    }
-
-    .q-text {
-      flex: 1;
-      font-family: 'Cormorant', serif;
-      font-size: 20px;
-      font-weight: 500;
-      line-height: 1.4;
-      color: var(--text);
-      letter-spacing: 0.01em;
-    }
-
-    .q-toggle {
-      font-size: 20px;
-      color: var(--sub);
-      font-weight: 300;
-      line-height: 1;
-      padding-top: 4px;
-      transition: transform 0.25s ease, color 0.2s;
+    .chevron {
+      color: #c7c7cc;
+      font-size: 18px;
       flex-shrink: 0;
+      transition: transform 0.2s;
     }
-
-    details[open] .q-toggle {
-      transform: rotate(45deg);
-      color: var(--text);
-    }
+    details[open] .chevron { transform: rotate(90deg); }
 
     .answer {
-      display: grid;
-      grid-template-rows: 0fr;
-      transition: grid-template-rows 0.3s ease;
-    }
-
-    details[open] .answer {
-      grid-template-rows: 1fr;
-    }
-
-    .answer-inner {
-      overflow: hidden;
-    }
-
-    .answer-body {
-      padding: 0 0 28px 40px;
       font-size: 15px;
-      font-weight: 300;
-      line-height: 1.75;
-      color: #4A4A4C;
+      line-height: 1.7;
+      color: #3a3a3c;
+      padding: 0 0 20px;
     }
 
-    .answer-body a {
-      color: var(--text);
-      border-bottom: 1px solid var(--line);
-      text-decoration: none;
-      transition: border-color 0.2s;
+    .answer a {
+      color: #1c1c1e;
+      text-decoration: underline;
+      text-decoration-color: #c7c7cc;
     }
-    .answer-body a:hover { border-color: var(--text); }
 
     code {
-      font-family: 'SF Mono', 'Menlo', monospace;
-      font-size: 12px;
-      background: var(--line);
+      font-family: 'SF Mono', Menlo, monospace;
+      font-size: 13px;
+      background: #f2f2f7;
       padding: 2px 6px;
-      border-radius: 4px;
+      border-radius: 5px;
       word-break: break-all;
     }
 
-    /* ── Footer ── */
     footer {
-      max-width: 640px;
-      margin: 0 auto;
-      padding: 32px 0 48px;
-      border-top: 1px solid var(--line);
+      margin-top: 48px;
+      padding: 24px 0 40px;
+      border-top: 1px solid #e5e5ea;
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      font-size: 13px;
+      color: #8e8e93;
     }
-
-    .footer-copy {
-      font-size: 12px;
-      color: var(--sub);
-      letter-spacing: 0.04em;
-    }
-
-    .footer-link {
-      font-size: 12px;
-      color: var(--sub);
-      text-decoration: none;
-      letter-spacing: 0.04em;
-      border-bottom: 1px solid transparent;
-      transition: border-color 0.2s, color 0.2s;
-    }
-    .footer-link:hover { color: var(--text); border-color: var(--line); }
+    footer a { color: #8e8e93; text-decoration: none; }
+    footer a:hover { color: #1c1c1e; }
   </style>
 </head>
 <body>
 
-  <header class="site-header">
-    <a href="/" class="back-link">← Bookrest</a>
-    <span class="site-name">Bookrest</span>
+  <header>
+    <a href="/" class="back">← 戻る</a>
+    <span class="logo">Bookrest</span>
   </header>
 
-  <section class="hero">
-    <p class="hero-label">Help &amp; Support</p>
-    <h1 class="hero-title">よくある<br><em>ご質問</em></h1>
-  </section>
+  <h1>よくある質問</h1>
 
-  <div class="faq-list">
+  <details>
+    <summary>ブックマークのデータはどこに保存されますか？<span class="chevron">›</span></summary>
+    <p class="answer">すべてのデータはお使いのデバイス内にのみ保存されます。外部サーバーへの送信は行いません。</p>
+  </details>
 
-    <details>
-      <summary>
-        <span class="q-num">01</span>
-        <span class="q-text">ブックマークのデータはどこに保存されますか？</span>
-        <span class="q-toggle">+</span>
-      </summary>
-      <div class="answer"><div class="answer-inner">
-        <p class="answer-body">すべてのブックマークデータはお使いのデバイス内にのみ保存されます。外部サーバーへの送信や、クラウドへのアップロードは一切行いません。</p>
-      </div></div>
-    </details>
+  <details>
+    <summary>アプリを削除するとデータはどうなりますか？<span class="chevron">›</span></summary>
+    <p class="answer">アプリをアンインストールすると、保存されたすべてのブックマークが削除されます。</p>
+  </details>
 
-    <details>
-      <summary>
-        <span class="q-num">02</span>
-        <span class="q-text">アプリを削除するとデータはどうなりますか？</span>
-        <span class="q-toggle">+</span>
-      </summary>
-      <div class="answer"><div class="answer-inner">
-        <p class="answer-body">アプリをアンインストールすると、保存されたすべてのブックマークデータが削除されます。大切なブックマークは事前にご確認ください。</p>
-      </div></div>
-    </details>
+  <details>
+    <summary>Bookrest Pro を購入すると何ができますか？<span class="chevron">›</span></summary>
+    <p class="answer">ブックマークを100件以上保存できます。またフォルダにPINロックを設定できます。一度購入すれば追加費用なしでずっと使える買い切りプランです。</p>
+  </details>
 
-    <details>
-      <summary>
-        <span class="q-num">03</span>
-        <span class="q-text">Bookrest Pro を購入すると何ができますか？</span>
-        <span class="q-toggle">+</span>
-      </summary>
-      <div class="answer"><div class="answer-inner">
-        <p class="answer-body">ブックマークを100件以上保存できるようになります。またフォルダにPINロックを設定して保護できます。<br><br>一度購入すれば追加費用なしでずっとお使いいただける、買い切りプランです。</p>
-      </div></div>
-    </details>
+  <details>
+    <summary>別のデバイスで Pro の購入を復元できますか？<span class="chevron">›</span></summary>
+    <p class="answer">はい。メニューの「プレミアム版を購入」から「購入を復元」をタップすると、同じ Apple ID で購入した Pro を復元できます。</p>
+  </details>
 
-    <details>
-      <summary>
-        <span class="q-num">04</span>
-        <span class="q-text">別のデバイスで Pro の購入を復元できますか？</span>
-        <span class="q-toggle">+</span>
-      </summary>
-      <div class="answer"><div class="answer-inner">
-        <p class="answer-body">はい。メニューの「プレミアム版を購入」から「購入を復元」をタップすると、同じ Apple ID で購入した Pro を復元できます。</p>
-      </div></div>
-    </details>
+  <details>
+    <summary>URLスキームで外部からブックマークを追加できますか？<span class="chevron">›</span></summary>
+    <p class="answer"><code>foldersapp://add?url=https://example.com</code> の形式で呼び出すと、ブックマーク追加画面が開きます。Safari の共有シートからも追加できます。</p>
+  </details>
 
-    <details>
-      <summary>
-        <span class="q-num">05</span>
-        <span class="q-text">URLスキームで外部からブックマークを追加できますか？</span>
-        <span class="q-toggle">+</span>
-      </summary>
-      <div class="answer"><div class="answer-inner">
-        <p class="answer-body"><code>foldersapp://add?url=https://example.com</code> の形式で呼び出すと、ブックマーク追加画面が開きます。Safari の共有シートからも追加できます。</p>
-      </div></div>
-    </details>
-
-    <details>
-      <summary>
-        <span class="q-num">06</span>
-        <span class="q-text">不具合や要望はどこに送ればいいですか？</span>
-        <span class="q-toggle">+</span>
-      </summary>
-      <div class="answer"><div class="answer-inner">
-        <p class="answer-body"><a href="mailto:625.somq2525@gmail.com">625.somq2525@gmail.com</a> までご連絡ください。いただいたフィードバックはアプリの改善に活かします。</p>
-      </div></div>
-    </details>
-
-  </div>
+  <details>
+    <summary>不具合や要望はどこに送ればいいですか？<span class="chevron">›</span></summary>
+    <p class="answer"><a href="mailto:625.somq2525@gmail.com">625.somq2525@gmail.com</a> までご連絡ください。</p>
+  </details>
 
   <footer>
-    <span class="footer-copy">© 2026 s-knk</span>
-    <a href="/" class="footer-link">プライバシーポリシー</a>
+    <span>© 2026 s-knk</span>
+    <a href="/">プライバシーポリシー</a>
   </footer>
 
 </body>
