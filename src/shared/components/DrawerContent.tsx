@@ -1,17 +1,40 @@
-import { View, Text, TouchableOpacity, Switch, StyleSheet, ScrollView, Alert } from 'react-native'
+import { useState } from 'react'
+import { View, Text, TouchableOpacity, Switch, StyleSheet, ScrollView, Alert, Linking } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { DrawerActions, useNavigation } from '@react-navigation/native'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import * as StoreReview from 'expo-store-review'
 import type { RootStackParamList } from '../types'
 import { useSettingsStore } from '../../features/settings/store'
+import { ProUpgradeModal } from '../../features/pro/components/ProUpgradeModal'
 import { colors, spacing } from '../theme'
 
 export function DrawerContent() {
   const insets = useSafeAreaInsets()
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
   const { settings, set } = useSettingsStore()
+  const [proModalVisible, setProModalVisible] = useState(false)
 
   const close = () => navigation.dispatch(DrawerActions.closeDrawer())
+
+  const handleReview = async () => {
+    close()
+    if (await StoreReview.isAvailableAsync()) {
+      await StoreReview.requestReview()
+    } else {
+      Alert.alert('App Storeで評価', 'App Storeのページからレビューをお願いします。')
+    }
+  }
+
+  const handleFaq = () => {
+    close()
+    void Linking.openURL('https://sknk-aaa.github.io/folders-app/faq.html')
+  }
+
+  const handlePro = () => {
+    close()
+    setProModalVisible(true)
+  }
 
   const openTutorial = () => {
     close()
@@ -36,17 +59,17 @@ export function DrawerContent() {
   return (
     <View style={[styles.container, { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 16 }]}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <Text style={styles.appName}>ブックマーク</Text>
+        <Text style={styles.appName}>Bookrest</Text>
 
         <View style={styles.section}>
           <DrawerItem label="使い方" onPress={openTutorial} />
-          <DrawerItem label="アプリを評価" onPress={close} />
+          <DrawerItem label="アプリを評価" onPress={handleReview} />
           <DrawerItem
             label="プレミアム版を購入"
-            onPress={close}
+            onPress={handlePro}
             sublabel={settings.is_premium ? '購入済み' : undefined}
           />
-          <DrawerItem label="よくある質問" onPress={close} />
+          <DrawerItem label="よくある質問" onPress={handleFaq} />
         </View>
 
         <View style={styles.divider} />
@@ -66,6 +89,7 @@ export function DrawerContent() {
           </View>
         </View>
       </ScrollView>
+      <ProUpgradeModal visible={proModalVisible} onClose={() => setProModalVisible(false)} />
     </View>
   )
 }
