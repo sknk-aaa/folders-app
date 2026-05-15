@@ -27,12 +27,12 @@ function MainStack({ initialRouteName }: MainStackProps) {
       <Stack.Screen
         name="AllBookmarks"
         component={AllBookmarksScreen}
-        options={{ fullScreenGestureEnabled: true, gestureResponseDistance: SCREEN_WIDTH }}
+        options={{ fullScreenGestureEnabled: true, gestureResponseDistance: { start: SCREEN_WIDTH } }}
       />
       <Stack.Screen
         name="FolderDetail"
         component={FolderDetailScreen}
-        options={{ fullScreenGestureEnabled: true, gestureResponseDistance: SCREEN_WIDTH }}
+        options={{ fullScreenGestureEnabled: true, gestureResponseDistance: { start: SCREEN_WIDTH } }}
       />
       <Stack.Screen
         name="AddBookmark"

@@ -16,6 +16,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { PlaceholderImage } from '../../../shared/components/PlaceholderImage'
 import { PinEntryModal } from './PinEntryModal'
 import { useFoldersStore } from '../store'
+import { useProStore } from '../../pro/store'
+import { ProUpgradeModal } from '../../pro/components/ProUpgradeModal'
 import type { Bookmark, Folder, FolderIconId } from '../../../shared/types'
 import { colors, spacing, radius } from '../../../shared/theme'
 
@@ -42,6 +44,8 @@ export function FolderEditModal({
   const [pinModalMode, setPinModalMode] = useState<'set' | 'unlock' | null>(null)
   const { folders, setPin, removePin } = useFoldersStore()
   const currentFolder = folder ? folders.find((f) => f.id === folder.id) : undefined
+  const isPro = useProStore((s) => s.isPro)
+  const [proModalVisible, setProModalVisible] = useState(false)
 
   const handleOpen = () => {
     setName(folder?.name ?? '')
@@ -118,7 +122,10 @@ export function FolderEditModal({
           {folder && (
             <TouchableOpacity
               style={styles.lockRow}
-              onPress={() => setPinModalMode(currentFolder?.pinCode ? 'unlock' : 'set')}
+              onPress={() => {
+                if (!isPro) { setProModalVisible(true); return }
+                setPinModalMode(currentFolder?.pinCode ? 'unlock' : 'set')
+              }}
             >
               <Text style={styles.lockRowText}>
                 {currentFolder?.pinCode ? '🔒 PINロックを解除' : '🔓 PINロックを設定'}
@@ -178,10 +185,11 @@ export function FolderEditModal({
         <PinEntryModal
           mode="unlock"
           correctPin={currentFolder.pinCode}
-          onSuccess={() => { removePin(folder.id); setPinModalMode(null) }}
+          onSuccess={() => { removePin(folder!.id); setPinModalMode(null) }}
           onCancel={() => setPinModalMode(null)}
         />
       )}
+      <ProUpgradeModal visible={proModalVisible} onClose={() => setProModalVisible(false)} />
     </Modal>
   )
 }

@@ -7,6 +7,7 @@ import * as Linking from 'expo-linking'
 import { StatusBar } from 'expo-status-bar'
 import { initializeDatabase, migrateSchema, seedDefaultData } from './src/shared/db/migrations'
 import { useSettingsStore } from './src/features/settings/store'
+import { useProStore } from './src/features/pro/store'
 import { useFoldersStore } from './src/features/folders/store'
 import { useBookmarksStore } from './src/features/bookmarks/store'
 import { RootNavigator } from './src/navigation'
@@ -36,9 +37,11 @@ export default function App() {
         initializeDatabase()
         migrateSchema()
         seedDefaultData()
+        useProStore.getState().configure()
         await useSettingsStore.getState().load()
         await useFoldersStore.getState().load()
         await useBookmarksStore.getState().load()
+        void useProStore.getState().load()
       } catch (error) {
         console.error('Failed to initialize app', error)
         setInitError(error instanceof Error ? error : new Error(String(error)))

@@ -24,6 +24,7 @@ import * as FileSystem from 'expo-file-system/legacy'
 import { useBookmarksStore } from '../store'
 import { useFoldersStore } from '../../folders/store'
 import { useSettingsStore } from '../../settings/store'
+import { ProUpgradeModal } from '../../pro/components/ProUpgradeModal'
 import { PlaceholderImage } from '../../../shared/components/PlaceholderImage'
 import { Toast } from '../../../shared/components/Toast'
 import { fetchOgp } from '../../../shared/utils/url'
@@ -54,6 +55,7 @@ export function AddBookmarkScreen() {
   const [folderId, setFolderId] = useState(initialFolderId)
   const [toastMsg, setToastMsg] = useState('')
   const [toastVisible, setToastVisible] = useState(false)
+  const [proModalVisible, setProModalVisible] = useState(false)
 
   const webviewRef = useRef<WebView>(null)
   const autoStartedRef = useRef(false)
@@ -136,11 +138,11 @@ export function AddBookmarkScreen() {
 
     const total = useBookmarksStore.getState().total()
     if (!settings.is_premium && total >= 100) {
-      Alert.alert('上限に達しました', 'プレミアム版で無制限に保存できます')
+      setProModalVisible(true)
       return
     }
     if (!settings.is_premium && total === 90) {
-      showToast('残り10件です（プレミアムで無制限に）')
+      showToast('残り10件です。Proで無制限に保存できます')
     }
 
     setSetting('last_selected_folder_id', folderId)
@@ -317,6 +319,7 @@ export function AddBookmarkScreen() {
         </ScrollView>
 
         <Toast message={toastMsg} visible={toastVisible} onHide={() => setToastVisible(false)} />
+        <ProUpgradeModal visible={proModalVisible} onClose={() => setProModalVisible(false)} />
       </View>
     </KeyboardAvoidingView>
   )
