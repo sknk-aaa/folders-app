@@ -136,25 +136,6 @@ export function HomeScreen() {
         />
       )}
 
-      <View style={styles.adBanner}>
-        <Image
-          source={{ uri: 'https://picsum.photos/seed/folders-ad-living/240/180' }}
-          style={styles.adImage}
-          contentFit="cover"
-        />
-        <View style={styles.adCopy}>
-          <Text style={styles.adTitle} numberOfLines={1}>
-            暮らしを整える、ちょっといいアイテム。
-          </Text>
-          <Text style={styles.adBody} numberOfLines={1}>
-            日常に寄り添うアイテムを集めました。
-          </Text>
-          <Text style={styles.sponsored}>Sponsored</Text>
-        </View>
-        <TouchableOpacity style={styles.adButton}>
-          <Text style={styles.adButtonText}>詳しく見る</Text>
-        </TouchableOpacity>
-      </View>
     </View>
   )
 
@@ -450,55 +431,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.textSecondary,
     paddingHorizontal: GRID_PADDING,
-  },
-  adBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginHorizontal: GRID_PADDING,
-    marginTop: 34,
-    minHeight: 64,
-    padding: 8,
-    borderRadius: radius.lg,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.separator,
-    backgroundColor: '#fff',
-    gap: 10,
-  },
-  adImage: {
-    width: 70,
-    height: 48,
-    borderRadius: radius.sm,
-  },
-  adCopy: {
-    flex: 1,
-    minWidth: 0,
-  },
-  adTitle: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: colors.text,
-  },
-  adBody: {
-    fontSize: 10,
-    color: colors.text,
-    marginTop: 4,
-  },
-  sponsored: {
-    fontSize: 9,
-    color: colors.textSecondary,
-    marginTop: 4,
-  },
-  adButton: {
-    height: 36,
-    paddingHorizontal: 12,
-    borderRadius: 18,
-    backgroundColor: colors.text,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  adButtonText: {
-    color: '#fff',
-    fontSize: 11,
-    fontWeight: '700',
   },
 })
