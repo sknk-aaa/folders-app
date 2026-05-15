@@ -88,7 +88,6 @@ export function FolderEditModal({
   const hasBookmarks = bookmarks && bookmarks.length > 0
 
   return (
-    <>
     <Modal
       visible={visible}
       animationType="slide"
