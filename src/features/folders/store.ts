@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { getDb } from '../../shared/db/client'
+import { createId } from '../../shared/utils/id'
 import type { Folder, FolderIconId } from '../../shared/types'
 
 type FoldersStore = {
@@ -27,20 +28,29 @@ export const useFoldersStore = create<FoldersStore>((setState, getState) => ({
 
   load: () => {
     const db = getDb()
-    const rows = db.getAllSync<Record<string, unknown>>('SELECT * FROM folders ORDER BY sort_order ASC')
+    const rows = db.getAllSync<Record<string, unknown>>(
+      'SELECT * FROM folders ORDER BY sort_order ASC',
+    )
     setState({ folders: rows.map(toFolder) })
   },
 
   add: (name, iconId) => {
     const db = getDb()
-    const id = crypto.randomUUID()
+    const id = createId()
     const now = Date.now()
     const maxOrder = getState().folders.reduce((m, f) => Math.max(m, f.sortOrder), -1)
     db.runSync(
       'INSERT INTO folders (id, name, icon_id, sort_order, created_at, is_default) VALUES (?, ?, ?, ?, ?, 0)',
-      [id, name, iconId, maxOrder + 1, now]
+      [id, name, iconId, maxOrder + 1, now],
     )
-    const folder: Folder = { id, name, iconId, sortOrder: maxOrder + 1, createdAt: now, isDefault: 0 }
+    const folder: Folder = {
+      id,
+      name,
+      iconId,
+      sortOrder: maxOrder + 1,
+      createdAt: now,
+      isDefault: 0,
+    }
     setState((s) => ({ folders: [...s.folders, folder] }))
     return folder
   },

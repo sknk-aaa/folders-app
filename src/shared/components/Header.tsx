@@ -1,10 +1,10 @@
-import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useNavigation, DrawerActions } from '@react-navigation/native'
 import { colors, spacing } from '../theme'
 
 type Props = {
-  title: string
+  title?: string
   showBack?: boolean
   onBack?: () => void
   showSearch?: boolean
@@ -14,6 +14,8 @@ type Props = {
   showMore?: boolean
   onMore?: () => void
   leftSlot?: React.ReactNode
+  contentSlot?: React.ReactNode
+  hideBorder?: boolean
 }
 
 export function Header({
@@ -27,9 +29,12 @@ export function Header({
   showMore = false,
   onMore,
   leftSlot,
+  contentSlot,
+  hideBorder = false,
 }: Props) {
   const insets = useSafeAreaInsets()
   const navigation = useNavigation()
+  const hasContentSlot = Boolean(contentSlot)
 
   const handleBack = () => {
     if (onBack) {
@@ -44,10 +49,12 @@ export function Header({
   }
 
   return (
-    <View style={[styles.wrapper, { paddingTop: insets.top }]}>
+    <View
+      style={[styles.wrapper, { paddingTop: insets.top }, hideBorder && styles.wrapperNoBorder]}
+    >
       <View style={styles.row}>
         {/* Left */}
-        <View style={styles.left}>
+        <View style={[styles.left, hasContentSlot && styles.leftCompact]}>
           {showBack ? (
             <TouchableOpacity onPress={handleBack} style={styles.iconBtn} hitSlop={8}>
               <Text style={styles.backArrow}>‹</Text>
@@ -60,15 +67,18 @@ export function Header({
           {leftSlot}
         </View>
 
-        {/* Center */}
-        <View style={styles.center} pointerEvents="none">
-          <Text style={styles.title} numberOfLines={1}>
-            {title}
-          </Text>
-        </View>
+        {hasContentSlot ? (
+          <View style={styles.contentSlot}>{contentSlot}</View>
+        ) : (
+          <View style={styles.center} pointerEvents="none">
+            <Text style={styles.title} numberOfLines={1}>
+              {title}
+            </Text>
+          </View>
+        )}
 
         {/* Right */}
-        <View style={styles.right}>
+        <View style={[styles.right, hasContentSlot && styles.rightCompact]}>
           {showSearch && (
             <TouchableOpacity onPress={onSearch} style={styles.iconBtn} hitSlop={8}>
               <SearchIcon />
@@ -94,7 +104,10 @@ function HamburgerIcon() {
   return (
     <View style={{ gap: 4, paddingVertical: 2 }}>
       {[0, 1, 2].map((i) => (
-        <View key={i} style={{ width: 20, height: 1.5, backgroundColor: colors.text, borderRadius: 1 }} />
+        <View
+          key={i}
+          style={{ width: 20, height: 1.5, backgroundColor: colors.text, borderRadius: 1 }}
+        />
       ))}
     </View>
   )
@@ -134,10 +147,13 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: colors.separator,
   },
+  wrapperNoBorder: {
+    borderBottomWidth: 0,
+  },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 44,
+    height: 62,
     paddingHorizontal: spacing.lg,
   },
   left: {
@@ -145,6 +161,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
     gap: 8,
+  },
+  leftCompact: {
+    flex: 0,
+  },
+  contentSlot: {
+    flex: 1,
+    minWidth: 0,
+    marginLeft: spacing.sm,
+    marginRight: spacing.md,
   },
   center: {
     position: 'absolute',
@@ -158,6 +183,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-end',
     gap: 16,
+  },
+  rightCompact: {
+    flex: 0,
   },
   iconBtn: {
     alignItems: 'center',
@@ -173,8 +201,8 @@ const styles = StyleSheet.create({
     fontWeight: '300',
   },
   title: {
-    fontSize: 17,
-    fontWeight: '600',
+    fontSize: 19,
+    fontWeight: '700',
     color: colors.text,
   },
   addIcon: {

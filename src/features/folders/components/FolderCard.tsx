@@ -1,7 +1,8 @@
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet, Alert, Pressable } from 'react-native'
 import { Image } from 'expo-image'
 import type { Folder, Bookmark } from '../../../shared/types'
 import { colors, spacing, radius } from '../../../shared/theme'
+import { getFolderVisual } from '../../../shared/mockVisuals'
 
 type Props = {
   folder: Folder
@@ -11,135 +12,153 @@ type Props = {
   onDelete: () => void
   drag?: () => void
   isActive?: boolean
+  onMorePressIn?: () => void
+  onMorePressOut?: () => void
 }
 
-export function FolderCard({ folder, bookmarks, onPress, onEdit, onDelete, drag, isActive }: Props) {
+export function FolderCard({
+  folder,
+  bookmarks,
+  onPress,
+  onEdit,
+  onDelete,
+  drag,
+  isActive,
+  onMorePressIn,
+  onMorePressOut,
+}: Props) {
   const thumbnails = bookmarks
     .filter((b) => b.thumbnailPath)
-    .slice(0, 4)
+    .slice(0, 3)
     .map((b) => b.thumbnailPath as string)
+  const fallbackImages = getFolderVisual(folder).images
+  const images = [...thumbnails, ...fallbackImages].slice(0, 3)
 
   const handleMore = () => {
     Alert.alert(folder.name, undefined, [
       { text: '編集', onPress: onEdit },
-      { text: '削除', style: 'destructive', onPress: () => {
-        Alert.alert('フォルダを削除', `「${folder.name}」とその中のブックマークをすべて削除しますか？`, [
-          { text: 'キャンセル', style: 'cancel' },
-          { text: '削除', style: 'destructive', onPress: onDelete },
-        ])
-      }},
+      {
+        text: '削除',
+        style: 'destructive',
+        onPress: () => {
+          Alert.alert(
+            'フォルダを削除',
+            `「${folder.name}」とその中のブックマークをすべて削除しますか？`,
+            [
+              { text: 'キャンセル', style: 'cancel' },
+              { text: '削除', style: 'destructive', onPress: onDelete },
+            ],
+          )
+        },
+      },
       { text: 'キャンセル', style: 'cancel' },
     ])
   }
 
   return (
-    <TouchableOpacity
+    <Pressable
       onPress={onPress}
       onLongPress={drag}
-      activeOpacity={isActive ? 1 : 0.85}
+      delayLongPress={160}
       style={[styles.card, isActive && styles.cardActive]}
     >
-      {/* Mosaic */}
       <View style={styles.mosaic}>
-        {thumbnails.length === 0 ? (
-          <View style={styles.emptyMosaic}>
-            <Text style={styles.emptyIcon}>📁</Text>
-          </View>
-        ) : thumbnails.length === 1 ? (
-          <Image source={{ uri: thumbnails[0] }} style={styles.mosaicFull} contentFit="cover" />
-        ) : (
-          <View style={styles.mosaicGrid}>
-            {[0, 1, 2, 3].map((i) => (
-              <View key={i} style={styles.mosaicCell}>
-                {thumbnails[i] ? (
-                  <Image source={{ uri: thumbnails[i] }} style={StyleSheet.absoluteFill} contentFit="cover" />
-                ) : (
-                  <View style={[StyleSheet.absoluteFill, { backgroundColor: colors.placeholderBg }]} />
-                )}
-              </View>
-            ))}
-          </View>
-        )}
-      </View>
-
-      {/* Footer */}
-      <View style={styles.footer}>
-        <View style={styles.footerText}>
-          <Text style={styles.name} numberOfLines={1}>{folder.name}</Text>
-          <Text style={styles.count}>{bookmarks.length}件</Text>
+        <Image source={{ uri: images[0] }} style={styles.mosaicMain} contentFit="cover" />
+        <View style={styles.mosaicSide}>
+          <Image source={{ uri: images[1] }} style={styles.mosaicSideImage} contentFit="cover" />
+          <Image source={{ uri: images[2] }} style={styles.mosaicSideImage} contentFit="cover" />
         </View>
-        <TouchableOpacity onPress={handleMore} hitSlop={8} style={styles.moreBtn}>
-          <Text style={styles.moreDots}>•••</Text>
-        </TouchableOpacity>
+        <View style={styles.scrim} />
+
+        <View style={styles.overlay}>
+          <View style={styles.overlayText}>
+            <Text style={styles.name} numberOfLines={1}>
+              {folder.name}
+            </Text>
+            <Text style={styles.count}>{bookmarks.length}件</Text>
+          </View>
+          <TouchableOpacity
+            onPress={handleMore}
+            onPressIn={onMorePressIn}
+            onPressOut={onMorePressOut}
+            hitSlop={8}
+            style={styles.moreBtn}
+          >
+            <Text style={styles.moreDots}>•••</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   )
 }
 
 const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.background,
-    borderRadius: radius.md,
+    borderRadius: radius.lg,
     overflow: 'hidden',
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.separator,
   },
   cardActive: {
-    opacity: 0.85,
-    transform: [{ scale: 1.02 }],
+    opacity: 0.96,
+    zIndex: 20,
+    elevation: 20,
+    shadowColor: '#000',
+    shadowOpacity: 0.22,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 8 },
   },
   mosaic: {
-    aspectRatio: 1,
+    aspectRatio: 1.34,
     backgroundColor: colors.placeholderBg,
+    flexDirection: 'row',
   },
-  emptyMosaic: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  emptyIcon: {
-    fontSize: 36,
-    opacity: 0.5,
-  },
-  mosaicFull: {
-    width: '100%',
+  mosaicMain: {
+    flex: 1.55,
     height: '100%',
   },
-  mosaicGrid: {
+  mosaicSide: {
+    flex: 0.95,
+    height: '100%',
+    borderLeftWidth: 1,
+    borderLeftColor: 'rgba(255,255,255,0.9)',
+  },
+  mosaicSideImage: {
     flex: 1,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255,255,255,0.9)',
+  },
+  scrim: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.18)',
+  },
+  overlay: {
+    position: 'absolute',
+    left: spacing.md,
+    right: spacing.sm,
+    bottom: spacing.sm,
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    alignItems: 'flex-end',
   },
-  mosaicCell: {
-    width: '50%',
-    height: '50%',
-    overflow: 'hidden',
-  },
-  footer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.sm,
-  },
-  footerText: {
+  overlayText: {
     flex: 1,
   },
   name: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: colors.text,
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#fff',
   },
   count: {
-    fontSize: 12,
-    color: colors.textSecondary,
-    marginTop: 1,
+    fontSize: 13,
+    color: 'rgba(255,255,255,0.92)',
+    marginTop: 4,
   },
   moreBtn: {
-    padding: 4,
+    paddingHorizontal: 4,
+    paddingVertical: 2,
   },
   moreDots: {
-    fontSize: 9,
-    color: colors.textSecondary,
+    fontSize: 11,
+    color: '#fff',
     letterSpacing: 1,
   },
 })

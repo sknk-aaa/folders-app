@@ -14,7 +14,10 @@ import {
 import { Image } from 'expo-image'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useNavigation, useRoute } from '@react-navigation/native'
-import type { NativeStackNavigationProp, NativeStackScreenProps } from '@react-navigation/native-stack'
+import type {
+  NativeStackNavigationProp,
+  NativeStackScreenProps,
+} from '@react-navigation/native-stack'
 import WebView from 'react-native-webview'
 import { captureRef } from 'react-native-view-shot'
 import * as FileSystem from 'expo-file-system/legacy'
@@ -41,16 +44,26 @@ export function AddBookmarkScreen() {
   const { folders } = useFoldersStore()
   const { settings, set: setSetting } = useSettingsStore()
 
+  const initialFolderId =
+    route.params?.folderId ?? settings.last_selected_folder_id ?? folders[0]?.id ?? ''
   const [step, setStep] = useState<Step>(route.params?.url ? 'loading' : 'url-input')
   const [urlInput, setUrlInput] = useState(route.params?.url ?? '')
   const [name, setName] = useState(route.params?.title ?? '')
   const [url, setUrl] = useState(route.params?.url ?? '')
   const [thumbnailUri, setThumbnailUri] = useState<string | null>(null)
-  const [folderId, setFolderId] = useState(settings.last_selected_folder_id ?? folders[0]?.id)
+  const [folderId, setFolderId] = useState(initialFolderId)
   const [toastMsg, setToastMsg] = useState('')
   const [toastVisible, setToastVisible] = useState(false)
 
   const webviewRef = useRef<WebView>(null)
+  const autoStartedRef = useRef(false)
+
+  useEffect(() => {
+    if (route.params?.url && !autoStartedRef.current) {
+      autoStartedRef.current = true
+      void handleUrlSubmit()
+    }
+  }, [route.params?.url])
 
   // TrimScreen から戻ってきたとき thumbnailUri を受け取る
   useEffect(() => {
@@ -70,6 +83,7 @@ export function AddBookmarkScreen() {
     let finalUrl = urlInput.trim()
     if (!finalUrl) return
     if (!finalUrl.startsWith('http')) finalUrl = `https://${finalUrl}`
+    setUrlInput(finalUrl)
     setUrl(finalUrl)
     setStep('loading')
 
@@ -80,7 +94,7 @@ export function AddBookmarkScreen() {
       // OGP mode
       try {
         const ogp = await fetchOgp(finalUrl)
-        if (!name) setName(ogp.title)
+        if (!name.trim()) setName(ogp.title)
         if (ogp.imageUrl) {
           const dest = `${FileSystem.documentDirectory}thumbnails/${Date.now()}.jpg`
           await FileSystem.makeDirectoryAsync(`${FileSystem.documentDirectory}thumbnails/`, {
@@ -109,14 +123,14 @@ export function AddBookmarkScreen() {
   }
 
   const handleWebViewLoad = (e: { nativeEvent: { title: string } }) => {
-    if (!name && e.nativeEvent.title) {
+    if (!name.trim() && e.nativeEvent.title) {
       setName(e.nativeEvent.title)
     }
   }
 
   const handleSave = async () => {
-    if (!name.trim() || !url.trim()) {
-      Alert.alert('入力エラー', 'サイト名とURLを入力してください')
+    if (!name.trim() || !url.trim() || !folderId) {
+      Alert.alert('入力エラー', 'サイト名、URL、保存先フォルダを入力してください')
       return
     }
 
@@ -169,16 +183,36 @@ export function AddBookmarkScreen() {
               autoCapitalize="none"
               autoCorrect={false}
               keyboardType="url"
-              returnKeyType="go"
-              onSubmitEditing={handleUrlSubmit}
+              returnKeyType="next"
               autoFocus
             />
           </View>
 
+          <View style={styles.section}>
+            <Text style={styles.label}>サイト名</Text>
+            <TextInput
+              style={styles.input}
+              value={name}
+              onChangeText={setName}
+              placeholder="サイト名"
+              placeholderTextColor={colors.textTertiary}
+              returnKeyType="done"
+              onSubmitEditing={handleUrlSubmit}
+            />
+          </View>
+
+          <View style={styles.section}>
+            <Text style={styles.label}>保存先フォルダ</Text>
+            <FolderPicker folders={folders} folderId={folderId} onSelect={setFolderId} />
+          </View>
+
           <TouchableOpacity
-            style={[styles.primaryBtn, !urlInput.trim() && styles.primaryBtnDisabled]}
+            style={[
+              styles.primaryBtn,
+              (!urlInput.trim() || !folderId) && styles.primaryBtnDisabled,
+            ]}
             onPress={handleUrlSubmit}
-            disabled={!urlInput.trim()}
+            disabled={!urlInput.trim() || !folderId}
           >
             <Text style={styles.primaryBtnText}>次へ</Text>
           </TouchableOpacity>
@@ -278,25 +312,39 @@ export function AddBookmarkScreen() {
 
           <View style={styles.section}>
             <Text style={styles.label}>保存先フォルダ</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.folderScroll}>
-              {folders.map((f) => (
-                <TouchableOpacity
-                  key={f.id}
-                  onPress={() => setFolderId(f.id)}
-                  style={[styles.folderChip, folderId === f.id && styles.folderChipSelected]}
-                >
-                  <Text style={[styles.folderChipText, folderId === f.id && styles.folderChipTextSelected]}>
-                    {f.name}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
+            <FolderPicker folders={folders} folderId={folderId} onSelect={setFolderId} />
           </View>
         </ScrollView>
 
         <Toast message={toastMsg} visible={toastVisible} onHide={() => setToastVisible(false)} />
       </View>
     </KeyboardAvoidingView>
+  )
+}
+
+function FolderPicker({
+  folders,
+  folderId,
+  onSelect,
+}: {
+  folders: Array<{ id: string; name: string }>
+  folderId: string
+  onSelect: (folderId: string) => void
+}) {
+  return (
+    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.folderScroll}>
+      {folders.map((f) => (
+        <TouchableOpacity
+          key={f.id}
+          onPress={() => onSelect(f.id)}
+          style={[styles.folderChip, folderId === f.id && styles.folderChipSelected]}
+        >
+          <Text style={[styles.folderChipText, folderId === f.id && styles.folderChipTextSelected]}>
+            {f.name}
+          </Text>
+        </TouchableOpacity>
+      ))}
+    </ScrollView>
   )
 }
 

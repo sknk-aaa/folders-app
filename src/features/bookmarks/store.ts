@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { getDb } from '../../shared/db/client'
+import { createId } from '../../shared/utils/id'
 import type { Bookmark } from '../../shared/types'
 
 type BookmarksStore = {
@@ -34,21 +35,30 @@ export const useBookmarksStore = create<BookmarksStore>((setState, getState) => 
   load: () => {
     const db = getDb()
     const rows = db.getAllSync<Record<string, unknown>>(
-      'SELECT * FROM bookmarks ORDER BY created_at DESC'
+      'SELECT * FROM bookmarks ORDER BY created_at DESC',
     )
     setState({ bookmarks: rows.map(toBookmark) })
   },
 
   add: (data) => {
     const db = getDb()
-    const id = crypto.randomUUID()
+    const id = createId()
     const now = Date.now()
     const maxOrder = getState()
       .bookmarks.filter((b) => b.folderId === data.folderId)
       .reduce((m, b) => Math.max(m, b.sortOrder), -1)
     db.runSync(
       'INSERT INTO bookmarks (id, folder_id, name, url, favicon_url, thumbnail_path, sort_order, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      [id, data.folderId, data.name, data.url, data.faviconUrl, data.thumbnailPath, maxOrder + 1, now]
+      [
+        id,
+        data.folderId,
+        data.name,
+        data.url,
+        data.faviconUrl,
+        data.thumbnailPath,
+        maxOrder + 1,
+        now,
+      ],
     )
     const bookmark: Bookmark = { ...data, id, sortOrder: maxOrder + 1, createdAt: now }
     setState((s) => ({ bookmarks: [bookmark, ...s.bookmarks] }))

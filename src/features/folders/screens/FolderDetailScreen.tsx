@@ -1,20 +1,26 @@
-import { useState, useCallback } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions, Alert } from 'react-native'
+import { useState } from 'react'
+import { View, Text, StyleSheet } from 'react-native'
 import { Image } from 'expo-image'
 import { useNavigation, useRoute } from '@react-navigation/native'
-import type { NativeStackNavigationProp, NativeStackScreenProps } from '@react-navigation/native-stack'
-import DraggableFlatList, { ScaleDecorator } from 'react-native-draggable-flatlist'
+import type {
+  NativeStackNavigationProp,
+  NativeStackScreenProps,
+} from '@react-navigation/native-stack'
 import { useFoldersStore } from '../store'
 import { useBookmarksStore } from '../../bookmarks/store'
-import { BookmarkCard } from '../../bookmarks/components/BookmarkCard'
-import { BookmarkListItem } from '../../bookmarks/components/BookmarkListItem'
+import { BookmarkCollectionList } from '../../bookmarks/components/BookmarkCollectionList'
 import { FolderEditModal } from '../components/FolderEditModal'
+import { Header } from '../../../shared/components/Header'
+import { getFolderVisual } from '../../../shared/mockVisuals'
 import { colors, spacing, radius } from '../../../shared/theme'
-import type { RootStackParamList, Bookmark, FolderIconId, ViewMode } from '../../../shared/types'
+import type {
+  RootStackParamList,
+  Folder,
+  FolderIconId,
+  ViewMode,
+} from '../../../shared/types'
 
-const { width: SCREEN_W } = Dimensions.get('window')
 const PADDING = spacing.lg
-const GAP = spacing.sm
 
 type Nav = NativeStackNavigationProp<RootStackParamList>
 type Route = NativeStackScreenProps<RootStackParamList, 'FolderDetail'>['route']
@@ -35,8 +41,6 @@ export function FolderDetailScreen() {
 
   if (!folder) return null
 
-  const cardW = (SCREEN_W - PADDING * 2 - GAP) / 2
-
   const handleFolderSave = (name: string, iconId: FolderIconId) => {
     updateFolder(folder.id, name, iconId)
     setEditModalVisible(false)
@@ -47,61 +51,34 @@ export function FolderDetailScreen() {
     .slice(0, 1)
     .map((b) => b.thumbnailPath as string)
 
-  const renderItem = useCallback(
-    ({ item, drag, isActive }: { item: Bookmark; drag: () => void; isActive: boolean }) => {
-      if (viewMode === 'list') {
-        return (
-          <BookmarkListItem
-            bookmark={item}
-            allFolders={folders}
-            onDelete={() => remove(item.id)}
-            onMove={(fId) => move(item.id, fId)}
-          />
-        )
-      }
-      return (
-        <ScaleDecorator>
-          <View style={{ width: cardW }}>
-            <BookmarkCard
-              bookmark={item}
-              allFolders={folders}
-              onDelete={() => remove(item.id)}
-              onMove={(fId) => move(item.id, fId)}
-              drag={drag}
-              isActive={isActive}
-            />
-          </View>
-        </ScaleDecorator>
-      )
-    },
-    [viewMode, cardW, folders, remove, move]
-  )
-
   return (
     <View style={styles.container}>
-      {/* Custom Header */}
-      <FolderDetailHeader
-        folder={folder}
-        mosaicThumbnail={mosaicThumbnails[0]}
-        bookmarkCount={bookmarks.length}
-        viewMode={viewMode}
+      <Header
+        showBack
         onBack={() => navigation.goBack()}
+        showSearch
         onSearch={() => navigation.navigate('Search', { folderId: folder.id })}
+        showMore
         onMore={() => setEditModalVisible(true)}
-        onToggleView={() => setViewMode((v) => (v === 'grid' ? 'list' : 'grid'))}
+        hideBorder
       />
 
-      <DraggableFlatList
-        data={bookmarks}
-        keyExtractor={(b) => b.id}
-        numColumns={viewMode === 'grid' ? 2 : 1}
-        key={viewMode}
-        onDragEnd={({ data }) => reorder(folderId, data)}
-        renderItem={renderItem}
-        columnWrapperStyle={viewMode === 'grid' ? { gap: GAP, marginBottom: GAP } : undefined}
-        contentContainerStyle={styles.listContent}
-        ListEmptyComponent={
-          <Text style={styles.emptyText}>このフォルダにはまだブックマークがありません</Text>
+      <BookmarkCollectionList
+        bookmarks={bookmarks}
+        allFolders={folders}
+        viewMode={viewMode}
+        onGridPress={() => setViewMode('grid')}
+        onListPress={() => setViewMode('list')}
+        onDelete={(bookmark) => remove(bookmark.id)}
+        onMove={(bookmark, targetFolderId) => move(bookmark.id, targetFolderId)}
+        onReorder={(nextBookmarks) => reorder(folderId, nextBookmarks)}
+        emptyText="このフォルダにはまだブックマークがありません"
+        headerAccessory={
+          <FolderHeaderSummary
+            folder={folder}
+            thumbnail={mosaicThumbnails[0] ?? getFolderVisual(folder).images[0]}
+            bookmarkCount={bookmarks.length}
+          />
         }
       />
 
@@ -115,67 +92,27 @@ export function FolderDetailScreen() {
   )
 }
 
-function FolderDetailHeader({
+function FolderHeaderSummary({
   folder,
-  mosaicThumbnail,
+  thumbnail,
   bookmarkCount,
-  viewMode,
-  onBack,
-  onSearch,
-  onMore,
-  onToggleView,
 }: {
-  folder: { name: string }
-  mosaicThumbnail?: string
+  folder: Folder
+  thumbnail: string
   bookmarkCount: number
-  viewMode: ViewMode
-  onBack: () => void
-  onSearch: () => void
-  onMore: () => void
-  onToggleView: () => void
 }) {
-  const { useSafeAreaInsets } = require('react-native-safe-area-context')
-  const insets = useSafeAreaInsets()
-
   return (
-    <View style={[styles.header, { paddingTop: insets.top }]}>
-      <View style={styles.headerRow}>
-        {/* Left: back + thumbnail + title */}
-        <TouchableOpacity onPress={onBack} style={styles.backBtn} hitSlop={8}>
-          <Text style={styles.backArrow}>‹</Text>
-        </TouchableOpacity>
-        {mosaicThumbnail ? (
-          <Image
-            source={{ uri: mosaicThumbnail }}
-            style={styles.folderThumb}
-            contentFit="cover"
-          />
-        ) : (
-          <View style={[styles.folderThumb, { backgroundColor: colors.placeholderBg, alignItems: 'center', justifyContent: 'center' }]}>
-            <Text style={{ fontSize: 16 }}>📁</Text>
-          </View>
-        )}
+    <View style={styles.folderSummaryWrap} pointerEvents="none">
+      <View style={styles.folderSummary}>
+        <Image source={{ uri: thumbnail }} style={styles.folderThumb} contentFit="cover" />
         <View style={styles.titleBlock}>
-          <Text style={styles.headerTitle} numberOfLines={1}>{folder.name}</Text>
-          <Text style={styles.headerSub}>{bookmarkCount}件のブックマーク</Text>
+          <Text style={styles.headerTitle} numberOfLines={1}>
+            {folder.name}
+          </Text>
+          <Text style={styles.headerSub} numberOfLines={1}>
+            {bookmarkCount}件のブックマーク
+          </Text>
         </View>
-
-        {/* Right: search + more */}
-        <View style={styles.headerRight}>
-          <TouchableOpacity onPress={onSearch} hitSlop={8}>
-            <Text style={styles.headerIcon}>🔍</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={onMore} hitSlop={8}>
-            <Text style={styles.headerMoreDots}>•••</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      {/* View mode toggle */}
-      <View style={styles.viewToggleRow}>
-        <TouchableOpacity onPress={onToggleView}>
-          <Text style={styles.viewIcon}>{viewMode === 'grid' ? '⊞' : '≡'}</Text>
-        </TouchableOpacity>
       </View>
     </View>
   )
@@ -183,76 +120,40 @@ function FolderDetailHeader({
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
-  header: {
-    backgroundColor: colors.headerBg,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.separator,
+  folderSummaryWrap: {
+    position: 'absolute',
+    top: -30,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    paddingHorizontal: PADDING,
   },
-  headerRow: {
+  folderSummary: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 44,
-    paddingHorizontal: spacing.lg,
-    gap: 8,
-  },
-  backBtn: {
-    marginRight: 4,
-  },
-  backArrow: {
-    fontSize: 30,
-    color: colors.text,
-    lineHeight: 30,
-    fontWeight: '300',
+    maxWidth: 260,
+    minWidth: 0,
   },
   folderThumb: {
-    width: 32,
-    height: 32,
-    borderRadius: radius.sm,
+    width: 58,
+    height: 58,
+    borderRadius: radius.md,
     overflow: 'hidden',
+    backgroundColor: colors.placeholderBg,
   },
   titleBlock: {
     flex: 1,
+    minWidth: 0,
+    marginLeft: spacing.sm,
   },
   headerTitle: {
-    fontSize: 15,
-    fontWeight: '600',
+    fontSize: 18,
+    fontWeight: '700',
     color: colors.text,
   },
   headerSub: {
-    fontSize: 11,
+    fontSize: 13,
     color: colors.textSecondary,
-  },
-  headerRight: {
-    flexDirection: 'row',
-    gap: 16,
-    alignItems: 'center',
-  },
-  headerIcon: {
-    fontSize: 18,
-  },
-  headerMoreDots: {
-    fontSize: 9,
-    color: colors.text,
-    letterSpacing: 1,
-  },
-  viewToggleRow: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    paddingHorizontal: spacing.lg,
-    paddingVertical: 6,
-  },
-  viewIcon: {
-    fontSize: 20,
-    color: colors.text,
-  },
-  listContent: {
-    padding: PADDING,
-    paddingTop: spacing.sm,
-  },
-  emptyText: {
-    fontSize: 14,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    marginTop: 48,
+    marginTop: 5,
   },
 })

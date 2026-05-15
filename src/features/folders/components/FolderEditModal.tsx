@@ -5,7 +5,6 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  ScrollView,
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
@@ -13,20 +12,6 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import type { Folder, FolderIconId } from '../../../shared/types'
 import { colors, spacing, radius } from '../../../shared/theme'
-
-const ICONS: Array<{ id: FolderIconId; label: string; emoji: string }> = [
-  { id: 'default', label: '一般', emoji: '📁' },
-  { id: 'article', label: '記事', emoji: '📄' },
-  { id: 'music', label: '音楽', emoji: '🎵' },
-  { id: 'video', label: '動画', emoji: '▶️' },
-  { id: 'work', label: '仕事', emoji: '💼' },
-  { id: 'shopping', label: '買物', emoji: '🛒' },
-  { id: 'recipe', label: 'レシピ', emoji: '🍳' },
-  { id: 'game', label: 'ゲーム', emoji: '🎮' },
-  { id: 'sns', label: 'SNS', emoji: '💬' },
-  { id: 'news', label: 'ニュース', emoji: '📰' },
-  { id: 'study', label: '勉強', emoji: '📚' },
-]
 
 type Props = {
   visible: boolean
@@ -38,21 +23,24 @@ type Props = {
 export function FolderEditModal({ visible, folder, onSave, onClose }: Props) {
   const insets = useSafeAreaInsets()
   const [name, setName] = useState(folder?.name ?? '')
-  const [iconId, setIconId] = useState<FolderIconId>(folder?.iconId ?? 'default')
 
   const handleOpen = () => {
     setName(folder?.name ?? '')
-    setIconId(folder?.iconId ?? 'default')
   }
 
   const handleSave = () => {
     if (!name.trim()) return
-    onSave(name.trim(), iconId)
+    onSave(name.trim(), folder?.iconId ?? 'default')
     onClose()
   }
 
   return (
-    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onShow={handleOpen}>
+    <Modal
+      visible={visible}
+      animationType="slide"
+      presentationStyle="pageSheet"
+      onShow={handleOpen}
+    >
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -73,22 +61,6 @@ export function FolderEditModal({ visible, folder, onSave, onClose }: Props) {
             returnKeyType="done"
             onSubmitEditing={handleSave}
           />
-
-          <Text style={styles.sectionLabel}>アイコン</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.iconList}>
-            {ICONS.map((icon) => (
-              <TouchableOpacity
-                key={icon.id}
-                onPress={() => setIconId(icon.id)}
-                style={[styles.iconItem, iconId === icon.id && styles.iconItemSelected]}
-              >
-                <Text style={styles.iconEmoji}>{icon.emoji}</Text>
-                <Text style={[styles.iconLabel, iconId === icon.id && styles.iconLabelSelected]}>
-                  {icon.label}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
 
           <View style={styles.buttons}>
             <TouchableOpacity style={styles.cancelBtn} onPress={onClose}>
@@ -137,44 +109,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.text,
     marginBottom: 24,
-  },
-  sectionLabel: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: colors.textSecondary,
-    marginBottom: 12,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  iconList: {
-    paddingBottom: 8,
-    gap: 8,
-  },
-  iconItem: {
-    alignItems: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: radius.sm,
-    borderWidth: 1.5,
-    borderColor: 'transparent',
-    backgroundColor: colors.placeholderBg,
-    minWidth: 64,
-  },
-  iconItemSelected: {
-    borderColor: colors.text,
-    backgroundColor: colors.background,
-  },
-  iconEmoji: {
-    fontSize: 24,
-    marginBottom: 4,
-  },
-  iconLabel: {
-    fontSize: 11,
-    color: colors.textSecondary,
-  },
-  iconLabelSelected: {
-    color: colors.text,
-    fontWeight: '600',
   },
   buttons: {
     flexDirection: 'row',

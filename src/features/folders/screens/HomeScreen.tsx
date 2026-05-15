@@ -1,29 +1,36 @@
 import { useState, useCallback } from 'react'
 import {
+  ActionSheetIOS,
+  Alert,
   View,
   Text,
-  ScrollView,
   TouchableOpacity,
+  Pressable,
+  ScrollView,
   StyleSheet,
   Dimensions,
   FlatList,
+  Platform,
 } from 'react-native'
 import { Image } from 'expo-image'
 import { useNavigation } from '@react-navigation/native'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import DraggableFlatList, { ScaleDecorator } from 'react-native-draggable-flatlist'
+import DraggableFlatList, { ScaleDecorator, ShadowDecorator } from 'react-native-draggable-flatlist'
 import { useFoldersStore } from '../store'
 import { useBookmarksStore } from '../../bookmarks/store'
 import { Header } from '../../../shared/components/Header'
+import { ViewModeToggle } from '../../../shared/components/ViewModeToggle'
 import { FolderCard } from '../components/FolderCard'
 import { FolderEditModal } from '../components/FolderEditModal'
+import { SortableFolderGrid } from '../components/SortableFolderGrid'
 import { PlaceholderImage } from '../../../shared/components/PlaceholderImage'
 import { colors, spacing, radius, getDomain } from '../../../shared/theme'
-import type { RootStackParamList, Folder, FolderIconId } from '../../../shared/types'
+import { MOCK_BOOKMARKS } from '../../../shared/mockVisuals'
+import type { RootStackParamList, Folder, FolderIconId, ViewMode } from '../../../shared/types'
 
 const { width: SCREEN_W } = Dimensions.get('window')
 const GRID_PADDING = spacing.lg
-const GRID_GAP = spacing.sm
+const GRID_GAP = 10
 const CARD_W = (SCREEN_W - GRID_PADDING * 2 - GRID_GAP) / 2
 
 type Nav = NativeStackNavigationProp<RootStackParamList>
@@ -31,15 +38,45 @@ type Nav = NativeStackNavigationProp<RootStackParamList>
 export function HomeScreen() {
   const navigation = useNavigation<Nav>()
   const { folders, add, update, remove, reorder } = useFoldersStore()
-  const { byFolder, recent, total } = useBookmarksStore()
+  const { byFolder, recent } = useBookmarksStore()
   const recentBookmarks = recent(10)
+  const recentItems =
+    recentBookmarks.length >= 5
+      ? recentBookmarks
+      : [
+          ...recentBookmarks,
+          ...MOCK_BOOKMARKS.map((bookmark, i) => ({ ...bookmark, id: `mock-recent-${i}` })),
+        ].slice(0, 5)
 
   const [editTarget, setEditTarget] = useState<Folder | undefined>(undefined)
   const [modalVisible, setModalVisible] = useState(false)
+  const [viewMode, setViewMode] = useState<ViewMode>('grid')
+  const [isGridDragging, setIsGridDragging] = useState(false)
 
-  const openAdd = () => {
+  const openFolderAdd = () => {
     setEditTarget(undefined)
     setModalVisible(true)
+  }
+  const openAdd = () => {
+    if (Platform.OS === 'ios') {
+      ActionSheetIOS.showActionSheetWithOptions(
+        {
+          options: ['キャンセル', 'フォルダを追加', 'ブックマークを追加'],
+          cancelButtonIndex: 0,
+        },
+        (buttonIndex) => {
+          if (buttonIndex === 1) openFolderAdd()
+          if (buttonIndex === 2) navigation.navigate('AddBookmark', {})
+        },
+      )
+      return
+    }
+
+    Alert.alert('追加', undefined, [
+      { text: 'フォルダを追加', onPress: openFolderAdd },
+      { text: 'ブックマークを追加', onPress: () => navigation.navigate('AddBookmark', {}) },
+      { text: 'キャンセル', style: 'cancel' },
+    ])
   }
   const openEdit = (folder: Folder) => {
     setEditTarget(folder)
@@ -57,83 +94,132 @@ export function HomeScreen() {
   const renderFolder = useCallback(
     ({ item: folder, drag, isActive }: { item: Folder; drag: () => void; isActive: boolean }) => {
       const bookmarks = byFolder(folder.id)
+      const openFolder = () => navigation.navigate('FolderDetail', { folderId: folder.id })
+
       return (
-        <ScaleDecorator>
-          <View style={{ width: CARD_W }}>
-            <FolderCard
+        <ShadowDecorator opacity={0.3} radius={14}>
+          <ScaleDecorator activeScale={1.03}>
+            <FolderListRow
               folder={folder}
-              bookmarks={bookmarks}
-              onPress={() => navigation.navigate('FolderDetail', { folderId: folder.id })}
+              count={bookmarks.length}
+              onPress={openFolder}
               onEdit={() => openEdit(folder)}
               onDelete={() => remove(folder.id)}
               drag={drag}
               isActive={isActive}
             />
-          </View>
-        </ScaleDecorator>
+          </ScaleDecorator>
+        </ShadowDecorator>
       )
     },
-    [byFolder, navigation, remove]
+    [byFolder, navigation, remove],
+  )
+
+  const listHeader = (
+    <View style={styles.sectionHeader}>
+      <Text style={styles.sectionTitle}>フォルダ</Text>
+      <ViewModeToggle
+        value={viewMode}
+        onGridPress={() => setViewMode('grid')}
+        onListPress={() => setViewMode('list')}
+      />
+    </View>
+  )
+
+  const listFooter = (
+    <View>
+      <View style={styles.recentHeader}>
+        <Text style={styles.sectionTitle}>最近追加したブックマーク</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('AllBookmarks')}>
+          <Text style={styles.sectionAction}>すべて見る 〉</Text>
+        </TouchableOpacity>
+      </View>
+
+      {recentItems.length === 0 ? (
+        <Text style={styles.emptyText}>まだブックマークがありません</Text>
+      ) : (
+        <FlatList
+          data={recentItems}
+          keyExtractor={(b) => b.id}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.recentList}
+          renderItem={({ item }) => <RecentItem item={item} />}
+          scrollEnabled
+        />
+      )}
+
+      <View style={styles.adBanner}>
+        <Image
+          source={{ uri: 'https://picsum.photos/seed/folders-ad-living/240/180' }}
+          style={styles.adImage}
+          contentFit="cover"
+        />
+        <View style={styles.adCopy}>
+          <Text style={styles.adTitle} numberOfLines={1}>
+            暮らしを整える、ちょっといいアイテム。
+          </Text>
+          <Text style={styles.adBody} numberOfLines={1}>
+            日常に寄り添うアイテムを集めました。
+          </Text>
+          <Text style={styles.sponsored}>Sponsored</Text>
+        </View>
+        <TouchableOpacity style={styles.adButton}>
+          <Text style={styles.adButtonText}>詳しく見る</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
   )
 
   return (
     <View style={styles.container}>
       <Header
         title="ブックマーク"
+        showSearch
+        onSearch={() => navigation.navigate('Search', {})}
         showAdd
-        onAdd={() => navigation.navigate('AddBookmark', {})}
+        onAdd={openAdd}
       />
 
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
-        {/* Folder section header */}
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>フォルダ</Text>
-          <TouchableOpacity onPress={openAdd}>
-            <Text style={styles.sectionAction}>＋ 追加</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Folder grid (draggable) */}
-        <View style={styles.gridWrapper}>
-          <DraggableFlatList
-            data={folders}
-            keyExtractor={(f) => f.id}
-            numColumns={2}
-            onDragEnd={({ data }) => reorder(data)}
-            renderItem={renderFolder}
-            scrollEnabled={false}
-            columnWrapperStyle={styles.columnWrapper}
-            contentContainerStyle={styles.gridContent}
-          />
-        </View>
-
-        {/* Recent bookmarks */}
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>最近追加したブックマーク</Text>
-          <TouchableOpacity onPress={() => navigation.navigate('AllBookmarks')}>
-            <Text style={styles.sectionAction}>すべて見る</Text>
-          </TouchableOpacity>
-        </View>
-
-        {recentBookmarks.length === 0 ? (
-          <Text style={styles.emptyText}>まだブックマークがありません</Text>
-        ) : (
-          <FlatList
-            data={recentBookmarks}
-            keyExtractor={(b) => b.id}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.recentList}
-            renderItem={({ item }) => <RecentItem item={item} />}
-            scrollEnabled
-          />
-        )}
-
-        {/* Bottom space for ad banner */}
-        <View style={styles.adPlaceholder}>
-          <Text style={styles.adText}>広告エリア（Phase 3で実装）</Text>
-        </View>
-      </ScrollView>
+      {viewMode === 'grid' ? (
+        <ScrollView
+          contentContainerStyle={styles.listContent}
+          scrollEnabled={!isGridDragging}
+          showsVerticalScrollIndicator={false}
+        >
+          {listHeader}
+          <View style={styles.gridWrapper}>
+            <SortableFolderGrid
+              folders={folders}
+              getBookmarks={byFolder}
+              cardWidth={CARD_W}
+              gap={GRID_GAP}
+              onPressFolder={(folder) =>
+                navigation.navigate('FolderDetail', { folderId: folder.id })
+              }
+              onEditFolder={openEdit}
+              onDeleteFolder={(folder) => remove(folder.id)}
+              onReorder={reorder}
+              onDragStateChange={setIsGridDragging}
+            />
+          </View>
+          {listFooter}
+        </ScrollView>
+      ) : (
+        <DraggableFlatList
+          data={folders}
+          keyExtractor={(f) => f.id}
+          onDragEnd={({ data }) => reorder(data)}
+          renderItem={renderFolder}
+          ListHeaderComponent={listHeader}
+          ListFooterComponent={listFooter}
+          contentContainerStyle={styles.listContent}
+          activationDistance={0}
+          autoscrollThreshold={80}
+          autoscrollSpeed={180}
+          dragItemOverflow
+        />
+      )}
 
       <FolderEditModal
         visible={modalVisible}
@@ -145,10 +231,14 @@ export function HomeScreen() {
   )
 }
 
-function RecentItem({ item }: { item: { thumbnailPath: string | null; name: string; url: string } }) {
-  const ITEM_W = 120
+function RecentItem({
+  item,
+}: {
+  item: { thumbnailPath: string | null; name: string; url: string }
+}) {
+  const ITEM_W = 72
   return (
-    <TouchableOpacity style={{ width: ITEM_W, marginRight: spacing.sm }}>
+    <TouchableOpacity style={{ width: ITEM_W, marginRight: 10 }}>
       {item.thumbnailPath ? (
         <Image
           source={{ uri: item.thumbnailPath }}
@@ -158,72 +248,232 @@ function RecentItem({ item }: { item: { thumbnailPath: string | null; name: stri
       ) : (
         <PlaceholderImage width={ITEM_W} height={ITEM_W} style={{ borderRadius: radius.sm }} />
       )}
-      <Text style={styles.recentName} numberOfLines={2}>{item.name}</Text>
-      <Text style={styles.recentDomain} numberOfLines={1}>{getDomain(item.url)}</Text>
+      <Text style={styles.recentName} numberOfLines={2}>
+        {item.name}
+      </Text>
+      <Text style={styles.recentDomain} numberOfLines={1}>
+        {getDomain(item.url)}
+      </Text>
     </TouchableOpacity>
+  )
+}
+
+function FolderListRow({
+  folder,
+  count,
+  onPress,
+  onEdit,
+  onDelete,
+  drag,
+  isActive,
+}: {
+  folder: Folder
+  count: number
+  onPress: () => void
+  onEdit: () => void
+  onDelete: () => void
+  drag: () => void
+  isActive: boolean
+}) {
+  const visual = MOCK_BOOKMARKS[folder.sortOrder % MOCK_BOOKMARKS.length]
+
+  const handleMore = () => {
+    Alert.alert(folder.name, undefined, [
+      { text: '編集', onPress: onEdit },
+      {
+        text: '削除',
+        style: 'destructive',
+        onPress: () => {
+          Alert.alert(
+            'フォルダを削除',
+            `「${folder.name}」とその中のブックマークをすべて削除しますか？`,
+            [
+              { text: 'キャンセル', style: 'cancel' },
+              { text: '削除', style: 'destructive', onPress: onDelete },
+            ],
+          )
+        },
+      },
+      { text: 'キャンセル', style: 'cancel' },
+    ])
+  }
+
+  return (
+    <Pressable
+      onPress={onPress}
+      onLongPress={drag}
+      delayLongPress={160}
+      style={[styles.folderRow, isActive && styles.folderRowActive]}
+    >
+      <Image
+        source={{ uri: visual.thumbnailPath }}
+        style={styles.folderRowImage}
+        contentFit="cover"
+      />
+      <View style={styles.folderRowText}>
+        <Text style={styles.folderRowName} numberOfLines={1}>
+          {folder.name}
+        </Text>
+        <Text style={styles.folderRowCount}>{count}件</Text>
+      </View>
+      <TouchableOpacity onPress={handleMore} hitSlop={8} style={styles.folderRowMore}>
+        <Text style={styles.folderRowDots}>•••</Text>
+      </TouchableOpacity>
+    </Pressable>
   )
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
-  scroll: { paddingBottom: 24 },
+  listContent: {
+    paddingBottom: 34,
+  },
   sectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: GRID_PADDING,
-    paddingTop: spacing.xl,
-    paddingBottom: spacing.sm,
+    paddingTop: spacing.lg,
+    paddingBottom: spacing.md,
+  },
+  recentHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: GRID_PADDING,
+    paddingTop: 30,
+    paddingBottom: spacing.md,
   },
   sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: 17,
+    fontWeight: '700',
     color: colors.text,
   },
   sectionAction: {
-    fontSize: 14,
-    color: colors.textSecondary,
+    fontSize: 13,
+    fontWeight: '600',
+    color: colors.text,
   },
   gridWrapper: {
     paddingHorizontal: GRID_PADDING,
   },
-  columnWrapper: {
-    gap: GRID_GAP,
+  folderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: GRID_PADDING,
     marginBottom: GRID_GAP,
+    padding: spacing.sm,
+    borderRadius: radius.lg,
+    backgroundColor: colors.background,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.separator,
   },
-  gridContent: {
-    gap: GRID_GAP,
+  folderRowActive: {
+    opacity: 0.96,
+    zIndex: 20,
+    elevation: 20,
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 8 },
+  },
+  folderRowImage: {
+    width: 58,
+    height: 58,
+    borderRadius: radius.md,
+    backgroundColor: colors.placeholderBg,
+  },
+  folderRowText: {
+    flex: 1,
+    marginLeft: spacing.md,
+  },
+  folderRowName: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: colors.text,
+  },
+  folderRowCount: {
+    fontSize: 13,
+    color: colors.textSecondary,
+    marginTop: 4,
+  },
+  folderRowMore: {
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.sm,
+  },
+  folderRowDots: {
+    fontSize: 11,
+    color: colors.textSecondary,
+    letterSpacing: 1,
   },
   recentList: {
     paddingHorizontal: GRID_PADDING,
   },
   recentName: {
-    fontSize: 12,
+    fontSize: 11,
+    fontWeight: '600',
     color: colors.text,
-    marginTop: 4,
-    lineHeight: 16,
+    marginTop: 7,
+    lineHeight: 15,
   },
   recentDomain: {
-    fontSize: 11,
+    fontSize: 10,
     color: colors.textSecondary,
-    marginTop: 2,
+    marginTop: 4,
   },
   emptyText: {
     fontSize: 14,
     color: colors.textSecondary,
     paddingHorizontal: GRID_PADDING,
   },
-  adPlaceholder: {
+  adBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginHorizontal: GRID_PADDING,
-    marginTop: spacing.xl,
-    height: 50,
-    backgroundColor: colors.placeholderBg,
+    marginTop: 34,
+    minHeight: 64,
+    padding: 8,
+    borderRadius: radius.lg,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.separator,
+    backgroundColor: '#fff',
+    gap: 10,
+  },
+  adImage: {
+    width: 70,
+    height: 48,
     borderRadius: radius.sm,
+  },
+  adCopy: {
+    flex: 1,
+    minWidth: 0,
+  },
+  adTitle: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: colors.text,
+  },
+  adBody: {
+    fontSize: 10,
+    color: colors.text,
+    marginTop: 4,
+  },
+  sponsored: {
+    fontSize: 9,
+    color: colors.textSecondary,
+    marginTop: 4,
+  },
+  adButton: {
+    height: 36,
+    paddingHorizontal: 12,
+    borderRadius: 18,
+    backgroundColor: colors.text,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  adText: {
-    fontSize: 12,
-    color: colors.textTertiary,
+  adButtonText: {
+    color: '#fff',
+    fontSize: 11,
+    fontWeight: '700',
   },
 })

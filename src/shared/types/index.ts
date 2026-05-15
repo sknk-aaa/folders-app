@@ -9,6 +9,8 @@ export type FolderIconId =
   | 'sns'
   | 'news'
   | 'study'
+  | 'travel'
+  | 'book'
   | 'default'
 
 export type Folder = {

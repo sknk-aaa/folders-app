@@ -13,9 +13,13 @@ import type { RootStackParamList, DrawerParamList } from '../shared/types'
 const Stack = createNativeStackNavigator<RootStackParamList>()
 const Drawer = createDrawerNavigator<DrawerParamList>()
 
-function MainStack() {
+type MainStackProps = {
+  initialRouteName: keyof RootStackParamList
+}
+
+function MainStack({ initialRouteName }: MainStackProps) {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator initialRouteName={initialRouteName} screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="AllBookmarks" component={AllBookmarksScreen} />
       <Stack.Screen name="FolderDetail" component={FolderDetailScreen} />
@@ -29,11 +33,7 @@ function MainStack() {
         component={TrimScreen}
         options={{ presentation: 'fullScreenModal' }}
       />
-      <Stack.Screen
-        name="Search"
-        component={SearchScreen}
-        options={{ presentation: 'modal' }}
-      />
+      <Stack.Screen name="Search" component={SearchScreen} options={{ presentation: 'modal' }} />
       <Stack.Screen
         name="Tutorial"
         component={TutorialScreen}
@@ -43,17 +43,24 @@ function MainStack() {
   )
 }
 
-export function RootNavigator() {
+type RootNavigatorProps = {
+  initialRouteName: keyof RootStackParamList
+}
+
+export function RootNavigator({ initialRouteName }: RootNavigatorProps) {
   return (
     <Drawer.Navigator
       drawerContent={() => <DrawerContent />}
       screenOptions={{
         headerShown: false,
         drawerType: 'front',
+        swipeEnabled: false,
         drawerStyle: { width: '80%' },
       }}
     >
-      <Drawer.Screen name="Main" component={MainStack} />
+      <Drawer.Screen name="Main">
+        {() => <MainStack initialRouteName={initialRouteName} />}
+      </Drawer.Screen>
     </Drawer.Navigator>
   )
 }

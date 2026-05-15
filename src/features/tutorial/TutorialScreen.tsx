@@ -68,7 +68,10 @@ export function TutorialScreen() {
 
   const finish = () => {
     set('tutorial_completed', true)
-    navigation.navigate('Home')
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Home' }],
+    })
   }
 
   const goNext = () => {
