@@ -23,6 +23,14 @@
       "expo-sqlite",
       "expo-web-browser",
       [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#FFFFFF",
+          "image": "./assets/splash.png",
+          "imageWidth": 260
+        }
+      ],
+      [
         "expo-share-extension",
         {
           "activationRules": [
