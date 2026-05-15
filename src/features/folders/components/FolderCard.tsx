@@ -146,7 +146,7 @@ function FolderMosaic({
 
 const styles = StyleSheet.create({
   card: {
-    aspectRatio: 0.92,
+    aspectRatio: 1.05,
     backgroundColor: '#fff',
     borderRadius: 22,
     overflow: 'hidden',
@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255,255,255,0.9)',
   },
   meta: {
-    height: 52,
+    height: 60,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     flexDirection: 'row',
@@ -218,15 +218,15 @@ const styles = StyleSheet.create({
     minWidth: 0,
   },
   name: {
-    fontSize: 15,
-    fontWeight: '600',
+    fontSize: 18,
+    fontWeight: '800',
     color: colors.text,
-    marginTop: 4,
+    marginTop: 2,
   },
   count: {
     fontSize: 12,
     color: colors.textSecondary,
-    marginTop: 3,
+    marginTop: 2,
   },
   moreBtn: {
     alignSelf: 'center',
