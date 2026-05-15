@@ -137,6 +137,7 @@ function FolderMosaic({
       <Image source={{ uri: main }} style={styles.mosaicMain} contentFit="cover" />
       <View style={styles.mosaicSide}>
         <Image source={{ uri: sub1 }} style={styles.mosaicSideImage} contentFit="cover" />
+        <View style={styles.mosaicDivider} />
         <Image source={{ uri: sub2 }} style={styles.mosaicSideImage} contentFit="cover" />
       </View>
     </View>
@@ -187,8 +188,10 @@ const styles = StyleSheet.create({
   },
   mosaicSideImage: {
     flex: 1,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255,255,255,0.9)',
+  },
+  mosaicDivider: {
+    height: 1,
+    backgroundColor: 'rgba(255,255,255,0.9)',
   },
   pipFrame: {
     position: 'absolute',
@@ -198,9 +201,9 @@ const styles = StyleSheet.create({
     height: '55%',
     borderTopLeftRadius: radius.sm,
     overflow: 'hidden',
-    borderTopWidth: 3,
-    borderLeftWidth: 3,
-    borderColor: '#fff',
+    borderTopWidth: 1,
+    borderLeftWidth: 1,
+    borderColor: 'rgba(255,255,255,0.9)',
   },
   meta: {
     height: 52,
