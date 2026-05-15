@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { View, Text, TouchableOpacity, StyleSheet, Alert, Linking } from 'react-native'
 import { Image } from 'expo-image'
 import { CustomActionSheet } from '../../../shared/components/CustomActionSheet'
+import { MoreButton } from '../../../shared/components/MoreButton'
 import { PlaceholderImage } from '../../../shared/components/PlaceholderImage'
 import { colors, spacing, radius } from '../../../shared/theme'
 import { openInBrowser } from '../../../shared/utils/url'
@@ -54,9 +55,7 @@ export function BookmarkListItem({ bookmark, allFolders, onDelete, onMove }: Pro
           <Text style={styles.name} numberOfLines={2}>{bookmark.name}</Text>
           <Text style={styles.domain} numberOfLines={1}>{bookmark.url}</Text>
         </View>
-        <TouchableOpacity onPress={() => setSheetVisible(true)} hitSlop={8}>
-          <Text style={styles.moreDots}>•••</Text>
-        </TouchableOpacity>
+        <MoreButton onPress={() => setSheetVisible(true)} />
       </TouchableOpacity>
 
       <BookmarkEditModal
@@ -116,10 +115,5 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.textSecondary,
     marginTop: 2,
-  },
-  moreDots: {
-    fontSize: 9,
-    color: colors.textSecondary,
-    letterSpacing: 1,
   },
 })

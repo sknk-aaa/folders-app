@@ -20,6 +20,7 @@ import { useBookmarksStore } from '../../bookmarks/store'
 import { Header } from '../../../shared/components/Header'
 import { CustomActionSheet } from '../../../shared/components/CustomActionSheet'
 import { ViewModeToggle } from '../../../shared/components/ViewModeToggle'
+import { MoreButton } from '../../../shared/components/MoreButton'
 import { FolderCard } from '../components/FolderCard'
 import { FolderEditModal } from '../components/FolderEditModal'
 import { SortableFolderGrid } from '../components/SortableFolderGrid'
@@ -316,9 +317,7 @@ function FolderListRow({
           </Text>
           <Text style={styles.folderRowCount}>{count}件</Text>
         </View>
-        <TouchableOpacity onPress={() => setSheetVisible(true)} hitSlop={8} style={styles.folderRowMore}>
-          <Text style={styles.folderRowDots}>•••</Text>
-        </TouchableOpacity>
+        <MoreButton onPress={() => setSheetVisible(true)} />
       </Pressable>
 
       <CustomActionSheet
@@ -407,15 +406,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: colors.textSecondary,
     marginTop: 4,
-  },
-  folderRowMore: {
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.sm,
-  },
-  folderRowDots: {
-    fontSize: 11,
-    color: colors.textSecondary,
-    letterSpacing: 1,
   },
   recentList: {
     paddingHorizontal: GRID_PADDING,

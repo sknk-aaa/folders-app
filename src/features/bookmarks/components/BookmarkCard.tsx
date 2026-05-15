@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { View, Text, TouchableOpacity, StyleSheet, Alert, Dimensions, Linking } from 'react-native'
 import { Image } from 'expo-image'
 import { CustomActionSheet } from '../../../shared/components/CustomActionSheet'
+import { MoreButton } from '../../../shared/components/MoreButton'
 import { PlaceholderImage } from '../../../shared/components/PlaceholderImage'
 import { colors, spacing, radius, getFaviconColor, getFaviconLetter, getDomain } from '../../../shared/theme'
 import { openInBrowser } from '../../../shared/utils/url'
@@ -70,9 +71,7 @@ export function BookmarkCard({ bookmark, allFolders, onDelete, onMove, drag, isA
               <Text style={styles.domain} numberOfLines={1}>{getDomain(bookmark.url)}</Text>
             </View>
           </View>
-          <TouchableOpacity onPress={() => setSheetVisible(true)} hitSlop={8} style={styles.moreBtn}>
-            <Text style={styles.moreDots}>•••</Text>
-          </TouchableOpacity>
+          <MoreButton onPress={() => setSheetVisible(true)} />
         </View>
       </TouchableOpacity>
 
@@ -181,17 +180,5 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: colors.textSecondary,
     marginTop: 1,
-  },
-  moreBtn: {
-    alignSelf: 'center',
-    paddingHorizontal: 4,
-    paddingVertical: 10,
-    marginRight: -2,
-  },
-  moreDots: {
-    fontSize: 11,
-    color: colors.textSecondary,
-    letterSpacing: 1,
-    lineHeight: 12,
   },
 })
