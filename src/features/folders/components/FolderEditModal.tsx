@@ -114,7 +114,6 @@ export function FolderEditModal({
             onChangeText={setName}
             placeholder="フォルダ名"
             placeholderTextColor={colors.textTertiary}
-            autoFocus
             returnKeyType="done"
             onSubmitEditing={handleSave}
           />

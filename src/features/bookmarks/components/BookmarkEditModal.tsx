@@ -60,7 +60,6 @@ export function BookmarkEditModal({ bookmark, onClose, onSave }: Props) {
               placeholder="サイト名"
               placeholderTextColor={colors.textTertiary}
               returnKeyType="next"
-              autoFocus
             />
           </View>
 
