@@ -105,18 +105,20 @@ export function AllBookmarksScreen() {
       )}
 
       <GestureDetector gesture={pinchGesture}>
-        <BookmarkCollectionList
-          bookmarks={sortedBookmarks}
-          allFolders={folders}
-          viewMode={viewMode}
-          onGridPress={() => setViewMode('grid')}
-          onListPress={() => setViewMode('list')}
-          onDelete={(bookmark) => remove(bookmark.id)}
-          onMove={(bookmark, folderId) => move(bookmark.id, folderId)}
-          title="すべてのブックマーク"
-          emptyText={query.trim() ? '検索結果がありません' : 'ブックマークがまだありません'}
-          columns={columns}
-        />
+        <View collapsable={false} style={{ flex: 1 }}>
+          <BookmarkCollectionList
+            bookmarks={sortedBookmarks}
+            allFolders={folders}
+            viewMode={viewMode}
+            onGridPress={() => setViewMode('grid')}
+            onListPress={() => setViewMode('list')}
+            onDelete={(bookmark) => remove(bookmark.id)}
+            onMove={(bookmark, folderId) => move(bookmark.id, folderId)}
+            title="すべてのブックマーク"
+            emptyText={query.trim() ? '検索結果がありません' : 'ブックマークがまだありません'}
+            columns={columns}
+          />
+        </View>
       </GestureDetector>
     </View>
   )

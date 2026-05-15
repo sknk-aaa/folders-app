@@ -152,8 +152,9 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
-    alignItems: 'center',
-    height: 50,
+    alignItems: 'flex-start',
+    height: 62,
+    paddingTop: 12,
     paddingHorizontal: spacing.lg,
   },
   left: {
@@ -175,6 +176,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     right: 0,
+    top: 12,
     alignItems: 'center',
   },
   right: {

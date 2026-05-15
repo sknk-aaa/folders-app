@@ -75,25 +75,27 @@ export function FolderDetailScreen() {
       />
 
       <GestureDetector gesture={pinchGesture}>
-        <BookmarkCollectionList
-          bookmarks={bookmarks}
-          allFolders={folders}
-          viewMode={viewMode}
-          onGridPress={() => setViewMode('grid')}
-          onListPress={() => setViewMode('list')}
-          onDelete={(bookmark) => remove(bookmark.id)}
-          onMove={(bookmark, targetFolderId) => move(bookmark.id, targetFolderId)}
-          onReorder={(nextBookmarks) => reorder(folderId, nextBookmarks)}
-          emptyText="このフォルダにはまだブックマークがありません"
-          columns={columns}
-          headerAccessory={
-            <FolderHeaderSummary
-              folder={folder}
-              thumbnail={mosaicThumbnails[0]}
-              bookmarkCount={bookmarks.length}
-            />
-          }
-        />
+        <View collapsable={false} style={{ flex: 1 }}>
+          <BookmarkCollectionList
+            bookmarks={bookmarks}
+            allFolders={folders}
+            viewMode={viewMode}
+            onGridPress={() => setViewMode('grid')}
+            onListPress={() => setViewMode('list')}
+            onDelete={(bookmark) => remove(bookmark.id)}
+            onMove={(bookmark, targetFolderId) => move(bookmark.id, targetFolderId)}
+            onReorder={(nextBookmarks) => reorder(folderId, nextBookmarks)}
+            emptyText="このフォルダにはまだブックマークがありません"
+            columns={columns}
+            headerAccessory={
+              <FolderHeaderSummary
+                folder={folder}
+                thumbnail={mosaicThumbnails[0]}
+                bookmarkCount={bookmarks.length}
+              />
+            }
+          />
+        </View>
       </GestureDetector>
 
       <FolderEditModal

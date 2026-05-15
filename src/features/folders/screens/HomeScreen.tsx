@@ -1,6 +1,5 @@
 import { useState, useCallback, useMemo } from 'react'
 import {
-  ActionSheetIOS,
   Alert,
   View,
   Text,
@@ -10,7 +9,6 @@ import {
   StyleSheet,
   Dimensions,
   FlatList,
-  Platform,
   Linking,
 } from 'react-native'
 import { Image } from 'expo-image'
@@ -22,6 +20,7 @@ import { runOnJS } from 'react-native-reanimated'
 import { useFoldersStore } from '../store'
 import { useBookmarksStore } from '../../bookmarks/store'
 import { Header } from '../../../shared/components/Header'
+import { CustomActionSheet } from '../../../shared/components/CustomActionSheet'
 import { ViewModeToggle } from '../../../shared/components/ViewModeToggle'
 import { FolderCard } from '../components/FolderCard'
 import { FolderEditModal } from '../components/FolderEditModal'
@@ -54,6 +53,7 @@ export function HomeScreen() {
 
   const [editTarget, setEditTarget] = useState<Folder | undefined>(undefined)
   const [modalVisible, setModalVisible] = useState(false)
+  const [addSheetVisible, setAddSheetVisible] = useState(false)
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
   const [isGridDragging, setIsGridDragging] = useState(false)
   const [folderColumns, setFolderColumns] = useState(2)
@@ -76,25 +76,7 @@ export function HomeScreen() {
     setModalVisible(true)
   }
   const openAdd = () => {
-    if (Platform.OS === 'ios') {
-      ActionSheetIOS.showActionSheetWithOptions(
-        {
-          options: ['キャンセル', 'フォルダを追加', 'ブックマークを追加'],
-          cancelButtonIndex: 0,
-        },
-        (buttonIndex) => {
-          if (buttonIndex === 1) openFolderAdd()
-          if (buttonIndex === 2) navigation.navigate('AddBookmark', {})
-        },
-      )
-      return
-    }
-
-    Alert.alert('追加', undefined, [
-      { text: 'フォルダを追加', onPress: openFolderAdd },
-      { text: 'ブックマークを追加', onPress: () => navigation.navigate('AddBookmark', {}) },
-      { text: 'キャンセル', style: 'cancel' },
-    ])
+    setAddSheetVisible(true)
   }
   const openEdit = (folder: Folder) => {
     setEditTarget(folder)
@@ -247,6 +229,15 @@ export function HomeScreen() {
         folder={editTarget}
         onSave={handleSave}
         onClose={() => setModalVisible(false)}
+      />
+
+      <CustomActionSheet
+        visible={addSheetVisible}
+        options={[
+          { label: 'フォルダを追加', onPress: openFolderAdd },
+          { label: 'ブックマークを追加', onPress: () => navigation.navigate('AddBookmark', {}) },
+        ]}
+        onCancel={() => setAddSheetVisible(false)}
       />
     </View>
   )

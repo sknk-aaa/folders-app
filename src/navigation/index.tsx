@@ -1,5 +1,8 @@
+import { Dimensions } from 'react-native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { createDrawerNavigator } from '@react-navigation/drawer'
+
+const SCREEN_WIDTH = Dimensions.get('window').width
 import { HomeScreen } from '../features/folders/screens/HomeScreen'
 import { FolderDetailScreen } from '../features/folders/screens/FolderDetailScreen'
 import { AllBookmarksScreen } from '../features/bookmarks/screens/AllBookmarksScreen'
@@ -24,12 +27,12 @@ function MainStack({ initialRouteName }: MainStackProps) {
       <Stack.Screen
         name="AllBookmarks"
         component={AllBookmarksScreen}
-        options={{ fullScreenGestureEnabled: true }}
+        options={{ fullScreenGestureEnabled: true, gestureResponseDistance: SCREEN_WIDTH }}
       />
       <Stack.Screen
         name="FolderDetail"
         component={FolderDetailScreen}
-        options={{ fullScreenGestureEnabled: true }}
+        options={{ fullScreenGestureEnabled: true, gestureResponseDistance: SCREEN_WIDTH }}
       />
       <Stack.Screen
         name="AddBookmark"
