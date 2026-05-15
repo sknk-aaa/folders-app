@@ -13,6 +13,7 @@ export function PinEntryModal(props: Props) {
   const [confirmInput, setConfirmInput] = useState('')
   const [step, setStep] = useState<'enter' | 'confirm'>('enter')
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState(false)
 
   const handleDigit = (d: string) => {
     setError('')
@@ -21,8 +22,12 @@ export function PinEntryModal(props: Props) {
       setInput(next)
       if (next.length === 4) {
         if (next === props.correctPin) {
-          setInput('')
-          props.onSuccess()
+          setSuccess(true)
+          setTimeout(() => {
+            setInput('')
+            setSuccess(false)
+            props.onSuccess()
+          }, 500)
         } else {
           setError('PINが違います')
           setInput('')
@@ -41,10 +46,14 @@ export function PinEntryModal(props: Props) {
         if (next.length === 4) {
           if (next === input) {
             const pin = input
-            setInput('')
-            setConfirmInput('')
-            setStep('enter')
-            props.onSet(pin)
+            setSuccess(true)
+            setTimeout(() => {
+              setInput('')
+              setConfirmInput('')
+              setStep('enter')
+              setSuccess(false)
+              props.onSet(pin)
+            }, 500)
           } else {
             setError('PINが一致しません')
             setConfirmInput('')
@@ -73,10 +82,11 @@ export function PinEntryModal(props: Props) {
     props.onCancel()
   }
 
-  const currentLength = props.mode === 'unlock' || step === 'enter' ? input.length : confirmInput.length
+  const currentLength = success ? 4 : (props.mode === 'unlock' || step === 'enter' ? input.length : confirmInput.length)
 
-  const title =
-    props.mode === 'unlock'
+  const title = success
+    ? (props.mode === 'unlock' ? 'ロックを解除しました' : 'PINを設定しました')
+    : props.mode === 'unlock'
       ? 'PINを入力'
       : step === 'enter'
         ? '新しいPINを入力'
@@ -90,7 +100,7 @@ export function PinEntryModal(props: Props) {
 
           <View style={styles.dots}>
             {[0, 1, 2, 3].map((i) => (
-              <View key={i} style={[styles.dot, i < currentLength && styles.dotFilled]} />
+              <View key={i} style={[styles.dot, i < currentLength && (success ? styles.dotSuccess : styles.dotFilled)]} />
             ))}
           </View>
 
@@ -155,6 +165,10 @@ const styles = StyleSheet.create({
   dotFilled: {
     backgroundColor: colors.text,
     borderColor: colors.text,
+  },
+  dotSuccess: {
+    backgroundColor: '#34C759',
+    borderColor: '#34C759',
   },
   error: {
     fontSize: 13,

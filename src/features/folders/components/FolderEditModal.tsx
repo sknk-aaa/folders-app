@@ -40,7 +40,8 @@ export function FolderEditModal({
   const [name, setName] = useState(folder?.name ?? '')
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [pinModalMode, setPinModalMode] = useState<'set' | 'unlock' | null>(null)
-  const { setPin, removePin } = useFoldersStore()
+  const { folders, setPin, removePin } = useFoldersStore()
+  const currentFolder = folder ? folders.find((f) => f.id === folder.id) : undefined
 
   const handleOpen = () => {
     setName(folder?.name ?? '')
@@ -117,10 +118,10 @@ export function FolderEditModal({
           {folder && (
             <TouchableOpacity
               style={styles.lockRow}
-              onPress={() => setPinModalMode(folder.pinCode ? 'unlock' : 'set')}
+              onPress={() => setPinModalMode(currentFolder?.pinCode ? 'unlock' : 'set')}
             >
               <Text style={styles.lockRowText}>
-                {folder.pinCode ? '🔒 PINロックを解除' : '🔓 PINロックを設定'}
+                {currentFolder?.pinCode ? '🔒 PINロックを解除' : '🔓 PINロックを設定'}
               </Text>
             </TouchableOpacity>
           )}
@@ -173,10 +174,10 @@ export function FolderEditModal({
           onCancel={() => setPinModalMode(null)}
         />
       )}
-      {pinModalMode === 'unlock' && folder?.pinCode && (
+      {pinModalMode === 'unlock' && currentFolder?.pinCode && (
         <PinEntryModal
           mode="unlock"
-          correctPin={folder.pinCode}
+          correctPin={currentFolder.pinCode}
           onSuccess={() => { removePin(folder.id); setPinModalMode(null) }}
           onCancel={() => setPinModalMode(null)}
         />
