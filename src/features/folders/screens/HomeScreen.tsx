@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback } from 'react'
 import {
   Alert,
   View,
@@ -15,8 +15,6 @@ import { Image } from 'expo-image'
 import { useNavigation } from '@react-navigation/native'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import DraggableFlatList, { ScaleDecorator, ShadowDecorator } from 'react-native-draggable-flatlist'
-import { Gesture, GestureDetector } from 'react-native-gesture-handler'
-import { runOnJS } from 'react-native-reanimated'
 import { useFoldersStore } from '../store'
 import { useBookmarksStore } from '../../bookmarks/store'
 import { Header } from '../../../shared/components/Header'
@@ -35,6 +33,8 @@ import { useSettingsStore } from '../../settings/store'
 const { width: SCREEN_W } = Dimensions.get('window')
 const GRID_PADDING = spacing.lg
 const GRID_GAP = 10
+const FOLDER_COLUMNS = 2
+const CARD_W = (SCREEN_W - GRID_PADDING * 2 - GRID_GAP * (FOLDER_COLUMNS - 1)) / FOLDER_COLUMNS
 
 type Nav = NativeStackNavigationProp<RootStackParamList>
 
@@ -56,20 +56,6 @@ export function HomeScreen() {
   const [addSheetVisible, setAddSheetVisible] = useState(false)
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
   const [isGridDragging, setIsGridDragging] = useState(false)
-  const [folderColumns, setFolderColumns] = useState(2)
-
-  const cardW = useMemo(
-    () => (SCREEN_W - GRID_PADDING * 2 - GRID_GAP * (folderColumns - 1)) / folderColumns,
-    [folderColumns],
-  )
-
-  const pinchGesture = useMemo(
-    () =>
-      Gesture.Pinch().onEnd((e) => {
-        runOnJS(setFolderColumns)(e.scale < 0.85 ? 3 : 2)
-      }),
-    [],
-  )
 
   const openFolderAdd = () => {
     setEditTarget(undefined)
@@ -182,32 +168,29 @@ export function HomeScreen() {
       />
 
       {viewMode === 'grid' ? (
-        <GestureDetector gesture={pinchGesture}>
-          <ScrollView
-            contentContainerStyle={styles.listContent}
-            scrollEnabled={!isGridDragging}
-            showsVerticalScrollIndicator={false}
-          >
-            {listHeader}
-            <View style={styles.gridWrapper}>
-              <SortableFolderGrid
-                folders={folders}
-                getBookmarks={byFolder}
-                cardWidth={cardW}
-                gap={GRID_GAP}
-                columns={folderColumns}
-                onPressFolder={(folder) =>
-                  navigation.navigate('FolderDetail', { folderId: folder.id })
-                }
-                onEditFolder={openEdit}
-                onDeleteFolder={(folder) => remove(folder.id)}
-                onReorder={reorder}
-                onDragStateChange={setIsGridDragging}
-              />
-            </View>
-            {listFooter}
-          </ScrollView>
-        </GestureDetector>
+        <ScrollView
+          contentContainerStyle={styles.listContent}
+          scrollEnabled={!isGridDragging}
+          showsVerticalScrollIndicator={false}
+        >
+          {listHeader}
+          <View style={styles.gridWrapper}>
+            <SortableFolderGrid
+              folders={folders}
+              getBookmarks={byFolder}
+              cardWidth={CARD_W}
+              gap={GRID_GAP}
+              onPressFolder={(folder) =>
+                navigation.navigate('FolderDetail', { folderId: folder.id })
+              }
+              onEditFolder={openEdit}
+              onDeleteFolder={(folder) => remove(folder.id)}
+              onReorder={reorder}
+              onDragStateChange={setIsGridDragging}
+            />
+          </View>
+          {listFooter}
+        </ScrollView>
       ) : (
         <DraggableFlatList
           data={folders}
