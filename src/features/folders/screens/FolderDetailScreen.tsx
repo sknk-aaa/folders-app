@@ -11,7 +11,7 @@ import { useBookmarksStore } from '../../bookmarks/store'
 import { BookmarkCollectionList } from '../../bookmarks/components/BookmarkCollectionList'
 import { FolderEditModal } from '../components/FolderEditModal'
 import { Header } from '../../../shared/components/Header'
-import { getFolderVisual } from '../../../shared/mockVisuals'
+import { FOLDER_PLACEHOLDER } from '../../../shared/mockVisuals'
 import { colors, spacing, radius } from '../../../shared/theme'
 import type {
   RootStackParamList,
@@ -76,7 +76,7 @@ export function FolderDetailScreen() {
         headerAccessory={
           <FolderHeaderSummary
             folder={folder}
-            thumbnail={mosaicThumbnails[0] ?? getFolderVisual(folder).images[0]}
+            thumbnail={mosaicThumbnails[0]}
             bookmarkCount={bookmarks.length}
           />
         }
@@ -98,13 +98,17 @@ function FolderHeaderSummary({
   bookmarkCount,
 }: {
   folder: Folder
-  thumbnail: string
+  thumbnail: string | undefined
   bookmarkCount: number
 }) {
   return (
     <View style={styles.folderSummaryWrap} pointerEvents="none">
       <View style={styles.folderSummary}>
-        <Image source={{ uri: thumbnail }} style={styles.folderThumb} contentFit="cover" />
+        <Image
+          source={thumbnail ? { uri: thumbnail } : FOLDER_PLACEHOLDER}
+          style={styles.folderThumb}
+          contentFit="cover"
+        />
         <View style={styles.titleBlock}>
           <Text style={styles.headerTitle} numberOfLines={1}>
             {folder.name}

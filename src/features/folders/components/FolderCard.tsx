@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Alert, Pressable } from 'reac
 import { Image } from 'expo-image'
 import type { Folder, Bookmark } from '../../../shared/types'
 import { colors, spacing, radius } from '../../../shared/theme'
-import { getFolderVisual } from '../../../shared/mockVisuals'
+import { FOLDER_PLACEHOLDER } from '../../../shared/mockVisuals'
 
 type Props = {
   folder: Folder
@@ -27,12 +27,10 @@ export function FolderCard({
   onMorePressIn,
   onMorePressOut,
 }: Props) {
-  const thumbnails = bookmarks
+  const realThumbnails = bookmarks
     .filter((b) => b.thumbnailPath)
-    .slice(0, 3)
     .map((b) => b.thumbnailPath as string)
-  const fallbackImages = getFolderVisual(folder).images
-  const images = [...thumbnails, ...fallbackImages].slice(0, 3)
+  const count = realThumbnails.length
 
   const handleMore = () => {
     Alert.alert(folder.name, undefined, [
@@ -63,40 +61,101 @@ export function FolderCard({
       style={[styles.card, isActive && styles.cardActive]}
     >
       <View style={styles.mosaic}>
-        <Image source={{ uri: images[0] }} style={styles.mosaicMain} contentFit="cover" />
-        <View style={styles.mosaicSide}>
-          <Image source={{ uri: images[1] }} style={styles.mosaicSideImage} contentFit="cover" />
-          <Image source={{ uri: images[2] }} style={styles.mosaicSideImage} contentFit="cover" />
-        </View>
-        <View style={styles.scrim} />
+        <FolderMosaic count={count} realThumbnails={realThumbnails} />
+      </View>
 
-        <View style={styles.overlay}>
-          <View style={styles.overlayText}>
-            <Text style={styles.name} numberOfLines={1}>
-              {folder.name}
-            </Text>
-            <Text style={styles.count}>{bookmarks.length}件</Text>
-          </View>
-          <TouchableOpacity
-            onPress={handleMore}
-            onPressIn={onMorePressIn}
-            onPressOut={onMorePressOut}
-            hitSlop={8}
-            style={styles.moreBtn}
-          >
-            <Text style={styles.moreDots}>•••</Text>
-          </TouchableOpacity>
+      <View style={styles.meta}>
+        <View style={styles.metaText}>
+          <Text style={styles.name} numberOfLines={1}>
+            {folder.name}
+          </Text>
+          <Text style={styles.count}>{bookmarks.length}件</Text>
         </View>
+        <TouchableOpacity
+          onPress={handleMore}
+          onPressIn={onMorePressIn}
+          onPressOut={onMorePressOut}
+          hitSlop={8}
+          style={styles.moreBtn}
+        >
+          <Text style={styles.moreDots}>⋮</Text>
+        </TouchableOpacity>
       </View>
     </Pressable>
   )
 }
 
+function FolderMosaic({
+  count,
+  realThumbnails,
+}: {
+  count: number
+  realThumbnails: string[]
+}) {
+  // 0件: ローカルプレースホルダー画像
+  if (count === 0) {
+    return (
+      <Image source={FOLDER_PLACEHOLDER} style={StyleSheet.absoluteFill} contentFit="cover" />
+    )
+  }
+
+  // 1件: 全面1枚
+  if (count === 1) {
+    return (
+      <Image
+        source={{ uri: realThumbnails[0] }}
+        style={StyleSheet.absoluteFill}
+        contentFit="cover"
+      />
+    )
+  }
+
+  // 2件: 全面 + 右下にPIP
+  if (count === 2) {
+    return (
+      <>
+        <Image
+          source={{ uri: realThumbnails[0] }}
+          style={StyleSheet.absoluteFill}
+          contentFit="cover"
+        />
+        <View style={styles.pipFrame}>
+          <Image
+            source={{ uri: realThumbnails[1] }}
+            style={StyleSheet.absoluteFill}
+            contentFit="cover"
+          />
+        </View>
+      </>
+    )
+  }
+
+  // 3件以上: 左大1 + 右に小2
+  const [main, sub1, sub2] = realThumbnails.slice(0, 3)
+  return (
+    <View style={styles.threeMosaic}>
+      <Image source={{ uri: main }} style={styles.mosaicMain} contentFit="cover" />
+      <View style={styles.mosaicSide}>
+        <Image source={{ uri: sub1 }} style={styles.mosaicSideImage} contentFit="cover" />
+        <Image source={{ uri: sub2 }} style={styles.mosaicSideImage} contentFit="cover" />
+      </View>
+    </View>
+  )
+}
+
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: colors.background,
+    aspectRatio: 1.05,
+    backgroundColor: '#fff',
     borderRadius: radius.lg,
     overflow: 'hidden',
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.separator,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 2,
   },
   cardActive: {
     opacity: 0.96,
@@ -108,8 +167,12 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 8 },
   },
   mosaic: {
-    aspectRatio: 1.34,
+    flex: 1,
     backgroundColor: colors.placeholderBg,
+    position: 'relative',
+  },
+  threeMosaic: {
+    flex: 1,
     flexDirection: 'row',
   },
   mosaicMain: {
@@ -127,38 +190,49 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(255,255,255,0.9)',
   },
-  scrim: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.18)',
-  },
-  overlay: {
+  pipFrame: {
     position: 'absolute',
-    left: spacing.md,
-    right: spacing.sm,
-    bottom: spacing.sm,
-    flexDirection: 'row',
-    alignItems: 'flex-end',
+    bottom: 0,
+    right: 0,
+    width: '42%',
+    height: '55%',
+    borderTopLeftRadius: radius.sm,
+    overflow: 'hidden',
+    borderTopWidth: 3,
+    borderLeftWidth: 3,
+    borderColor: '#fff',
   },
-  overlayText: {
+  meta: {
+    height: 52,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  metaText: {
     flex: 1,
+    minWidth: 0,
   },
   name: {
-    fontSize: 18,
+    fontSize: 15,
     fontWeight: '700',
-    color: '#fff',
+    color: colors.text,
   },
   count: {
-    fontSize: 13,
-    color: 'rgba(255,255,255,0.92)',
-    marginTop: 4,
+    fontSize: 12,
+    color: colors.textSecondary,
+    marginTop: 3,
   },
   moreBtn: {
+    alignSelf: 'center',
     paddingHorizontal: 4,
-    paddingVertical: 2,
+    paddingVertical: 8,
+    marginRight: -2,
   },
   moreDots: {
-    fontSize: 11,
-    color: '#fff',
-    letterSpacing: 1,
+    fontSize: 22,
+    color: colors.textSecondary,
+    lineHeight: 22,
   },
 })

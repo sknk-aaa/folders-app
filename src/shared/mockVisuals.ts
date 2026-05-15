@@ -1,8 +1,4 @@
-import type { Folder, FolderIconId } from './types'
-
-type FolderVisual = {
-  images: string[]
-}
+import type { FolderIconId } from './types'
 
 export const MOCK_FOLDERS: Array<{
   name: string
@@ -17,95 +13,137 @@ export const MOCK_FOLDERS: Array<{
   { name: '読書', iconId: 'book', isDefault: 0 },
 ]
 
-export const MOCK_BOOKMARKS = [
+export type MockBookmark = {
+  folderName: string
+  name: string
+  url: string
+  thumbnailPath: string
+}
+
+// 各フォルダに3件ずつ、合計18件のテーマ別ブックマーク
+// 各フォルダの先頭3件がフォルダカードのモザイクに使われる
+export const MOCK_BOOKMARKS: MockBookmark[] = [
+  // 記事 (コーヒー・本・部屋の暖かい雰囲気)
   {
-    name: '自然と暮らす、心地よい家づくり',
-    url: 'https://goodrooms.jp',
-    thumbnailPath: 'https://picsum.photos/seed/folders-recent-cabin/360/360',
+    folderName: '記事',
+    name: '暮らしを整える朝のルーティン',
+    url: 'https://kurashi-style.jp',
+    thumbnailPath: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=720&q=80',
   },
   {
-    name: '東京のおしゃれカフェ10選',
-    url: 'https://cafe-note.com',
-    thumbnailPath: 'https://picsum.photos/seed/folders-recent-cafe/360/360',
+    folderName: '記事',
+    name: '心に響く名エッセイ10選',
+    url: 'https://essay-mag.com',
+    thumbnailPath: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=720&q=80',
   },
   {
-    name: '簡単に作れる絶品パスタレシピ',
-    url: 'https://kurashiru.com',
-    thumbnailPath: 'https://picsum.photos/seed/folders-recent-pasta/360/360',
+    folderName: '記事',
+    name: '心地よい部屋づくりのコツ',
+    url: 'https://room-design.jp',
+    thumbnailPath: 'https://images.unsplash.com/photo-1525540581-23f1afea1d9c?w=720&q=80',
+  },
+
+  // 音楽 (ヘッドホン・ライブ・レコード)
+  {
+    folderName: '音楽',
+    name: '高音質ヘッドホンおすすめ7選',
+    url: 'https://audio-review.jp',
+    thumbnailPath: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=720&q=80',
   },
   {
-    name: '集中できるデスク環境の作り方',
-    url: 'https://lifehacker.jp',
-    thumbnailPath: 'https://picsum.photos/seed/folders-recent-desk/360/360',
+    folderName: '音楽',
+    name: '注目の音楽フェス2024',
+    url: 'https://music-festival.jp',
+    thumbnailPath: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=720&q=80',
   },
   {
-    name: '週末に行きたい国内旅行先まとめ',
-    url: 'https://tabi-navi.jp',
-    thumbnailPath: 'https://picsum.photos/seed/folders-recent-beach/360/360',
+    folderName: '音楽',
+    name: '名盤アナログレコードガイド',
+    url: 'https://vinyl-shop.com',
+    thumbnailPath: 'https://images.unsplash.com/photo-1483412033650-1015ddeb83d1?w=720&q=80',
+  },
+
+  // 仕事 (ラップトップ・会議・デスク)
+  {
+    folderName: '仕事',
+    name: 'リモートワーカー必携アイテム',
+    url: 'https://worktips.jp',
+    thumbnailPath: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=720&q=80',
+  },
+  {
+    folderName: '仕事',
+    name: '効果的な会議の進め方',
+    url: 'https://biz-meeting.com',
+    thumbnailPath: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=720&q=80',
+  },
+  {
+    folderName: '仕事',
+    name: '集中力を高めるデスク環境',
+    url: 'https://focus-work.jp',
+    thumbnailPath: 'https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=720&q=80',
+  },
+
+  // 買い物 (バスケット・ニット・キャンドル)
+  {
+    folderName: '買い物',
+    name: '北欧雑貨セレクトショップ',
+    url: 'https://hokuoh-zakka.com',
+    thumbnailPath: 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=720&q=80',
+  },
+  {
+    folderName: '買い物',
+    name: '上質ニットの選び方',
+    url: 'https://knit-style.jp',
+    thumbnailPath: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=720&q=80',
+  },
+  {
+    folderName: '買い物',
+    name: 'アロマキャンドルおすすめ',
+    url: 'https://aroma-life.com',
+    thumbnailPath: 'https://images.unsplash.com/photo-1602874801007-aa0a0a8c5cae?w=720&q=80',
+  },
+
+  // 旅行 (ビーチ・街・空)
+  {
+    folderName: '旅行',
+    name: '週末に行きたい国内ビーチ',
+    url: 'https://beach-japan.jp',
+    thumbnailPath: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=720&q=80',
+  },
+  {
+    folderName: '旅行',
+    name: 'ヨーロッパ街歩きガイド',
+    url: 'https://europe-walk.com',
+    thumbnailPath: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=720&q=80',
+  },
+  {
+    folderName: '旅行',
+    name: '機内から見える絶景',
+    url: 'https://airline-mag.jp',
+    thumbnailPath: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=720&q=80',
+  },
+
+  // 読書 (開いた本・図書館・積読)
+  {
+    folderName: '読書',
+    name: '今読みたいおすすめ本15選',
+    url: 'https://bookblog.jp',
+    thumbnailPath: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=720&q=80',
+  },
+  {
+    folderName: '読書',
+    name: '名作小説まとめ',
+    url: 'https://novel-list.com',
+    thumbnailPath: 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=720&q=80',
+  },
+  {
+    folderName: '読書',
+    name: '積読を楽しむ方法',
+    url: 'https://tsundoku.jp',
+    thumbnailPath: 'https://images.unsplash.com/photo-1519682337058-a94d519337bc?w=720&q=80',
   },
 ]
 
-const VISUALS_BY_ICON: Partial<Record<FolderIconId, FolderVisual>> = {
-  article: {
-    images: [
-      'https://picsum.photos/seed/folders-article-coffee/720/540',
-      'https://picsum.photos/seed/folders-article-books/360/270',
-      'https://picsum.photos/seed/folders-article-room/360/270',
-    ],
-  },
-  music: {
-    images: [
-      'https://picsum.photos/seed/folders-music-headphones/720/540',
-      'https://picsum.photos/seed/folders-music-live/360/270',
-      'https://picsum.photos/seed/folders-music-record/360/270',
-    ],
-  },
-  work: {
-    images: [
-      'https://picsum.photos/seed/folders-work-laptop/720/540',
-      'https://picsum.photos/seed/folders-work-meeting/360/270',
-      'https://picsum.photos/seed/folders-work-desk/360/270',
-    ],
-  },
-  shopping: {
-    images: [
-      'https://picsum.photos/seed/folders-shopping-basket/720/540',
-      'https://picsum.photos/seed/folders-shopping-clothes/360/270',
-      'https://picsum.photos/seed/folders-shopping-candles/360/270',
-    ],
-  },
-  travel: {
-    images: [
-      'https://picsum.photos/seed/folders-travel-beach/720/540',
-      'https://picsum.photos/seed/folders-travel-street/360/270',
-      'https://picsum.photos/seed/folders-travel-flight/360/270',
-    ],
-  },
-  book: {
-    images: [
-      'https://picsum.photos/seed/folders-book-open/720/540',
-      'https://picsum.photos/seed/folders-book-library/360/270',
-      'https://picsum.photos/seed/folders-book-stack/360/270',
-    ],
-  },
-  default: {
-    images: [
-      'https://picsum.photos/seed/folders-default-main/720/540',
-      'https://picsum.photos/seed/folders-default-side-a/360/270',
-      'https://picsum.photos/seed/folders-default-side-b/360/270',
-    ],
-  },
-}
-
-const ICON_BY_NAME: Record<string, FolderIconId> = {
-  未分類: 'article',
-  エンタメ: 'music',
-  ショッピング: 'shopping',
-  ニュース: 'article',
-  勉強: 'book',
-}
-
-export function getFolderVisual(folder: Folder): FolderVisual {
-  const iconId = ICON_BY_NAME[folder.name] ?? folder.iconId
-  return VISUALS_BY_ICON[iconId] ?? VISUALS_BY_ICON.default!
-}
+// 空フォルダのフォールバック画像（local asset）
+// FolderCard / FolderDetailScreen から require で参照
+export const FOLDER_PLACEHOLDER = require('../../assets/folder-placeholder.png')
