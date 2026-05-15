@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import Purchases, { LOG_LEVEL } from 'react-native-purchases'
 import { useSettingsStore } from '../settings/store'
 
-const REVENUECAT_API_KEY = 'test_enrVyYluGhroDWIinHHJdfVtFtc'
+const REVENUECAT_API_KEY = 'appl_uesZfCuFvseRYpwJqpMMcFrDRfc'
 const ENTITLEMENT_ID = 'Bookrest Pro'
 
 type ProStore = {
