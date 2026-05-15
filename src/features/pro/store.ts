@@ -2,8 +2,7 @@ import { create } from 'zustand'
 import Purchases, { LOG_LEVEL } from 'react-native-purchases'
 import { useSettingsStore } from '../settings/store'
 
-// TODO: RevenueCatダッシュボードで取得したiOS公開SDKキーに差し替える
-const REVENUECAT_API_KEY = 'REPLACE_WITH_REVENUECAT_IOS_API_KEY'
+const REVENUECAT_API_KEY = 'test_enrVyYluGhroDWIinHHJdfVtFtc'
 const ENTITLEMENT_ID = 'pro'
 
 type ProStore = {
