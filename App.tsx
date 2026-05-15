@@ -5,7 +5,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { NavigationContainer, createNavigationContainerRef } from '@react-navigation/native'
 import * as Linking from 'expo-linking'
 import { StatusBar } from 'expo-status-bar'
-import { initializeDatabase, seedDefaultData } from './src/shared/db/migrations'
+import { initializeDatabase, migrateSchema, seedDefaultData } from './src/shared/db/migrations'
 import { useSettingsStore } from './src/features/settings/store'
 import { useFoldersStore } from './src/features/folders/store'
 import { useBookmarksStore } from './src/features/bookmarks/store'
@@ -34,6 +34,7 @@ export default function App() {
     const init = async () => {
       try {
         initializeDatabase()
+        migrateSchema()
         seedDefaultData()
         await useSettingsStore.getState().load()
         await useFoldersStore.getState().load()

@@ -20,6 +20,7 @@ export type Folder = {
   sortOrder: number
   createdAt: number
   isDefault: number
+  pinCode: string | null
 }
 
 export type Bookmark = {

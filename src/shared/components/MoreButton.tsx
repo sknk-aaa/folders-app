@@ -17,6 +17,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: colors.textSecondary,
     lineHeight: 20,
-    letterSpacing: -2,
+    letterSpacing: -3,
   },
 })

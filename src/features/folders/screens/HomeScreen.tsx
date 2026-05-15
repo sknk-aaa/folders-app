@@ -21,6 +21,7 @@ import { Header } from '../../../shared/components/Header'
 import { CustomActionSheet } from '../../../shared/components/CustomActionSheet'
 import { ViewModeToggle } from '../../../shared/components/ViewModeToggle'
 import { MoreButton } from '../../../shared/components/MoreButton'
+import { PinEntryModal } from '../components/PinEntryModal'
 import { FolderCard } from '../components/FolderCard'
 import { FolderEditModal } from '../components/FolderEditModal'
 import { SortableFolderGrid } from '../components/SortableFolderGrid'
@@ -267,6 +268,15 @@ function FolderListRow({
   const visual = MOCK_BOOKMARKS[folder.sortOrder % MOCK_BOOKMARKS.length]
 
   const [sheetVisible, setSheetVisible] = useState(false)
+  const [pinVisible, setPinVisible] = useState(false)
+
+  const handlePress = () => {
+    if (folder.pinCode) {
+      setPinVisible(true)
+    } else {
+      onPress()
+    }
+  }
 
   const handleDeleteConfirm = () => {
     Alert.alert(
@@ -282,7 +292,7 @@ function FolderListRow({
   return (
     <>
       <Pressable
-        onPress={onPress}
+        onPress={handlePress}
         onLongPress={drag}
         delayLongPress={160}
         style={[styles.folderRow, isActive && styles.folderRowActive]}
@@ -298,6 +308,7 @@ function FolderListRow({
           </Text>
           <Text style={styles.folderRowCount}>{count}件</Text>
         </View>
+        {folder.pinCode && <Text style={styles.folderRowLock}>🔒</Text>}
         <MoreButton onPress={() => setSheetVisible(true)} />
       </Pressable>
 
@@ -310,6 +321,15 @@ function FolderListRow({
         ]}
         onCancel={() => setSheetVisible(false)}
       />
+
+      {pinVisible && folder.pinCode && (
+        <PinEntryModal
+          mode="unlock"
+          correctPin={folder.pinCode}
+          onSuccess={() => { setPinVisible(false); onPress() }}
+          onCancel={() => setPinVisible(false)}
+        />
+      )}
     </>
   )
 }
@@ -374,6 +394,10 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     backgroundColor: colors.placeholderBg,
   },
+  folderRowLock: {
+    fontSize: 14,
+    marginRight: 4,
+  },
   folderRowText: {
     flex: 1,
     marginLeft: spacing.md,
@@ -394,7 +418,7 @@ const styles = StyleSheet.create({
   recentCard: {
     marginRight: 10,
     minHeight: 150,
-    borderRadius: radius.sm,
+    borderRadius: 10,
     backgroundColor: '#fff',
     overflow: 'hidden',
     borderWidth: StyleSheet.hairlineWidth,

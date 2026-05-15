@@ -10,6 +10,8 @@ type FoldersStore = {
   update: (id: string, name: string, iconId: FolderIconId) => void
   remove: (id: string) => void
   reorder: (folders: Folder[]) => void
+  setPin: (id: string, pin: string) => void
+  removePin: (id: string) => void
 }
 
 function toFolder(row: Record<string, unknown>): Folder {
@@ -20,6 +22,7 @@ function toFolder(row: Record<string, unknown>): Folder {
     sortOrder: row.sort_order as number,
     createdAt: row.created_at as number,
     isDefault: row.is_default as number,
+    pinCode: (row.pin_code as string | null) ?? null,
   }
 }
 
@@ -50,6 +53,7 @@ export const useFoldersStore = create<FoldersStore>((setState, getState) => ({
       sortOrder: maxOrder + 1,
       createdAt: now,
       isDefault: 0,
+      pinCode: null,
     }
     setState((s) => ({ folders: [...s.folders, folder] }))
     return folder
@@ -76,5 +80,21 @@ export const useFoldersStore = create<FoldersStore>((setState, getState) => ({
       db.runSync('UPDATE folders SET sort_order = ? WHERE id = ?', [i, f.id])
     })
     setState({ folders: folders.map((f, i) => ({ ...f, sortOrder: i })) })
+  },
+
+  setPin: (id, pin) => {
+    const db = getDb()
+    db.runSync('UPDATE folders SET pin_code = ? WHERE id = ?', [pin, id])
+    setState((s) => ({
+      folders: s.folders.map((f) => (f.id === id ? { ...f, pinCode: pin } : f)),
+    }))
+  },
+
+  removePin: (id) => {
+    const db = getDb()
+    db.runSync('UPDATE folders SET pin_code = NULL WHERE id = ?', [id])
+    setState((s) => ({
+      folders: s.folders.map((f) => (f.id === id ? { ...f, pinCode: null } : f)),
+    }))
   },
 }))

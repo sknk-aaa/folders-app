@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { View, Text, TouchableOpacity, StyleSheet, Alert, Pressable } from 'react-native'
 import { Image } from 'expo-image'
 import { CustomActionSheet } from '../../../shared/components/CustomActionSheet'
+import { PinEntryModal } from './PinEntryModal'
 import type { Folder, Bookmark } from '../../../shared/types'
 import { colors, spacing, radius } from '../../../shared/theme'
 import { FOLDER_PLACEHOLDER } from '../../../shared/mockVisuals'
@@ -35,8 +36,16 @@ export function FolderCard({
   const count = realThumbnails.length
 
   const [sheetVisible, setSheetVisible] = useState(false)
+  const [pinVisible, setPinVisible] = useState(false)
 
   const handleMore = () => setSheetVisible(true)
+  const handlePress = () => {
+    if (folder.pinCode) {
+      setPinVisible(true)
+    } else {
+      onPress()
+    }
+  }
 
   const handleDeleteConfirm = () => {
     Alert.alert(
@@ -52,13 +61,18 @@ export function FolderCard({
   return (
     <>
     <Pressable
-      onPress={onPress}
+      onPress={handlePress}
       onLongPress={drag}
       delayLongPress={160}
       style={[styles.card, isActive && styles.cardActive]}
     >
       <View style={styles.mosaic}>
         <FolderMosaic count={count} realThumbnails={realThumbnails} />
+        {folder.pinCode && (
+          <View style={styles.lockBadge}>
+            <Text style={styles.lockIcon}>🔒</Text>
+          </View>
+        )}
       </View>
 
       <View style={styles.meta}>
@@ -89,6 +103,15 @@ export function FolderCard({
       ]}
       onCancel={() => setSheetVisible(false)}
     />
+
+    {pinVisible && folder.pinCode && (
+      <PinEntryModal
+        mode="unlock"
+        correctPin={folder.pinCode}
+        onSuccess={() => { setPinVisible(false); onPress() }}
+        onCancel={() => setPinVisible(false)}
+      />
+    )}
     </>
   )
 }
@@ -180,6 +203,18 @@ const styles = StyleSheet.create({
     backgroundColor: colors.placeholderBg,
     position: 'relative',
   },
+  lockBadge: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    backgroundColor: 'rgba(0,0,0,0.35)',
+    borderRadius: 12,
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+  },
+  lockIcon: {
+    fontSize: 13,
+  },
   threeMosaic: {
     flex: 1,
     flexDirection: 'row',
@@ -214,7 +249,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255,255,255,0.9)',
   },
   meta: {
-    height: 60,
+    height: 57,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     flexDirection: 'row',
@@ -226,13 +261,13 @@ const styles = StyleSheet.create({
     minWidth: 0,
   },
   name: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '500',
     color: colors.text,
     marginTop: 2,
   },
   count: {
-    fontSize: 12,
+    fontSize: 11,
     color: colors.textSecondary,
     marginTop: 2,
   },

@@ -14,6 +14,8 @@ import {
 import { Image } from 'expo-image'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { PlaceholderImage } from '../../../shared/components/PlaceholderImage'
+import { PinEntryModal } from './PinEntryModal'
+import { useFoldersStore } from '../store'
 import type { Bookmark, Folder, FolderIconId } from '../../../shared/types'
 import { colors, spacing, radius } from '../../../shared/theme'
 
@@ -37,10 +39,13 @@ export function FolderEditModal({
   const insets = useSafeAreaInsets()
   const [name, setName] = useState(folder?.name ?? '')
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const [pinModalMode, setPinModalMode] = useState<'set' | 'unlock' | null>(null)
+  const { setPin, removePin } = useFoldersStore()
 
   const handleOpen = () => {
     setName(folder?.name ?? '')
     setSelectedIds(new Set())
+    setPinModalMode(null)
   }
 
   const handleSave = () => {
@@ -83,6 +88,7 @@ export function FolderEditModal({
   const hasBookmarks = bookmarks && bookmarks.length > 0
 
   return (
+    <>
     <Modal
       visible={visible}
       animationType="slide"
@@ -108,6 +114,17 @@ export function FolderEditModal({
             returnKeyType="done"
             onSubmitEditing={handleSave}
           />
+
+          {folder && (
+            <TouchableOpacity
+              style={styles.lockRow}
+              onPress={() => setPinModalMode(folder.pinCode ? 'unlock' : 'set')}
+            >
+              <Text style={styles.lockRowText}>
+                {folder.pinCode ? '🔒 PINロックを解除' : '🔓 PINロックを設定'}
+              </Text>
+            </TouchableOpacity>
+          )}
 
           {hasBookmarks && onDeleteBookmarks ? (
             <View style={styles.bookmarkSection}>
@@ -150,6 +167,23 @@ export function FolderEditModal({
         </View>
       </KeyboardAvoidingView>
     </Modal>
+
+    {pinModalMode === 'set' && folder && (
+      <PinEntryModal
+        mode="set"
+        onSet={(pin) => { setPin(folder.id, pin); setPinModalMode(null) }}
+        onCancel={() => setPinModalMode(null)}
+      />
+    )}
+    {pinModalMode === 'unlock' && folder?.pinCode && (
+      <PinEntryModal
+        mode="unlock"
+        correctPin={folder.pinCode}
+        onSuccess={() => { removePin(folder.id); setPinModalMode(null) }}
+        onCancel={() => setPinModalMode(null)}
+      />
+    )}
+    </>
   )
 }
 
@@ -318,5 +352,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: colors.background,
+  },
+  lockRow: {
+    paddingVertical: 14,
+    paddingHorizontal: 4,
+    marginBottom: 16,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.separator,
+  },
+  lockRowText: {
+    fontSize: 15,
+    color: colors.text,
   },
 })

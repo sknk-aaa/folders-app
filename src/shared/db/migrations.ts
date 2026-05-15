@@ -4,6 +4,16 @@ import { MOCK_BOOKMARKS, MOCK_FOLDERS } from '../mockVisuals'
 
 const CURRENT_MOCK_SEED_VERSION = '3'
 
+export function migrateSchema(): void {
+  const db = getDb()
+  const hasPinCode = db.getFirstSync<{ count: number }>(
+    "SELECT COUNT(*) as count FROM pragma_table_info('folders') WHERE name='pin_code'",
+  )?.count ?? 0
+  if (!hasPinCode) {
+    db.execSync('ALTER TABLE folders ADD COLUMN pin_code TEXT')
+  }
+}
+
 export function initializeDatabase(): void {
   const db = getDb()
   db.execSync(`
