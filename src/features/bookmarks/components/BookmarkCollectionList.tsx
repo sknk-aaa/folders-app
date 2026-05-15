@@ -175,8 +175,8 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.md,
   },
   toolbarTitle: {
-    fontSize: 17,
-    fontWeight: '700',
+    fontSize: 16,
+    fontWeight: '600',
     color: colors.text,
     flexShrink: 1,
   },

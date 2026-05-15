@@ -284,49 +284,53 @@ function FolderListRow({
 }) {
   const visual = MOCK_BOOKMARKS[folder.sortOrder % MOCK_BOOKMARKS.length]
 
-  const handleMore = () => {
-    Alert.alert(folder.name, undefined, [
-      { text: '編集', onPress: onEdit },
-      {
-        text: '削除',
-        style: 'destructive',
-        onPress: () => {
-          Alert.alert(
-            'フォルダを削除',
-            `「${folder.name}」とその中のブックマークをすべて削除しますか？`,
-            [
-              { text: 'キャンセル', style: 'cancel' },
-              { text: '削除', style: 'destructive', onPress: onDelete },
-            ],
-          )
-        },
-      },
-      { text: 'キャンセル', style: 'cancel' },
-    ])
+  const [sheetVisible, setSheetVisible] = useState(false)
+
+  const handleDeleteConfirm = () => {
+    Alert.alert(
+      'フォルダを削除',
+      `「${folder.name}」とその中のブックマークをすべて削除しますか？`,
+      [
+        { text: 'キャンセル', style: 'cancel' },
+        { text: '削除', style: 'destructive', onPress: onDelete },
+      ],
+    )
   }
 
   return (
-    <Pressable
-      onPress={onPress}
-      onLongPress={drag}
-      delayLongPress={160}
-      style={[styles.folderRow, isActive && styles.folderRowActive]}
-    >
-      <Image
-        source={{ uri: visual.thumbnailPath }}
-        style={styles.folderRowImage}
-        contentFit="cover"
+    <>
+      <Pressable
+        onPress={onPress}
+        onLongPress={drag}
+        delayLongPress={160}
+        style={[styles.folderRow, isActive && styles.folderRowActive]}
+      >
+        <Image
+          source={{ uri: visual.thumbnailPath }}
+          style={styles.folderRowImage}
+          contentFit="cover"
+        />
+        <View style={styles.folderRowText}>
+          <Text style={styles.folderRowName} numberOfLines={1}>
+            {folder.name}
+          </Text>
+          <Text style={styles.folderRowCount}>{count}件</Text>
+        </View>
+        <TouchableOpacity onPress={() => setSheetVisible(true)} hitSlop={8} style={styles.folderRowMore}>
+          <Text style={styles.folderRowDots}>•••</Text>
+        </TouchableOpacity>
+      </Pressable>
+
+      <CustomActionSheet
+        visible={sheetVisible}
+        title={folder.name}
+        options={[
+          { label: '編集', onPress: onEdit },
+          { label: '削除', destructive: true, onPress: handleDeleteConfirm },
+        ]}
+        onCancel={() => setSheetVisible(false)}
       />
-      <View style={styles.folderRowText}>
-        <Text style={styles.folderRowName} numberOfLines={1}>
-          {folder.name}
-        </Text>
-        <Text style={styles.folderRowCount}>{count}件</Text>
-      </View>
-      <TouchableOpacity onPress={handleMore} hitSlop={8} style={styles.folderRowMore}>
-        <Text style={styles.folderRowDots}>•••</Text>
-      </TouchableOpacity>
-    </Pressable>
+    </>
   )
 }
 
@@ -352,8 +356,8 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.md,
   },
   sectionTitle: {
-    fontSize: 17,
-    fontWeight: '700',
+    fontSize: 16,
+    fontWeight: '600',
     color: colors.text,
   },
   sectionAction: {

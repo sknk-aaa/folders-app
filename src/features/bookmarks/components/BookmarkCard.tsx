@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { View, Text, TouchableOpacity, StyleSheet, Alert, Dimensions, Linking } from 'react-native'
 import { Image } from 'expo-image'
+import { CustomActionSheet } from '../../../shared/components/CustomActionSheet'
 import { PlaceholderImage } from '../../../shared/components/PlaceholderImage'
 import { colors, spacing, radius, getFaviconColor, getFaviconLetter, getDomain } from '../../../shared/theme'
 import { openInBrowser } from '../../../shared/utils/url'
@@ -26,29 +27,18 @@ export function BookmarkCard({ bookmark, allFolders, onDelete, onMove, drag, isA
   const { update } = useBookmarksStore()
   const { settings } = useSettingsStore()
   const [editVisible, setEditVisible] = useState(false)
+  const [sheetVisible, setSheetVisible] = useState(false)
+  const [moveSheetVisible, setMoveSheetVisible] = useState(false)
 
   const handlePress = () => {
     const target = openInBrowser(bookmark.url, settings.default_browser)
     Linking.openURL(target)
   }
 
-  const handleMore = () => {
-    Alert.alert(bookmark.name, undefined, [
-      { text: '編集', onPress: () => setEditVisible(true) },
-      ...(allFolders.length > 1
-        ? [{ text: '移動', onPress: () => showMoveSheet(allFolders, onMove) }]
-        : []),
-      {
-        text: '削除',
-        style: 'destructive' as const,
-        onPress: () => {
-          Alert.alert('削除', `「${bookmark.name}」を削除しますか？`, [
-            { text: 'キャンセル', style: 'cancel' },
-            { text: '削除', style: 'destructive', onPress: onDelete },
-          ])
-        },
-      },
+  const handleDeleteConfirm = () => {
+    Alert.alert('削除', `「${bookmark.name}」を削除しますか？`, [
       { text: 'キャンセル', style: 'cancel' },
+      { text: '削除', style: 'destructive', onPress: onDelete },
     ])
   }
 
@@ -80,7 +70,7 @@ export function BookmarkCard({ bookmark, allFolders, onDelete, onMove, drag, isA
               <Text style={styles.domain} numberOfLines={1}>{getDomain(bookmark.url)}</Text>
             </View>
           </View>
-          <TouchableOpacity onPress={handleMore} hitSlop={8} style={styles.moreBtn}>
+          <TouchableOpacity onPress={() => setSheetVisible(true)} hitSlop={8} style={styles.moreBtn}>
             <Text style={styles.moreDots}>•••</Text>
           </TouchableOpacity>
         </View>
@@ -90,6 +80,26 @@ export function BookmarkCard({ bookmark, allFolders, onDelete, onMove, drag, isA
         bookmark={editVisible ? bookmark : null}
         onClose={() => setEditVisible(false)}
         onSave={(name, url) => update(bookmark.id, name, url)}
+      />
+
+      <CustomActionSheet
+        visible={sheetVisible}
+        title={bookmark.name}
+        options={[
+          { label: '編集', onPress: () => setEditVisible(true) },
+          ...(allFolders.length > 1
+            ? [{ label: '移動', onPress: () => setMoveSheetVisible(true) }]
+            : []),
+          { label: '削除', destructive: true, onPress: handleDeleteConfirm },
+        ]}
+        onCancel={() => setSheetVisible(false)}
+      />
+
+      <CustomActionSheet
+        visible={moveSheetVisible}
+        title="移動先フォルダ"
+        options={allFolders.map((f) => ({ label: f.name, onPress: () => onMove(f.id) }))}
+        onCancel={() => setMoveSheetVisible(false)}
       />
     </>
   )

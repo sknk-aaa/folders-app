@@ -1,5 +1,7 @@
+import { useState } from 'react'
 import { View, Text, TouchableOpacity, StyleSheet, Alert, Pressable } from 'react-native'
 import { Image } from 'expo-image'
+import { CustomActionSheet } from '../../../shared/components/CustomActionSheet'
 import type { Folder, Bookmark } from '../../../shared/types'
 import { colors, spacing, radius } from '../../../shared/theme'
 import { FOLDER_PLACEHOLDER } from '../../../shared/mockVisuals'
@@ -32,28 +34,23 @@ export function FolderCard({
     .map((b) => b.thumbnailPath as string)
   const count = realThumbnails.length
 
-  const handleMore = () => {
-    Alert.alert(folder.name, undefined, [
-      { text: '編集', onPress: onEdit },
-      {
-        text: '削除',
-        style: 'destructive',
-        onPress: () => {
-          Alert.alert(
-            'フォルダを削除',
-            `「${folder.name}」とその中のブックマークをすべて削除しますか？`,
-            [
-              { text: 'キャンセル', style: 'cancel' },
-              { text: '削除', style: 'destructive', onPress: onDelete },
-            ],
-          )
-        },
-      },
-      { text: 'キャンセル', style: 'cancel' },
-    ])
+  const [sheetVisible, setSheetVisible] = useState(false)
+
+  const handleMore = () => setSheetVisible(true)
+
+  const handleDeleteConfirm = () => {
+    Alert.alert(
+      'フォルダを削除',
+      `「${folder.name}」とその中のブックマークをすべて削除しますか？`,
+      [
+        { text: 'キャンセル', style: 'cancel' },
+        { text: '削除', style: 'destructive', onPress: onDelete },
+      ],
+    )
   }
 
   return (
+    <>
     <Pressable
       onPress={onPress}
       onLongPress={drag}
@@ -82,6 +79,17 @@ export function FolderCard({
         </TouchableOpacity>
       </View>
     </Pressable>
+
+    <CustomActionSheet
+      visible={sheetVisible}
+      title={folder.name}
+      options={[
+        { label: '編集', onPress: onEdit },
+        { label: '削除', destructive: true, onPress: handleDeleteConfirm },
+      ]}
+      onCancel={() => setSheetVisible(false)}
+    />
+    </>
   )
 }
 
