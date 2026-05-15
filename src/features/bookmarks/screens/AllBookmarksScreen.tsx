@@ -7,7 +7,6 @@ import {
   Text,
 } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
-import { runOnJS } from 'react-native-reanimated'
 import { useNavigation } from '@react-navigation/native'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useBookmarksStore } from '../store'
@@ -39,9 +38,11 @@ export function AllBookmarksScreen() {
 
   const pinchGesture = useMemo(
     () =>
-      Gesture.Pinch().onEnd((e) => {
-        runOnJS(setColumns)(e.scale < 0.85 ? 3 : 2)
-      }),
+      Gesture.Pinch()
+        .onEnd((e) => {
+          setColumns(e.scale < 0.85 ? 3 : 2)
+        })
+        .runOnJS(true),
     [],
   )
 

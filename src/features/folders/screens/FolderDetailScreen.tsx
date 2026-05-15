@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react'
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native'
 import { Image } from 'expo-image'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
-import { runOnJS } from 'react-native-reanimated'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import type {
   NativeStackNavigationProp,
@@ -60,9 +59,11 @@ export function FolderDetailScreen() {
 
   const pinchGesture = useMemo(
     () =>
-      Gesture.Pinch().onEnd((e) => {
-        runOnJS(setColumns)(e.scale < 0.85 ? 3 : 2)
-      }),
+      Gesture.Pinch()
+        .onEnd((e) => {
+          setColumns(e.scale < 0.85 ? 3 : 2)
+        })
+        .runOnJS(true),
     [],
   )
 
@@ -109,11 +110,13 @@ export function FolderDetailScreen() {
             emptyText="このフォルダにはまだブックマークがありません"
             columns={columns}
             headerAccessory={
-              <FolderHeaderSummary
-                folder={folder}
-                thumbnail={mosaicThumbnails[0]}
-                bookmarkCount={bookmarks.length}
-              />
+              isSearching ? undefined : (
+                <FolderHeaderSummary
+                  folder={folder}
+                  thumbnail={mosaicThumbnails[0]}
+                  bookmarkCount={bookmarks.length}
+                />
+              )
             }
           />
         </View>
