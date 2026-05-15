@@ -154,7 +154,6 @@ const styles = StyleSheet.create({
   meta: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    minHeight: 82,
     paddingHorizontal: spacing.sm,
     paddingTop: spacing.sm,
     paddingBottom: spacing.sm,
