@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native'
 import { Image } from 'expo-image'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import { runOnJS } from 'react-native-reanimated'
@@ -41,6 +41,22 @@ export function FolderDetailScreen() {
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
   const [editModalVisible, setEditModalVisible] = useState(false)
   const [columns, setColumns] = useState(2)
+  const [isSearching, setIsSearching] = useState(false)
+  const [query, setQuery] = useState('')
+
+  const filteredBookmarks = useMemo(() => {
+    if (!isSearching || !query.trim()) return bookmarks
+    const q = query.toLowerCase()
+    return bookmarks.filter(
+      (b) => b.name.toLowerCase().includes(q) || b.url.toLowerCase().includes(q),
+    )
+  }, [bookmarks, isSearching, query])
+
+  const handleSearchOpen = () => setIsSearching(true)
+  const handleSearchClose = () => {
+    setIsSearching(false)
+    setQuery('')
+  }
 
   const pinchGesture = useMemo(
     () =>
@@ -66,18 +82,23 @@ export function FolderDetailScreen() {
     <View style={styles.container}>
       <Header
         showBack
-        onBack={() => navigation.goBack()}
-        showSearch
-        onSearch={() => navigation.navigate('Search', { folderId: folder.id })}
-        showMore
+        onBack={isSearching ? handleSearchClose : () => navigation.goBack()}
+        showSearch={!isSearching}
+        onSearch={handleSearchOpen}
+        showMore={!isSearching}
         onMore={() => setEditModalVisible(true)}
+        contentSlot={
+          isSearching ? (
+            <InlineSearchBar query={query} onChangeText={setQuery} onCancel={handleSearchClose} />
+          ) : undefined
+        }
         hideBorder
       />
 
       <GestureDetector gesture={pinchGesture}>
         <View collapsable={false} style={{ flex: 1 }}>
           <BookmarkCollectionList
-            bookmarks={bookmarks}
+            bookmarks={filteredBookmarks}
             allFolders={folders}
             viewMode={viewMode}
             onGridPress={() => setViewMode('grid')}
@@ -106,6 +127,34 @@ export function FolderDetailScreen() {
         bookmarks={bookmarks}
         onDeleteBookmarks={(ids) => ids.forEach((id) => remove(id))}
       />
+    </View>
+  )
+}
+
+function InlineSearchBar({
+  query,
+  onChangeText,
+  onCancel,
+}: {
+  query: string
+  onChangeText: (t: string) => void
+  onCancel: () => void
+}) {
+  return (
+    <View style={styles.searchBar}>
+      <TextInput
+        style={styles.searchInput}
+        value={query}
+        onChangeText={onChangeText}
+        autoFocus
+        placeholder="フォルダ内を検索"
+        placeholderTextColor={colors.textSecondary}
+        returnKeyType="search"
+        clearButtonMode="while-editing"
+      />
+      <TouchableOpacity onPress={onCancel} style={styles.searchCancel}>
+        <Text style={styles.searchCancelText}>キャンセル</Text>
+      </TouchableOpacity>
     </View>
   )
 }
@@ -177,5 +226,26 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: colors.textSecondary,
     marginTop: 5,
+  },
+  searchBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  searchInput: {
+    flex: 1,
+    height: 34,
+    backgroundColor: colors.placeholderBg,
+    borderRadius: 10,
+    paddingHorizontal: spacing.sm,
+    fontSize: 15,
+    color: colors.text,
+  },
+  searchCancel: {
+    flexShrink: 0,
+  },
+  searchCancelText: {
+    fontSize: 15,
+    color: colors.text,
   },
 })
