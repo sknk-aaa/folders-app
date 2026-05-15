@@ -3,7 +3,6 @@ import { View, Text, TouchableOpacity, Switch, StyleSheet, ScrollView, Alert, Li
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { DrawerActions, useNavigation } from '@react-navigation/native'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import * as StoreReview from 'expo-store-review'
 import type { RootStackParamList } from '../types'
 import { useSettingsStore } from '../../features/settings/store'
 import { ProUpgradeModal } from '../../features/pro/components/ProUpgradeModal'
@@ -17,13 +16,11 @@ export function DrawerContent() {
 
   const close = () => navigation.dispatch(DrawerActions.closeDrawer())
 
-  const handleReview = async () => {
+  const handleReview = () => {
     close()
-    if (await StoreReview.isAvailableAsync()) {
-      await StoreReview.requestReview()
-    } else {
-      Alert.alert('App Storeで評価', 'App Storeのページからレビューをお願いします。')
-    }
+    // TODO: App Store公開後にIDをURLに追加する
+    // void Linking.openURL('https://apps.apple.com/app/idXXXXXXXXX?action=write-review')
+    Alert.alert('準備中', 'App Store公開後にレビューをお願いします！')
   }
 
   const handleFaq = () => {
