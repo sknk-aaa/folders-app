@@ -6,6 +6,7 @@
     "orientation": "portrait",
     "scheme": "foldersapp",
     "userInterfaceStyle": "light",
+    "icon": "./assets/icon.png",
     "ios": {
       "bundleIdentifier": "com.sknk.foldersapp",
       "supportsTablet": false,
