@@ -1,22 +1,16 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import {
-  View,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  Text,
-} from 'react-native'
+import { useMemo, useState } from 'react'
+import { View, StyleSheet } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import { useNavigation } from '@react-navigation/native'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useBookmarksStore } from '../store'
 import { useFoldersStore } from '../../folders/store'
 import { Header } from '../../../shared/components/Header'
+import { InlineSearchBar } from '../../../shared/components/InlineSearchBar'
 import { BookmarkCollectionList } from '../components/BookmarkCollectionList'
-import { colors, spacing } from '../../../shared/theme'
+import { colors } from '../../../shared/theme'
 import type { RootStackParamList, ViewMode } from '../../../shared/types'
 
-const PADDING = spacing.lg
 
 type Nav = NativeStackNavigationProp<RootStackParamList>
 
@@ -28,13 +22,6 @@ export function AllBookmarksScreen() {
   const [columns, setColumns] = useState(2)
   const [searchVisible, setSearchVisible] = useState(false)
   const [query, setQuery] = useState('')
-  const searchInputRef = useRef<TextInput>(null)
-
-  useEffect(() => {
-    if (searchVisible) {
-      requestAnimationFrame(() => searchInputRef.current?.focus())
-    }
-  }, [searchVisible])
 
   const pinchGesture = useMemo(
     () =>
@@ -63,11 +50,7 @@ export function AllBookmarksScreen() {
     }
   }
 
-  const openSearch = () => {
-    setSearchVisible(true)
-    requestAnimationFrame(() => searchInputRef.current?.focus())
-  }
-
+  const openSearch = () => setSearchVisible(true)
   const closeSearch = () => {
     setQuery('')
     setSearchVisible(false)
@@ -76,34 +59,24 @@ export function AllBookmarksScreen() {
   return (
     <View style={styles.container}>
       <Header
-        title="ブックマーク"
+        title={searchVisible ? undefined : 'ブックマーク'}
         showBack
-        onBack={handleBack}
-        showSearch
+        onBack={searchVisible ? closeSearch : handleBack}
+        showSearch={!searchVisible}
         onSearch={openSearch}
-        showAdd
+        showAdd={!searchVisible}
         onAdd={() => navigation.navigate('AddBookmark', {})}
+        contentSlot={
+          searchVisible ? (
+            <InlineSearchBar
+              query={query}
+              onChangeText={setQuery}
+              onCancel={closeSearch}
+              placeholder="ブックマークを検索"
+            />
+          ) : undefined
+        }
       />
-
-      {searchVisible && (
-        <View style={styles.searchBar}>
-          <TextInput
-            ref={searchInputRef}
-            style={styles.searchInput}
-            value={query}
-            onChangeText={setQuery}
-            placeholder="ブックマークを検索"
-            placeholderTextColor={colors.textTertiary}
-            autoCapitalize="none"
-            autoCorrect={false}
-            clearButtonMode="while-editing"
-            returnKeyType="search"
-          />
-          <TouchableOpacity onPress={closeSearch} style={styles.cancelBtn}>
-            <Text style={styles.cancelText}>キャンセル</Text>
-          </TouchableOpacity>
-        </View>
-      )}
 
       <GestureDetector gesture={pinchGesture}>
         <View collapsable={false} style={{ flex: 1 }}>
@@ -127,29 +100,4 @@ export function AllBookmarksScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
-  searchBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: PADDING,
-    paddingVertical: spacing.sm,
-    gap: spacing.sm,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.separator,
-  },
-  searchInput: {
-    flex: 1,
-    height: 38,
-    backgroundColor: colors.placeholderBg,
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    fontSize: 15,
-    color: colors.text,
-  },
-  cancelBtn: {
-    paddingVertical: 8,
-  },
-  cancelText: {
-    fontSize: 15,
-    color: colors.accent,
-  },
 })

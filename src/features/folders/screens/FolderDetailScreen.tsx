@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet } from 'react-native'
 import { Image } from 'expo-image'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import { useNavigation, useRoute } from '@react-navigation/native'
@@ -12,6 +12,7 @@ import { useBookmarksStore } from '../../bookmarks/store'
 import { BookmarkCollectionList } from '../../bookmarks/components/BookmarkCollectionList'
 import { FolderEditModal } from '../components/FolderEditModal'
 import { Header } from '../../../shared/components/Header'
+import { InlineSearchBar } from '../../../shared/components/InlineSearchBar'
 import { FOLDER_PLACEHOLDER } from '../../../shared/mockVisuals'
 import { colors, spacing, radius } from '../../../shared/theme'
 import type {
@@ -134,33 +135,6 @@ export function FolderDetailScreen() {
   )
 }
 
-function InlineSearchBar({
-  query,
-  onChangeText,
-  onCancel,
-}: {
-  query: string
-  onChangeText: (t: string) => void
-  onCancel: () => void
-}) {
-  return (
-    <View style={styles.searchBar}>
-      <TextInput
-        style={styles.searchInput}
-        value={query}
-        onChangeText={onChangeText}
-        autoFocus
-        placeholder="フォルダ内を検索"
-        placeholderTextColor={colors.textSecondary}
-        returnKeyType="search"
-        clearButtonMode="while-editing"
-      />
-      <TouchableOpacity onPress={onCancel} style={styles.searchCancel}>
-        <Text style={styles.searchCancelText}>キャンセル</Text>
-      </TouchableOpacity>
-    </View>
-  )
-}
 
 function FolderHeaderSummary({
   folder,
@@ -229,26 +203,5 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: colors.textSecondary,
     marginTop: 5,
-  },
-  searchBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  searchInput: {
-    flex: 1,
-    height: 34,
-    backgroundColor: colors.placeholderBg,
-    borderRadius: 10,
-    paddingHorizontal: spacing.sm,
-    fontSize: 15,
-    color: colors.text,
-  },
-  searchCancel: {
-    flexShrink: 0,
-  },
-  searchCancelText: {
-    fontSize: 15,
-    color: colors.text,
   },
 })
