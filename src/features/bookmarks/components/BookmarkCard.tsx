@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: radius.md,
     overflow: 'hidden',
-    borderWidth: StyleSheet.hairlineWidth,
+    borderWidth: 1,
     borderColor: colors.separator,
     shadowColor: '#000',
     shadowOpacity: 0.08,
