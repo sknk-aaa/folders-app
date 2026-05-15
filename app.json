@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Bookrest",
-    "slug": "bookrest",
+    "slug": "folders-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "scheme": "foldersapp",
@@ -11,7 +11,9 @@
       "bundleIdentifier": "com.sknk.foldersapp",
       "supportsTablet": false,
       "entitlements": {
-        "com.apple.security.application-groups": ["group.com.sknk.foldersapp"]
+        "com.apple.security.application-groups": [
+          "group.com.sknk.foldersapp"
+        ]
       }
     },
     "android": {
@@ -24,7 +26,10 @@
         "expo-share-extension",
         {
           "activationRules": [
-            { "type": "url", "max": 1 }
+            {
+              "type": "url",
+              "max": 1
+            }
           ]
         }
       ]
