@@ -3,7 +3,7 @@ import Purchases, { LOG_LEVEL } from 'react-native-purchases'
 import { useSettingsStore } from '../settings/store'
 
 const REVENUECAT_API_KEY = 'test_enrVyYluGhroDWIinHHJdfVtFtc'
-const ENTITLEMENT_ID = 'pro'
+const ENTITLEMENT_ID = 'Bookrest Pro'
 
 type ProStore = {
   isPro: boolean
