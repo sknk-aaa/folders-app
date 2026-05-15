@@ -4,68 +4,316 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>よくある質問 — Bookrest</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,500;1,300&family=DM+Sans:opsz,wght@9..40,300;9..40,400&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --bg: #FAFAF7;
+      --text: #1C1C1E;
+      --sub: #9A9590;
+      --line: #E8E3DA;
+      --warm: #B8A48A;
+    }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
-      background: #fff;
-      color: #1c1c1e;
-      line-height: 1.7;
-      padding: 48px 24px;
-      max-width: 680px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+      padding: 0 24px;
+    }
+
+    /* ── Header ── */
+    .site-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 28px 0 0;
+      max-width: 640px;
       margin: 0 auto;
     }
-    h1 { font-size: 28px; font-weight: 700; margin-bottom: 40px; }
-    .item { margin-bottom: 32px; }
-    .q {
-      font-size: 16px;
-      font-weight: 600;
-      color: #1c1c1e;
-      margin-bottom: 8px;
+
+    .back-link {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--sub);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      transition: color 0.2s;
     }
-    .a { font-size: 15px; color: #3a3a3c; }
-    hr { border: none; border-top: 1px solid #e5e5ea; margin: 40px 0; }
-    a { color: #1c1c1e; }
-    .back { font-size: 14px; color: #8e8e93; margin-bottom: 32px; display: block; }
+    .back-link:hover { color: var(--text); }
+
+    .site-name {
+      font-family: 'Cormorant', serif;
+      font-size: 17px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: var(--text);
+    }
+
+    /* ── Hero ── */
+    .hero {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 64px 0 48px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .hero-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--warm);
+      margin-bottom: 16px;
+    }
+
+    .hero-title {
+      font-family: 'Cormorant', serif;
+      font-size: clamp(42px, 10vw, 58px);
+      font-weight: 300;
+      line-height: 1.1;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--warm);
+    }
+
+    /* ── FAQ List ── */
+    .faq-list {
+      max-width: 640px;
+      margin: 0 auto;
+      padding-bottom: 80px;
+    }
+
+    details {
+      border-bottom: 1px solid var(--line);
+      opacity: 0;
+      transform: translateY(12px);
+      animation: fadeUp 0.5s ease forwards;
+    }
+
+    details:nth-child(1) { animation-delay: 0.05s; }
+    details:nth-child(2) { animation-delay: 0.10s; }
+    details:nth-child(3) { animation-delay: 0.15s; }
+    details:nth-child(4) { animation-delay: 0.20s; }
+    details:nth-child(5) { animation-delay: 0.25s; }
+    details:nth-child(6) { animation-delay: 0.30s; }
+
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    summary {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      padding: 28px 0;
+      cursor: pointer;
+      list-style: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    summary::-webkit-details-marker { display: none; }
+
+    .q-num {
+      font-family: 'Cormorant', serif;
+      font-size: 13px;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--warm);
+      min-width: 20px;
+      padding-top: 3px;
+      letter-spacing: 0.05em;
+    }
+
+    .q-text {
+      flex: 1;
+      font-family: 'Cormorant', serif;
+      font-size: 20px;
+      font-weight: 500;
+      line-height: 1.4;
+      color: var(--text);
+      letter-spacing: 0.01em;
+    }
+
+    .q-toggle {
+      font-size: 20px;
+      color: var(--sub);
+      font-weight: 300;
+      line-height: 1;
+      padding-top: 4px;
+      transition: transform 0.25s ease, color 0.2s;
+      flex-shrink: 0;
+    }
+
+    details[open] .q-toggle {
+      transform: rotate(45deg);
+      color: var(--text);
+    }
+
+    .answer {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.3s ease;
+    }
+
+    details[open] .answer {
+      grid-template-rows: 1fr;
+    }
+
+    .answer-inner {
+      overflow: hidden;
+    }
+
+    .answer-body {
+      padding: 0 0 28px 40px;
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.75;
+      color: #4A4A4C;
+    }
+
+    .answer-body a {
+      color: var(--text);
+      border-bottom: 1px solid var(--line);
+      text-decoration: none;
+      transition: border-color 0.2s;
+    }
+    .answer-body a:hover { border-color: var(--text); }
+
+    code {
+      font-family: 'SF Mono', 'Menlo', monospace;
+      font-size: 12px;
+      background: var(--line);
+      padding: 2px 6px;
+      border-radius: 4px;
+      word-break: break-all;
+    }
+
+    /* ── Footer ── */
+    footer {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 32px 0 48px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-copy {
+      font-size: 12px;
+      color: var(--sub);
+      letter-spacing: 0.04em;
+    }
+
+    .footer-link {
+      font-size: 12px;
+      color: var(--sub);
+      text-decoration: none;
+      letter-spacing: 0.04em;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .footer-link:hover { color: var(--text); border-color: var(--line); }
   </style>
 </head>
 <body>
 
-  <a href="/" class="back">← Bookrest</a>
-  <h1>よくある質問</h1>
+  <header class="site-header">
+    <a href="/" class="back-link">← Bookrest</a>
+    <span class="site-name">Bookrest</span>
+  </header>
 
-  <div class="item">
-    <p class="q">ブックマークのデータはどこに保存されますか？</p>
-    <p class="a">すべてのデータはお使いのデバイス内にのみ保存されます。外部サーバーへの送信は行いません。</p>
+  <section class="hero">
+    <p class="hero-label">Help &amp; Support</p>
+    <h1 class="hero-title">よくある<br><em>ご質問</em></h1>
+  </section>
+
+  <div class="faq-list">
+
+    <details>
+      <summary>
+        <span class="q-num">01</span>
+        <span class="q-text">ブックマークのデータはどこに保存されますか？</span>
+        <span class="q-toggle">+</span>
+      </summary>
+      <div class="answer"><div class="answer-inner">
+        <p class="answer-body">すべてのブックマークデータはお使いのデバイス内にのみ保存されます。外部サーバーへの送信や、クラウドへのアップロードは一切行いません。</p>
+      </div></div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="q-num">02</span>
+        <span class="q-text">アプリを削除するとデータはどうなりますか？</span>
+        <span class="q-toggle">+</span>
+      </summary>
+      <div class="answer"><div class="answer-inner">
+        <p class="answer-body">アプリをアンインストールすると、保存されたすべてのブックマークデータが削除されます。大切なブックマークは事前にご確認ください。</p>
+      </div></div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="q-num">03</span>
+        <span class="q-text">Bookrest Pro を購入すると何ができますか？</span>
+        <span class="q-toggle">+</span>
+      </summary>
+      <div class="answer"><div class="answer-inner">
+        <p class="answer-body">ブックマークを100件以上保存できるようになります。またフォルダにPINロックを設定して保護できます。<br><br>一度購入すれば追加費用なしでずっとお使いいただける、買い切りプランです。</p>
+      </div></div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="q-num">04</span>
+        <span class="q-text">別のデバイスで Pro の購入を復元できますか？</span>
+        <span class="q-toggle">+</span>
+      </summary>
+      <div class="answer"><div class="answer-inner">
+        <p class="answer-body">はい。メニューの「プレミアム版を購入」から「購入を復元」をタップすると、同じ Apple ID で購入した Pro を復元できます。</p>
+      </div></div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="q-num">05</span>
+        <span class="q-text">URLスキームで外部からブックマークを追加できますか？</span>
+        <span class="q-toggle">+</span>
+      </summary>
+      <div class="answer"><div class="answer-inner">
+        <p class="answer-body"><code>foldersapp://add?url=https://example.com</code> の形式で呼び出すと、ブックマーク追加画面が開きます。Safari の共有シートからも追加できます。</p>
+      </div></div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="q-num">06</span>
+        <span class="q-text">不具合や要望はどこに送ればいいですか？</span>
+        <span class="q-toggle">+</span>
+      </summary>
+      <div class="answer"><div class="answer-inner">
+        <p class="answer-body"><a href="mailto:625.somq2525@gmail.com">625.somq2525@gmail.com</a> までご連絡ください。いただいたフィードバックはアプリの改善に活かします。</p>
+      </div></div>
+    </details>
+
   </div>
 
-  <div class="item">
-    <p class="q">アプリを削除するとデータはどうなりますか？</p>
-    <p class="a">アプリをアンインストールするとすべてのブックマークデータが削除されます。事前にエクスポートなどのバックアップはご検討ください。</p>
-  </div>
-
-  <div class="item">
-    <p class="q">Bookrest Pro を購入すると何ができますか？</p>
-    <p class="a">ブックマークを100件以上保存できるようになります。またフォルダにPINロックを設定して保護できます。一度購入すれば、追加費用なしでずっとお使いいただけます。</p>
-  </div>
-
-  <div class="item">
-    <p class="q">別のデバイスで Pro の購入を復元できますか？</p>
-    <p class="a">はい。設定画面の「プレミアム版を購入」から「購入を復元」を押すと、同じ Apple ID で購入した Pro を復元できます。</p>
-  </div>
-
-  <div class="item">
-    <p class="q">URLスキームで外部からブックマークを追加できますか？</p>
-    <p class="a">はい。<code>foldersapp://add?url=https://example.com</code> の形式で呼び出すと、ブックマーク追加画面が開きます。Safari の共有シートからも追加できます。</p>
-  </div>
-
-  <div class="item">
-    <p class="q">不具合や要望はどこに送ればいいですか？</p>
-    <p class="a"><a href="mailto:625.somq2525@gmail.com">625.somq2525@gmail.com</a> までご連絡ください。</p>
-  </div>
-
-  <hr>
-  <p style="font-size: 13px; color: #8e8e93;">© 2026 s-knk. All rights reserved.</p>
+  <footer>
+    <span class="footer-copy">© 2026 s-knk</span>
+    <a href="/" class="footer-link">プライバシーポリシー</a>
+  </footer>
 
 </body>
 </html>
