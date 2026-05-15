@@ -4,6 +4,8 @@ import { useSettingsStore } from '../settings/store'
 
 const REVENUECAT_API_KEY = 'appl_uesZfCuFvseRYpwJqpMMcFrDRfc'
 const ENTITLEMENT_ID = 'Bookrest Pro'
+// 開発中のUIテスト用。本番リリース前に必ず false に戻すこと
+const DEV_FORCE_PRO = __DEV__ && false
 
 type ProStore = {
   isPro: boolean
@@ -19,7 +21,7 @@ function syncToPremium(isPro: boolean) {
 }
 
 export const useProStore = create<ProStore>((setState) => ({
-  isPro: false,
+  isPro: DEV_FORCE_PRO,
   isLoading: false,
 
   configure: () => {
