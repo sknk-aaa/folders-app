@@ -25,7 +25,9 @@
 
     .back { font-size: 15px; color: #8e8e93; text-decoration: none; }
     .back:hover { color: #1c1c1e; }
-    .logo { font-size: 15px; font-weight: 600; color: #1c1c1e; }
+    .logo-img { height: 22px; display: block; }
+    .app-icon-wrap { padding: 32px 0 0; }
+    .app-icon { width: 80px; height: 80px; border-radius: 18px; display: block; }
 
     h1 {
       font-size: 32px;
@@ -103,8 +105,12 @@
 
   <header>
     <a href="/" class="back">← 戻る</a>
-    <span class="logo">Bookrest</span>
+    <a href="/"><img src="logo.png" alt="Bookrest" class="logo-img"></a>
   </header>
+
+  <div class="app-icon-wrap">
+    <img src="icon.png" alt="Bookrest" class="app-icon">
+  </div>
 
   <h1>よくある質問</h1>
 
