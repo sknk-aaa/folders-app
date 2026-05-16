@@ -38,9 +38,9 @@ export const MOCK_BOOKMARKS: MockBookmark[] = [
   },
   {
     folderName: '記事',
-    name: '心地よい部屋づくりのコツ',
-    url: 'https://room-design.jp',
-    thumbnailPath: 'https://images.unsplash.com/photo-1525540581-23f1afea1d9c?w=720&q=80',
+    name: '今日のニュース総まとめ',
+    url: 'https://news-digest.jp',
+    thumbnailPath: 'https://images.unsplash.com/photo-1532012197267-da84d127e765?w=720&q=80',
   },
 
   // 音楽 (ヘッドホン・ライブ・レコード)
@@ -63,7 +63,13 @@ export const MOCK_BOOKMARKS: MockBookmark[] = [
     thumbnailPath: 'https://images.unsplash.com/photo-1483412033650-1015ddeb83d1?w=720&q=80',
   },
 
-  // 仕事 (ラップトップ・会議・デスク)
+  // 仕事 (デスク・ラップトップ・会議)
+  {
+    folderName: '仕事',
+    name: '集中力を高めるデスク環境',
+    url: 'https://focus-work.jp',
+    thumbnailPath: 'https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=720&q=80',
+  },
   {
     folderName: '仕事',
     name: 'リモートワーカー必携アイテム',
@@ -76,19 +82,13 @@ export const MOCK_BOOKMARKS: MockBookmark[] = [
     url: 'https://biz-meeting.com',
     thumbnailPath: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=720&q=80',
   },
-  {
-    folderName: '仕事',
-    name: '集中力を高めるデスク環境',
-    url: 'https://focus-work.jp',
-    thumbnailPath: 'https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=720&q=80',
-  },
 
-  // 買い物 (バスケット・ニット・キャンドル)
+  // 買い物 (ショッピングバッグ・ニット・キャンドル)
   {
     folderName: '買い物',
-    name: '北欧雑貨セレクトショップ',
-    url: 'https://hokuoh-zakka.com',
-    thumbnailPath: 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=720&q=80',
+    name: '週末のお買い物リスト',
+    url: 'https://weekend-shop.jp',
+    thumbnailPath: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=720&q=80',
   },
   {
     folderName: '買い物',
