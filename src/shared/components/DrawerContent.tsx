@@ -81,7 +81,7 @@ export function DrawerContent() {
               <Text style={styles.label}>サムネ撮影</Text>
               <Text style={styles.description}>
                 {settings.capture_thumbnail
-                  ? 'サイトを開いて好きなタイミングでサムネを撮影します'
+                  ? 'ブックマーク追加時にサイトを開いて、保存したい画面をサムネにします'
                   : 'サイトの画像を自動で取得してサムネにします'}
               </Text>
             </View>
