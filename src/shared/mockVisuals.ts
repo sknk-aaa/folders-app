@@ -23,44 +23,44 @@ export type MockBookmark = {
 // 各フォルダに3件ずつ、合計18件のテーマ別ブックマーク
 // 各フォルダの先頭3件がフォルダカードのモザイクに使われる
 export const MOCK_BOOKMARKS: MockBookmark[] = [
-  // 記事 (コーヒー・本・部屋の暖かい雰囲気)
+  // 記事 (ライフスタイル・雑誌・カフェ)
   {
     folderName: '記事',
-    name: '暮らしを整える朝のルーティン',
-    url: 'https://kurashi-style.jp',
-    thumbnailPath: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=720&q=80',
+    name: '週末に楽しむブックカフェ巡り',
+    url: 'https://bookcafe-tokyo.jp',
+    thumbnailPath: 'https://images.unsplash.com/photo-1457369804613-52c61a9bcefc?w=720&q=80',
   },
   {
     folderName: '記事',
-    name: '心に響く名エッセイ10選',
-    url: 'https://essay-mag.com',
-    thumbnailPath: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=720&q=80',
+    name: 'デザイナーが愛読する雑誌5選',
+    url: 'https://magazine-guide.com',
+    thumbnailPath: 'https://images.unsplash.com/photo-1576502200916-3808e07386a5?w=720&q=80',
   },
   {
     folderName: '記事',
     name: '今日のニュース総まとめ',
     url: 'https://news-digest.jp',
-    thumbnailPath: 'https://images.unsplash.com/photo-1532012197267-da84d127e765?w=720&q=80',
+    thumbnailPath: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=720&q=80',
   },
 
-  // 音楽 (ヘッドホン・ライブ・レコード)
+  // 音楽 (楽器・スタジオ・ライブ)
   {
     folderName: '音楽',
-    name: '高音質ヘッドホンおすすめ7選',
-    url: 'https://audio-review.jp',
-    thumbnailPath: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=720&q=80',
+    name: 'アナログレコードの世界',
+    url: 'https://vinyl-mag.com',
+    thumbnailPath: 'https://images.unsplash.com/photo-1471478331149-c72f17e33c73?w=720&q=80',
   },
   {
     folderName: '音楽',
-    name: '注目の音楽フェス2024',
-    url: 'https://music-festival.jp',
-    thumbnailPath: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=720&q=80',
+    name: 'ギタリストおすすめの一本',
+    url: 'https://guitar-life.jp',
+    thumbnailPath: 'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=720&q=80',
   },
   {
     folderName: '音楽',
-    name: '名盤アナログレコードガイド',
-    url: 'https://vinyl-shop.com',
-    thumbnailPath: 'https://images.unsplash.com/photo-1483412033650-1015ddeb83d1?w=720&q=80',
+    name: '深夜のステージ特集',
+    url: 'https://stage-night.jp',
+    thumbnailPath: 'https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=720&q=80',
   },
 
   // 仕事 (デスク・ラップトップ・会議)
@@ -83,24 +83,24 @@ export const MOCK_BOOKMARKS: MockBookmark[] = [
     thumbnailPath: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=720&q=80',
   },
 
-  // 買い物 (ショッピングバッグ・ニット・キャンドル)
+  // 買い物 (グルメ・スイーツ・マーケット)
   {
     folderName: '買い物',
-    name: '週末のお買い物リスト',
-    url: 'https://weekend-shop.jp',
-    thumbnailPath: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=720&q=80',
+    name: '話題のスイーツショップ',
+    url: 'https://sweets-shop.jp',
+    thumbnailPath: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=720&q=80',
   },
   {
     folderName: '買い物',
-    name: '上質ニットの選び方',
-    url: 'https://knit-style.jp',
-    thumbnailPath: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=720&q=80',
+    name: '産地直送のフレッシュマーケット',
+    url: 'https://fresh-market.jp',
+    thumbnailPath: 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=720&q=80',
   },
   {
     folderName: '買い物',
-    name: 'アロマキャンドルおすすめ',
-    url: 'https://aroma-life.com',
-    thumbnailPath: 'https://images.unsplash.com/photo-1602874801007-aa0a0a8c5cae?w=720&q=80',
+    name: '北欧雑貨セレクトショップ',
+    url: 'https://nordic-zakka.com',
+    thumbnailPath: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=720&q=80',
   },
 
   // 旅行 (ビーチ・街・空)
