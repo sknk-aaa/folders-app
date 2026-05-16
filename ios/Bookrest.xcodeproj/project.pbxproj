@@ -11,17 +11,25 @@
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
+		5E2D3DA4D45B4210AEBC015A /* BookrestShareExtension.appex in Copy Files */ = {isa = PBXBuildFile; fileRef = E90DE53899EB44B48AD99341 /* BookrestShareExtension.appex */; };
+		022A173191A041FEB1955472 /* ShareExtensionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75984E50A6CD414FB41EAEB3 /* ShareExtensionViewController.swift */; };
+		46DA97D534C2440B899DF92D /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = AB61CC43CB7D441B9F8CBE8B /* Info.plist */; };
+		793CCDE0A2104F31B9F0EBFA /* BookrestShareExtension.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 4C38B30963DF47A7A12C7E88 /* BookrestShareExtension.entitlements */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		13B07F961A680F5B00A75B9A /* foldersapp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = foldersapp.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = foldersapp/Images.xcassets; sourceTree = "<group>"; };
-		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = foldersapp/Info.plist; sourceTree = "<group>"; };
-		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = foldersapp/SplashScreen.storyboard; sourceTree = "<group>"; };
+		13B07F961A680F5B00A75B9A /* Bookrest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Bookrest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Bookrest/Images.xcassets; sourceTree = "<group>"; };
+		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Bookrest/Info.plist; sourceTree = "<group>"; };
+		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = Bookrest/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = foldersapp/AppDelegate.swift; sourceTree = "<group>"; };
-		F11748442D0722820044C1D9 /* foldersapp-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "foldersapp-Bridging-Header.h"; path = "foldersapp/foldersapp-Bridging-Header.h"; sourceTree = "<group>"; };
+		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Bookrest/AppDelegate.swift; sourceTree = "<group>"; };
+		F11748442D0722820044C1D9 /* Bookrest-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Bookrest-Bridging-Header.h"; path = "Bookrest/Bookrest-Bridging-Header.h"; sourceTree = "<group>"; };
+		E90DE53899EB44B48AD99341 /* BookrestShareExtension.appex */ = {isa = PBXFileReference; name = "BookrestShareExtension.appex"; path = "BookrestShareExtension.appex"; sourceTree = BUILT_PRODUCTS_DIR; fileEncoding = undefined; lastKnownFileType = undefined; explicitFileType = wrapper.app-extension; includeInIndex = 0; };
+		75984E50A6CD414FB41EAEB3 /* ShareExtensionViewController.swift */ = {isa = PBXFileReference; name = "ShareExtensionViewController.swift"; path = "ShareExtensionViewController.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
+		AB61CC43CB7D441B9F8CBE8B /* Info.plist */ = {isa = PBXFileReference; name = "Info.plist"; path = "Info.plist"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = text.plist.xml; explicitFileType = undefined; includeInIndex = 0; };
+		4C38B30963DF47A7A12C7E88 /* BookrestShareExtension.entitlements */ = {isa = PBXFileReference; name = "BookrestShareExtension.entitlements"; path = "BookrestShareExtension.entitlements"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -32,20 +40,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		0498527E1557439F95F2E52D /* Embed Foundation Extensions */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		13B07FAE1A68108700A75B9A /* foldersapp */ = {
+		13B07FAE1A68108700A75B9A /* Bookrest */ = {
 			isa = PBXGroup;
 			children = (
 				F11748412D0307B40044C1D9 /* AppDelegate.swift */,
-				F11748442D0722820044C1D9 /* foldersapp-Bridging-Header.h */,
+				F11748442D0722820044C1D9 /* Bookrest-Bridging-Header.h */,
 				BB2F792B24A3F905000567C9 /* Supporting */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
 			);
-			name = foldersapp;
+			name = Bookrest;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
@@ -66,10 +81,11 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				13B07FAE1A68108700A75B9A /* foldersapp */,
+				13B07FAE1A68108700A75B9A /* Bookrest */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
+				6B3ACED848F1418CA9DD1793 /* BookrestShareExtension */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -79,7 +95,8 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* foldersapp.app */,
+				13B07F961A680F5B00A75B9A /* Bookrest.app */,
+				E90DE53899EB44B48AD99341 /* BookrestShareExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -90,15 +107,26 @@
 				BB2F792C24A3F905000567C9 /* Expo.plist */,
 			);
 			name = Supporting;
-			path = foldersapp/Supporting;
+			path = Bookrest/Supporting;
+			sourceTree = "<group>";
+		};
+		6B3ACED848F1418CA9DD1793 /* BookrestShareExtension */ = {
+			isa = PBXGroup;
+			children = (
+				75984E50A6CD414FB41EAEB3 /* ShareExtensionViewController.swift */,
+				AB61CC43CB7D441B9F8CBE8B /* Info.plist */,
+				4C38B30963DF47A7A12C7E88 /* BookrestShareExtension.entitlements */,
+			);
+			name = BookrestShareExtension;
+			path = BookrestShareExtension;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		13B07F861A680F5B00A75B9A /* foldersapp */ = {
+		13B07F861A680F5B00A75B9A /* Bookrest */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "foldersapp" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Bookrest" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
@@ -106,15 +134,37 @@
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
+				7664E335EE5244D79A95B8C1 /* Embed Foundation Extensions */,
+				306E18932E2D478482C599AE /* Copy Files */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E6D03CA10CC34993BE256CA0 /* PBXTargetDependency */,
+			);
+			name = Bookrest;
+			productName = Bookrest;
+			productReference = 13B07F961A680F5B00A75B9A /* Bookrest.app */;
+			productType = "com.apple.product-type.application";
+		};
+		56121B690FEA492ABF10CE22 /* BookrestShareExtension */ = {
+			isa = PBXNativeTarget;
+			name = BookrestShareExtension;
+			productName = BookrestShareExtension;
+			productReference = E90DE53899EB44B48AD99341;
+			productType = "com.apple.product-type.app-extension";
+			buildConfigurationList = 3F2B7BB985724ADFBED153A4;
+			buildPhases = (
+				BC6798AAC1924B5CBFB8ADC7 /* Start Packager */,
+				F604F93F5E4142C1972F1121 /* Embed Foundation Extensions */,
+				0498527E1557439F95F2E52D /* Embed Foundation Extensions */,
+				A21E9355BE944619BA132CDB /* Embed Foundation Extensions */,
+				43238A12A8A4439AB4BA957C /* Bundle React Native code and images */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = foldersapp;
-			productName = foldersapp;
-			productReference = 13B07F961A680F5B00A75B9A /* foldersapp.app */;
-			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
@@ -127,9 +177,12 @@
 					13B07F861A680F5B00A75B9A = {
 						LastSwiftMigration = 1250;
 					};
+					56121B690FEA492ABF10CE22 = {
+						LastSwiftMigration = 1250;
+					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "foldersapp" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Bookrest" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -142,7 +195,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* foldersapp */,
+				13B07F861A680F5B00A75B9A /* Bookrest */,
+				56121B690FEA492ABF10CE22 /* BookrestShareExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -155,6 +209,13 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A21E9355BE944619BA132CDB /* Embed Foundation Extensions */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -193,7 +254,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-foldersapp-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-Bookrest-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -206,7 +267,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-foldersapp/Pods-foldersapp-resources.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-Bookrest/Pods-Bookrest-resources.sh",
 				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/EXConstants.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/EXUpdates/EXUpdates.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/RCTI18nStrings.bundle",
@@ -219,8 +280,78 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-foldersapp/Pods-foldersapp-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Bookrest/Pods-Bookrest-resources.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		BC6798AAC1924B5CBFB8ADC7 /* Start Packager */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			name = "Start Packager";
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			shellPath = /bin/sh;
+			shellScript = "export RCT_METRO_PORT=\"${RCT_METRO_PORT:=8081}\"
+echo \"export RCT_METRO_PORT=${RCT_METRO_PORT}\" > \"${SRCROOT}/../node_modules/react-native/scripts/.packager.env\"
+if [ -z \"${RCT_NO_LAUNCH_PACKAGER+xxx}\" ] ; then
+  if nc -w 5 -z localhost ${RCT_METRO_PORT} ; then
+    if ! curl -s \"http://localhost:${RCT_METRO_PORT}/status\" | grep -q \"packager-status:running\" ; then
+      echo \"Port ${RCT_METRO_PORT} already in use, packager is either not running or not running correctly\"
+      exit 2
+    fi
+  else
+    open \"$SRCROOT/../node_modules/react-native/scripts/launchPackager.command\" || echo \"Can't start packager automatically\"
+  fi
+fi
+";
+		};
+		43238A12A8A4439AB4BA957C /* Bundle React Native code and images */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			name = "Bundle React Native code and images";
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			shellPath = /bin/sh;
+			shellScript = "set -e
+  NODE_BINARY=${NODE_BINARY:-node}
+  
+  # Source environment files
+  if [[ -f \"$PODS_ROOT/../.xcode.env\" ]]; then
+    source \"$PODS_ROOT/../.xcode.env\"
+  fi
+  if [[ -f \"$PODS_ROOT/../.xcode.env.local\" ]]; then
+    source \"$PODS_ROOT/../.xcode.env.local\"
+  fi
+  
+  # Set project root
+  export PROJECT_ROOT=\"$PROJECT_DIR\"/..
+  
+  # Set entry file
+  export ENTRY_FILE=\"$PROJECT_ROOT/index.share.js\"
+  
+  # Set up Expo CLI
+  if [[ -z \"$CLI_PATH\" ]]; then
+    export CLI_PATH=\"$(\"$NODE_BINARY\" --print \"require.resolve('@expo/cli', { paths: [require.resolve('expo/package.json')] })\")\"
+  fi
+  
+  if [[ -z \"$BUNDLE_COMMAND\" ]]; then
+    export BUNDLE_COMMAND=\"export:embed\"
+  fi
+  
+  REACT_NATIVE_SCRIPTS_PATH=$(\"$NODE_BINARY\" --print \"require('path').dirname(require.resolve('react-native/package.json')) + '/scripts'\")
+  WITH_ENVIRONMENT=\"$REACT_NATIVE_SCRIPTS_PATH/xcode/with-environment.sh\"
+  REACT_NATIVE_XCODE=\"$REACT_NATIVE_SCRIPTS_PATH/react-native-xcode.sh\"
+  
+  /bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -230,6 +361,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F604F93F5E4142C1972F1121 /* Embed Foundation Extensions */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				022A173191A041FEB1955472 /* "ShareExtensionViewController.swift" in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -247,7 +386,7 @@
 					"$(inherited)",
 					"FB_SONARKIT_ENABLED=1",
 				);
-				INFOPLIST_FILE = foldersapp/Info.plist;
+				INFOPLIST_FILE = Bookrest/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -260,13 +399,13 @@
 					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.sknk.foldersapp";
-				PRODUCT_NAME = "foldersapp";
-				SWIFT_OBJC_BRIDGING_HEADER = "foldersapp/foldersapp-Bridging-Header.h";
+				PRODUCT_NAME = "Bookrest";
+				SWIFT_OBJC_BRIDGING_HEADER = "Bookrest/Bookrest-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				TARGETED_DEVICE_FAMILY = "1";
-				CODE_SIGN_ENTITLEMENTS = foldersapp/foldersapp.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Bookrest/Bookrest.entitlements;
 			};
 			name = Debug;
 		};
@@ -276,7 +415,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				INFOPLIST_FILE = foldersapp/Info.plist;
+				INFOPLIST_FILE = Bookrest/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -289,12 +428,12 @@
 					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.sknk.foldersapp";
-				PRODUCT_NAME = "foldersapp";
-				SWIFT_OBJC_BRIDGING_HEADER = "foldersapp/foldersapp-Bridging-Header.h";
+				PRODUCT_NAME = "Bookrest";
+				SWIFT_OBJC_BRIDGING_HEADER = "Bookrest/Bookrest-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				TARGETED_DEVICE_FAMILY = "1";
-				CODE_SIGN_ENTITLEMENTS = foldersapp/foldersapp.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Bookrest/Bookrest.entitlements;
 			};
 			name = Release;
 		};
@@ -409,10 +548,49 @@
 			};
 			name = Release;
 		};
+		6878BA3BB8C745928056B139 /* Debug */ = {
+			name = Debug;
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CURRENT_PROJECT_VERSION = "1";
+				INFOPLIST_FILE = BookrestShareExtension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = "15.1";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.sknk.foldersapp.ShareExtension";
+				PRODUCT_NAME = "BookrestShareExtension";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				CODE_SIGN_ENTITLEMENTS = BookrestShareExtension/BookrestShareExtension.entitlements;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = "1.0.0";
+				ENABLE_ON_DEMAND_RESOURCES = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+			};
+		};
+		E0E30DF04062474E99F0FFA7 /* Release */ = {
+			name = Release;
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CURRENT_PROJECT_VERSION = "1";
+				INFOPLIST_FILE = BookrestShareExtension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = "15.1";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.sknk.foldersapp.ShareExtension";
+				PRODUCT_NAME = "BookrestShareExtension";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				CODE_SIGN_ENTITLEMENTS = BookrestShareExtension/BookrestShareExtension.entitlements;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = "1.0.0";
+				ENABLE_ON_DEMAND_RESOURCES = NO;
+			};
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "foldersapp" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Bookrest" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
@@ -421,7 +599,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "foldersapp" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Bookrest" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,
@@ -430,7 +608,58 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		3F2B7BB985724ADFBED153A4 /* Build configuration list for PBXNativeTarget "BookrestShareExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6878BA3BB8C745928056B139 /* Debug */,
+				E0E30DF04062474E99F0FFA7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
+
+/* Begin PBXTargetDependency section */
+		E6D03CA10CC34993BE256CA0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 56121B690FEA492ABF10CE22 /* BookrestShareExtension */;
+			targetProxy = D78503B4A6F347A8AE5FDF0F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXContainerItemProxy section */
+		D78503B4A6F347A8AE5FDF0F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 56121B690FEA492ABF10CE22;
+			remoteInfo = BookrestShareExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		7664E335EE5244D79A95B8C1 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			name = "Embed Foundation Extensions";
+			dstPath = "";
+			dstSubfolderSpec = 13;
+		};
+		306E18932E2D478482C599AE /* Copy Files */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5E2D3DA4D45B4210AEBC015A /* BookrestShareExtension.appex in Copy Files */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			name = "Copy Files";
+			dstPath = "";
+			dstSubfolderSpec = 13;
+		};
+/* End PBXCopyFilesBuildPhase section */
 	};
 	rootObject = 83CBB9F71A601CBA00E9B192 /* Project object */;
 }

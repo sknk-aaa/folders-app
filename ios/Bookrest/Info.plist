@@ -2,12 +2,16 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
   <dict>
+    <key>AppGroup</key>
+    <string>group.com.sknk.foldersapp</string>
+    <key>AppGroupIdentifier</key>
+    <string>group.com.sknk.foldersapp</string>
     <key>CADisableMinimumFrameDurationOnPhone</key>
     <true/>
     <key>CFBundleDevelopmentRegion</key>
     <string>$(DEVELOPMENT_LANGUAGE)</string>
     <key>CFBundleDisplayName</key>
-    <string>folders-app</string>
+    <string>Bookrest</string>
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key>
@@ -27,7 +31,14 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
+          <string>foldersapp</string>
           <string>com.sknk.foldersapp</string>
+        </array>
+      </dict>
+      <dict>
+        <key>CFBundleURLSchemes</key>
+        <array>
+          <string>exp+folders-app</string>
         </array>
       </dict>
     </array>
