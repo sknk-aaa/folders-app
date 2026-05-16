@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Image, ScrollView, StyleSheet, TouchableOpacity } from 'react-native'
 import { Text, TextInput, View } from 'expo-share-extension'
 import { close, type InitialProps } from 'expo-share-extension'
@@ -8,28 +8,36 @@ type Preprocessing = {
   url?: string
   title?: string
   ogTitle?: string
-  ogImage?: string
-  ogDescription?: string
+  ogImage?: string | null
+  candidates?: string[]
 }
 
 type Props = InitialProps & { preprocessingResults?: Preprocessing }
+
+const NO_IMAGE = '__no_image__'
 
 export default function ShareExtension({ url, preprocessingResults }: Props) {
   const pp = preprocessingResults ?? {}
   const actualUrl = pp.url ?? url ?? ''
   const defaultTitle = pp.ogTitle ?? pp.title ?? ''
   const ogImage = pp.ogImage ?? null
+  const candidates = pp.candidates ?? []
 
   const folders = getFolders()
   const [name, setName] = useState(defaultTitle)
   const [folderId, setFolderId] = useState(folders[0]?.id ?? '')
+  const [selectedImage, setSelectedImage] = useState<string | null>(
+    ogImage ?? candidates[0] ?? null,
+  )
+  const [showPicker, setShowPicker] = useState(false)
+
+  const pickerOptions = useMemo(() => {
+    // 候補画像 + 末尾に「なし」オプション
+    return [...candidates, NO_IMAGE]
+  }, [candidates])
 
   const handleSave = () => {
-    if (!actualUrl) {
-      close()
-      return
-    }
-    if (!folderId) {
+    if (!actualUrl || !folderId) {
       close()
       return
     }
@@ -37,16 +45,66 @@ export default function ShareExtension({ url, preprocessingResults }: Props) {
       url: actualUrl,
       name: name.trim() || defaultTitle || actualUrl,
       folderId,
-      ogImageUrl: ogImage,
+      ogImageUrl: selectedImage,
       createdAt: Date.now(),
     })
     close()
   }
 
+  const renderPreview = () => {
+    if (selectedImage) {
+      return <Image source={{ uri: selectedImage }} style={styles.preview} resizeMode="cover" />
+    }
+    return (
+      <View style={[styles.preview, styles.previewPlaceholder]}>
+        <Text style={styles.previewPlaceholderText} allowFontScaling={false}>
+          サムネなし
+        </Text>
+      </View>
+    )
+  }
+
+  const renderPicker = () => {
+    if (!showPicker) return null
+    return (
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.pickerRow}
+      >
+        {pickerOptions.map((opt, i) => {
+          if (opt === NO_IMAGE) {
+            const active = selectedImage === null
+            return (
+              <TouchableOpacity
+                key={`none-${i}`}
+                onPress={() => setSelectedImage(null)}
+                style={[styles.pickerThumb, styles.pickerNoneThumb, active && styles.pickerThumbActive]}
+              >
+                <Text style={styles.pickerNoneText} allowFontScaling={false}>
+                  ❌
+                </Text>
+              </TouchableOpacity>
+            )
+          }
+          const active = selectedImage === opt
+          return (
+            <TouchableOpacity
+              key={opt}
+              onPress={() => setSelectedImage(opt)}
+              style={[styles.pickerThumb, active && styles.pickerThumbActive]}
+            >
+              <Image source={{ uri: opt }} style={styles.pickerThumbImage} resizeMode="cover" />
+            </TouchableOpacity>
+          )
+        })}
+      </ScrollView>
+    )
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.handle} />
-
       <Text style={styles.title} allowFontScaling={false}>
         ブックマークを追加
       </Text>
@@ -57,22 +115,29 @@ export default function ShareExtension({ url, preprocessingResults }: Props) {
         </Text>
       ) : (
         <>
-          {ogImage ? (
-            <Image source={{ uri: ogImage }} style={styles.thumb} resizeMode="cover" />
-          ) : (
-            <View style={[styles.thumb, styles.thumbPlaceholder]}>
-              <Text style={styles.thumbPlaceholderText} allowFontScaling={false}>
-                サムネなし
+          {renderPreview()}
+
+          {candidates.length > 0 && (
+            <TouchableOpacity
+              onPress={() => setShowPicker((v) => !v)}
+              style={styles.toggleBtn}
+            >
+              <Text style={styles.toggleText} allowFontScaling={false}>
+                {showPicker ? '閉じる' : '別の画像にする ▽'}
               </Text>
-            </View>
+            </TouchableOpacity>
           )}
+
+          {renderPicker()}
 
           <Text style={styles.url} numberOfLines={1} allowFontScaling={false}>
             {actualUrl}
           </Text>
 
           <View style={styles.field}>
-            <Text style={styles.label} allowFontScaling={false}>サイト名</Text>
+            <Text style={styles.label} allowFontScaling={false}>
+              サイト名
+            </Text>
             <TextInput
               style={styles.input}
               value={name}
@@ -85,13 +150,19 @@ export default function ShareExtension({ url, preprocessingResults }: Props) {
           </View>
 
           <View style={styles.field}>
-            <Text style={styles.label} allowFontScaling={false}>保存先</Text>
+            <Text style={styles.label} allowFontScaling={false}>
+              保存先
+            </Text>
             {folders.length === 0 ? (
               <Text style={styles.noFolder} allowFontScaling={false}>
                 フォルダがありません。先にアプリを起動してください。
               </Text>
             ) : (
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipRow}>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.chipRow}
+              >
                 {folders.map((f) => {
                   const active = f.id === folderId
                   return (
@@ -158,24 +229,62 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 14,
   },
-  thumb: {
+  preview: {
     width: '100%',
     aspectRatio: 1.4,
     borderRadius: 10,
     backgroundColor: '#F2F2F7',
-    marginBottom: 12,
   },
-  thumbPlaceholder: {
+  previewPlaceholder: {
     alignItems: 'center',
     justifyContent: 'center',
   },
-  thumbPlaceholderText: {
-    fontSize: 12,
+  previewPlaceholderText: {
+    fontSize: 13,
     color: '#8A8A8E',
+  },
+  toggleBtn: {
+    alignSelf: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    marginTop: 6,
+  },
+  toggleText: {
+    fontSize: 13,
+    color: '#8A8A8E',
+  },
+  pickerRow: {
+    gap: 8,
+    paddingRight: 8,
+    paddingVertical: 4,
+  },
+  pickerThumb: {
+    width: 56,
+    height: 56,
+    borderRadius: 8,
+    overflow: 'hidden',
+    backgroundColor: '#F2F2F7',
+    borderWidth: 2,
+    borderColor: 'transparent',
+  },
+  pickerThumbActive: {
+    borderColor: '#000000',
+  },
+  pickerThumbImage: {
+    width: '100%',
+    height: '100%',
+  },
+  pickerNoneThumb: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  pickerNoneText: {
+    fontSize: 18,
   },
   url: {
     fontSize: 12,
     color: '#8A8A8E',
+    marginTop: 12,
     marginBottom: 14,
   },
   noUrl: {
