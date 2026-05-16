@@ -1,7 +1,14 @@
 import { create } from 'zustand'
 import { getDb } from '../../shared/db/client'
 import { createId } from '../../shared/utils/id'
+import { setFolders as setSharedFolders } from '../../shared/storage/sharedStorage'
 import type { Folder, FolderIconId } from '../../shared/types'
+
+function syncToShared(folders: Folder[]) {
+  setSharedFolders(
+    folders.map((f) => ({ id: f.id, name: f.name, sortOrder: f.sortOrder })),
+  )
+}
 
 type FoldersStore = {
   folders: Folder[]
@@ -34,7 +41,9 @@ export const useFoldersStore = create<FoldersStore>((setState, getState) => ({
     const rows = db.getAllSync<Record<string, unknown>>(
       'SELECT * FROM folders ORDER BY sort_order ASC',
     )
-    setState({ folders: rows.map(toFolder) })
+    const folders = rows.map(toFolder)
+    setState({ folders })
+    syncToShared(folders)
   },
 
   add: (name, iconId) => {
@@ -56,6 +65,7 @@ export const useFoldersStore = create<FoldersStore>((setState, getState) => ({
       pinCode: null,
     }
     setState((s) => ({ folders: [...s.folders, folder] }))
+    syncToShared(getState().folders)
     return folder
   },
 
@@ -65,6 +75,7 @@ export const useFoldersStore = create<FoldersStore>((setState, getState) => ({
     setState((s) => ({
       folders: s.folders.map((f) => (f.id === id ? { ...f, name, iconId } : f)),
     }))
+    syncToShared(getState().folders)
   },
 
   remove: (id) => {
@@ -72,6 +83,7 @@ export const useFoldersStore = create<FoldersStore>((setState, getState) => ({
     db.runSync('DELETE FROM bookmarks WHERE folder_id = ?', [id])
     db.runSync('DELETE FROM folders WHERE id = ?', [id])
     setState((s) => ({ folders: s.folders.filter((f) => f.id !== id) }))
+    syncToShared(getState().folders)
   },
 
   reorder: (folders) => {
@@ -80,6 +92,7 @@ export const useFoldersStore = create<FoldersStore>((setState, getState) => ({
       db.runSync('UPDATE folders SET sort_order = ? WHERE id = ?', [i, f.id])
     })
     setState({ folders: folders.map((f, i) => ({ ...f, sortOrder: i })) })
+    syncToShared(getState().folders)
   },
 
   setPin: (id, pin) => {

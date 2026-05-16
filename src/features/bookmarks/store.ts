@@ -1,6 +1,8 @@
 import { create } from 'zustand'
 import { getDb } from '../../shared/db/client'
 import { createId } from '../../shared/utils/id'
+import { drainQueue } from '../../shared/storage/sharedStorage'
+import { downloadAndCropOgp } from '../../shared/utils/thumbnail'
 import type { Bookmark } from '../../shared/types'
 
 type BookmarksStore = {
@@ -14,6 +16,7 @@ type BookmarksStore = {
   byFolder: (folderId: string) => Bookmark[]
   recent: (limit?: number) => Bookmark[]
   total: () => number
+  drainShareQueue: () => Promise<number>
 }
 
 function toBookmark(row: Record<string, unknown>): Bookmark {
@@ -109,4 +112,23 @@ export const useBookmarksStore = create<BookmarksStore>((setState, getState) => 
     [...getState().bookmarks].sort((a, b) => b.createdAt - a.createdAt).slice(0, limit),
 
   total: () => getState().bookmarks.length,
+
+  drainShareQueue: async () => {
+    const queued = drainQueue()
+    if (queued.length === 0) return 0
+    for (const q of queued) {
+      let thumbnailPath: string | null = null
+      if (q.ogImageUrl) {
+        thumbnailPath = await downloadAndCropOgp(q.ogImageUrl)
+      }
+      getState().add({
+        folderId: q.folderId,
+        name: q.name,
+        url: q.url,
+        faviconUrl: null,
+        thumbnailPath,
+      })
+    }
+    return queued.length
+  },
 }))

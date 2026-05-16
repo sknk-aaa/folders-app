@@ -15,6 +15,9 @@
         "com.apple.security.application-groups": [
           "group.com.sknk.foldersapp"
         ]
+      },
+      "infoPlist": {
+        "AppGroup": "group.com.sknk.foldersapp"
       }
     },
     "android": {
@@ -35,12 +38,7 @@
       [
         "expo-share-extension",
         {
-          "activationRules": [
-            {
-              "type": "url",
-              "max": 1
-            }
-          ]
+          "preprocessingFile": "./preprocessing.js"
         }
       ]
     ],

@@ -56,6 +56,8 @@ export default function App() {
         await useFoldersStore.getState().load()
         await useBookmarksStore.getState().load()
         void useProStore.getState().load()
+        // Share Extensionから保存されたブクマをDBに反映
+        void useBookmarksStore.getState().drainShareQueue()
       } catch (error) {
         console.error('Failed to initialize app', error)
         setInitError(error instanceof Error ? error : new Error(String(error)))
