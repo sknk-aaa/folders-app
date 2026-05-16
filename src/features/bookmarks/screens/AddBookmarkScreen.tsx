@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
+  Dimensions,
 } from 'react-native'
 import { Image } from 'expo-image'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -20,6 +21,7 @@ import type {
 } from '@react-navigation/native-stack'
 import WebView from 'react-native-webview'
 import { captureRef } from 'react-native-view-shot'
+import * as ImageManipulator from 'expo-image-manipulator'
 import * as FileSystem from 'expo-file-system/legacy'
 import { useBookmarksStore } from '../store'
 import { useFoldersStore } from '../../folders/store'
@@ -35,6 +37,10 @@ type Nav = NativeStackNavigationProp<RootStackParamList>
 type Route = NativeStackScreenProps<RootStackParamList, 'AddBookmark'>['route']
 
 type Step = 'url-input' | 'loading' | 'webview' | 'meta'
+
+const { width: SCREEN_W } = Dimensions.get('window')
+const THUMB_ASPECT = 1 / 0.72 // ≈1.389 (W:H) - BookmarkCardの画像エリアと同じ比率
+const FRAME_WIDTH_RATIO = 0.92 // WebView画面幅に対する枠の幅
 
 export function AddBookmarkScreen() {
   const navigation = useNavigation<Nav>()
@@ -102,11 +108,36 @@ export function AddBookmarkScreen() {
         const ogp = await fetchOgp(finalUrl)
         if (!name.trim()) setName(ogp.title)
         if (ogp.imageUrl) {
-          const dest = `${FileSystem.documentDirectory}thumbnails/${Date.now()}.jpg`
           await FileSystem.makeDirectoryAsync(`${FileSystem.documentDirectory}thumbnails/`, {
             intermediates: true,
           })
-          await FileSystem.downloadAsync(ogp.imageUrl, dest)
+          const ts = Date.now()
+          const tmpPath = `${FileSystem.documentDirectory}thumbnails/${ts}-raw.jpg`
+          const dest = `${FileSystem.documentDirectory}thumbnails/${ts}.jpg`
+          await FileSystem.downloadAsync(ogp.imageUrl, tmpPath)
+          const info = await ImageManipulator.manipulateAsync(tmpPath, [], { base64: false })
+          let cropW: number
+          let cropH: number
+          let originX: number
+          let originY: number
+          if (info.width / info.height > THUMB_ASPECT) {
+            cropH = info.height
+            cropW = cropH * THUMB_ASPECT
+            originY = 0
+            originX = (info.width - cropW) / 2
+          } else {
+            cropW = info.width
+            cropH = cropW / THUMB_ASPECT
+            originX = 0
+            originY = (info.height - cropH) / 2
+          }
+          const result = await ImageManipulator.manipulateAsync(
+            tmpPath,
+            [{ crop: { originX, originY, width: cropW, height: cropH } }],
+            { compress: 0.85, format: ImageManipulator.SaveFormat.JPEG },
+          )
+          await FileSystem.moveAsync({ from: result.uri, to: dest })
+          await FileSystem.deleteAsync(tmpPath, { idempotent: true })
           setThumbnailUri(dest)
         }
       } catch {
@@ -119,9 +150,24 @@ export function AddBookmarkScreen() {
   const handleWebViewCapture = async () => {
     if (!webviewRef.current) return
     try {
-      const uri = await captureRef(webviewRef, { format: 'jpg', quality: 0.8 })
-      // Navigate to Trim screen
-      navigation.navigate('Trim', { imageUri: uri })
+      const uri = await captureRef(webviewRef, { format: 'jpg', quality: 0.9 })
+      const info = await ImageManipulator.manipulateAsync(uri, [], { base64: false })
+      const cropW = info.width * FRAME_WIDTH_RATIO
+      const cropH = cropW / THUMB_ASPECT
+      const originX = (info.width - cropW) / 2
+      const originY = (info.height - cropH) / 2
+      const result = await ImageManipulator.manipulateAsync(
+        uri,
+        [{ crop: { originX, originY, width: cropW, height: cropH } }],
+        { compress: 0.85, format: ImageManipulator.SaveFormat.JPEG },
+      )
+      await FileSystem.makeDirectoryAsync(`${FileSystem.documentDirectory}thumbnails/`, {
+        intermediates: true,
+      })
+      const dest = `${FileSystem.documentDirectory}thumbnails/${Date.now()}.jpg`
+      await FileSystem.moveAsync({ from: result.uri, to: dest })
+      setThumbnailUri(dest)
+      setStep('meta')
     } catch {
       showToast('スクリーンショットの取得に失敗しました')
       setStep('meta')
@@ -240,6 +286,9 @@ export function AddBookmarkScreen() {
 
   // -------- WebView Capture Step --------
   if (step === 'webview') {
+    const frameWidth = SCREEN_W * FRAME_WIDTH_RATIO
+    const frameHeight = frameWidth / THUMB_ASPECT
+    const sideMaskWidth = (SCREEN_W - frameWidth) / 2
     return (
       <View style={[styles.container, { paddingTop: insets.top }]}>
         <View style={styles.modalHeader}>
@@ -251,13 +300,25 @@ export function AddBookmarkScreen() {
             <Text style={styles.captureText}>この画面を使う</Text>
           </TouchableOpacity>
         </View>
-        <Text style={styles.webviewHint}>保存したい画面でタップしてください</Text>
-        <WebView
-          ref={webviewRef}
-          source={{ uri: url }}
-          style={{ flex: 1 }}
-          onLoad={handleWebViewLoad}
-        />
+        <Text style={styles.webviewHint}>枠の中が保存されます</Text>
+        <View style={styles.webviewWrap}>
+          <WebView
+            ref={webviewRef}
+            source={{ uri: url }}
+            style={{ flex: 1 }}
+            onLoad={handleWebViewLoad}
+          />
+          {/* Frame overlay (1.4:1) */}
+          <View pointerEvents="none" style={styles.frameOverlay}>
+            <View style={[styles.frameMaskSide, { width: sideMaskWidth }]} />
+            <View style={styles.frameMiddleColumn}>
+              <View style={styles.frameMaskTopBottom} />
+              <View style={[styles.frameBox, { width: frameWidth, height: frameHeight }]} />
+              <View style={styles.frameMaskTopBottom} />
+            </View>
+            <View style={[styles.frameMaskSide, { width: sideMaskWidth }]} />
+          </View>
+        </View>
       </View>
     )
   }
@@ -404,6 +465,30 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     paddingVertical: 8,
     backgroundColor: colors.placeholderBg,
+  },
+  webviewWrap: {
+    flex: 1,
+    position: 'relative',
+  },
+  frameOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    flexDirection: 'row',
+  },
+  frameMaskSide: {
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    height: '100%',
+  },
+  frameMiddleColumn: {
+    flex: 1,
+    flexDirection: 'column',
+  },
+  frameMaskTopBottom: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+  },
+  frameBox: {
+    borderWidth: 2,
+    borderColor: '#fff',
   },
   metaContent: { paddingBottom: 32 },
   thumbPreview: { alignItems: 'center', paddingTop: spacing.xl },
