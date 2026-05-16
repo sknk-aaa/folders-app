@@ -76,8 +76,15 @@ export function DrawerContent() {
             <Text style={styles.label}>デフォルトブラウザ</Text>
             <Text style={styles.value}>{browserLabel[settings.default_browser]}</Text>
           </TouchableOpacity>
-          <View style={styles.row}>
-            <Text style={styles.label}>サムネ撮影</Text>
+          <View style={styles.toggleRow}>
+            <View style={styles.toggleText}>
+              <Text style={styles.label}>サムネ撮影</Text>
+              <Text style={styles.description}>
+                {settings.capture_thumbnail
+                  ? 'サイトを開いて好きなタイミングでサムネを撮影します'
+                  : 'サイトの画像を自動で取得してサムネにします'}
+              </Text>
+            </View>
             <Switch
               value={settings.capture_thumbnail}
               onValueChange={(v) => set('capture_thumbnail', v)}
@@ -130,6 +137,25 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: colors.separator,
+  },
+  toggleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+    paddingVertical: 14,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.separator,
+  },
+  toggleText: {
+    flex: 1,
+    minWidth: 0,
+  },
+  description: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    marginTop: 4,
+    lineHeight: 16,
   },
   label: {
     fontSize: 16,
