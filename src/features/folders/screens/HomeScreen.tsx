@@ -374,7 +374,7 @@ const styles = StyleSheet.create({
     marginHorizontal: GRID_PADDING,
     marginBottom: GRID_GAP,
     padding: spacing.sm,
-    borderRadius: radius.lg,
+    borderRadius: 16,
     backgroundColor: colors.background,
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: colors.separator,

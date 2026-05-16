@@ -3,7 +3,7 @@ export const colors = {
   text: '#000000',
   textSecondary: '#8A8A8E',
   textTertiary: '#C7C7CC',
-  separator: '#D0D0D0',
+  separator: '#DDDDDD',
   divider: '#E8E8E8',
   placeholderBg: '#F2F2F2',
   accent: '#007AFF',

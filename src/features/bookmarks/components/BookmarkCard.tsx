@@ -134,7 +134,7 @@ function showMoveSheet(folders: Folder[], onMove: (id: string) => void) {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: '#fff',
-    borderRadius: radius.md,
+    borderRadius: 16,
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: colors.separator,

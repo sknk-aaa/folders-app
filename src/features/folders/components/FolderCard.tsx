@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
   card: {
     aspectRatio: 1.05,
     backgroundColor: '#fff',
-    borderRadius: 22,
+    borderRadius: 16,
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: colors.separator,
