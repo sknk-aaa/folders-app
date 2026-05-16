@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { Image, ScrollView, StyleSheet, TouchableOpacity } from 'react-native'
 import { Text, TextInput, View } from 'expo-share-extension'
 import { close, type InitialProps } from 'expo-share-extension'
@@ -14,8 +14,6 @@ type Preprocessing = {
 
 type Props = InitialProps & { preprocessingResults?: Preprocessing }
 
-const NO_IMAGE = '__no_image__'
-
 export default function ShareExtension({ url, preprocessingResults }: Props) {
   const pp = preprocessingResults ?? {}
   const actualUrl = pp.url ?? url ?? ''
@@ -30,11 +28,6 @@ export default function ShareExtension({ url, preprocessingResults }: Props) {
     ogImage ?? candidates[0] ?? null,
   )
   const [showPicker, setShowPicker] = useState(false)
-
-  const pickerOptions = useMemo(() => {
-    // 候補画像 + 末尾に「なし」オプション
-    return [...candidates, NO_IMAGE]
-  }, [candidates])
 
   const handleSave = () => {
     if (!actualUrl || !folderId) {
@@ -72,21 +65,7 @@ export default function ShareExtension({ url, preprocessingResults }: Props) {
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.pickerRow}
       >
-        {pickerOptions.map((opt, i) => {
-          if (opt === NO_IMAGE) {
-            const active = selectedImage === null
-            return (
-              <TouchableOpacity
-                key={`none-${i}`}
-                onPress={() => setSelectedImage(null)}
-                style={[styles.pickerThumb, styles.pickerNoneThumb, active && styles.pickerThumbActive]}
-              >
-                <Text style={styles.pickerNoneText} allowFontScaling={false}>
-                  ❌
-                </Text>
-              </TouchableOpacity>
-            )
-          }
+        {candidates.map((opt) => {
           const active = selectedImage === opt
           return (
             <TouchableOpacity
@@ -273,13 +252,6 @@ const styles = StyleSheet.create({
   pickerThumbImage: {
     width: '100%',
     height: '100%',
-  },
-  pickerNoneThumb: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  pickerNoneText: {
-    fontSize: 18,
   },
   url: {
     fontSize: 12,
