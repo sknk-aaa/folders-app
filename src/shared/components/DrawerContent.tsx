@@ -43,6 +43,15 @@ export function DrawerContent() {
     void Linking.openURL('https://sknk-aaa.github.io/folders-app/faq.html')
   }
 
+  const handleReportBug = () => {
+    close()
+    const subject = encodeURIComponent('Bookrest 不具合・要望')
+    const body = encodeURIComponent(
+      '不具合の内容や改善要望をお書きください：\n\n\n\n---\n（以下は開発者用情報です。削除しないでください）\nアプリ: Bookrest 1.0.0\n',
+    )
+    void Linking.openURL(`mailto:625.somq2525@gmail.com?subject=${subject}&body=${body}`)
+  }
+
   const handlePro = () => {
     close()
     setProModalVisible(true)
@@ -75,13 +84,14 @@ export function DrawerContent() {
 
         <View style={styles.section}>
           <DrawerItem label="使い方" onPress={openTutorial} />
-          <DrawerItem label="アプリを評価" onPress={handleReview} />
           <DrawerItem
             label="プレミアム版を購入"
             onPress={handlePro}
             sublabel={settings.is_premium ? '購入済み' : undefined}
           />
           <DrawerItem label="よくある質問" onPress={handleFaq} />
+          <DrawerItem label="不具合・要望を報告" onPress={handleReportBug} />
+          <DrawerItem label="アプリを評価" onPress={handleReview} />
         </View>
 
         <View style={styles.divider} />
