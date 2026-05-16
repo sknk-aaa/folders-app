@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { View, Text, TouchableOpacity, Switch, StyleSheet, ScrollView, Alert, Linking, Image } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { DrawerActions, useNavigation } from '@react-navigation/native'
+import { Ionicons } from '@expo/vector-icons'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import type { RootStackParamList } from '../types'
 import { useSettingsStore } from '../../features/settings/store'
@@ -92,10 +93,10 @@ export function DrawerContent() {
         {/* サポート */}
         <SectionTitle>サポート</SectionTitle>
         <View style={styles.card}>
-          <DrawerLinkItem label="使い方" onPress={openTutorial} />
-          <DrawerLinkItem label="よくある質問" onPress={handleFaq} />
-          <DrawerLinkItem label="不具合・要望を報告" onPress={handleReportBug} />
-          <DrawerLinkItem label="アプリを評価" onPress={handleReview} isLast />
+          <DrawerLinkItem icon="compass-outline" label="使い方" onPress={openTutorial} />
+          <DrawerLinkItem icon="help-circle-outline" label="よくある質問" onPress={handleFaq} />
+          <DrawerLinkItem icon="chatbubble-ellipses-outline" label="不具合・要望を報告" onPress={handleReportBug} />
+          <DrawerLinkItem icon="star-outline" label="アプリを評価" onPress={handleReview} isLast />
         </View>
 
         {/* Pro */}
@@ -121,7 +122,10 @@ export function DrawerContent() {
         <SectionTitle>設定</SectionTitle>
         <View style={styles.card}>
           <TouchableOpacity style={styles.row} onPress={handleDefaultFolderChange}>
-            <Text style={styles.label}>デフォルトの保存先</Text>
+            <View style={styles.rowLeft}>
+              <Ionicons name="folder-outline" size={20} color={colors.textSecondary} style={styles.itemIcon} />
+              <Text style={styles.label}>デフォルトの保存先</Text>
+            </View>
             <View style={styles.rowRight}>
               <Text style={styles.value}>{defaultFolderName}</Text>
               <Text style={styles.chevron}>›</Text>
@@ -129,7 +133,10 @@ export function DrawerContent() {
           </TouchableOpacity>
           <View style={styles.separator} />
           <TouchableOpacity style={styles.row} onPress={handleBrowserChange}>
-            <Text style={styles.label}>デフォルトブラウザ</Text>
+            <View style={styles.rowLeft}>
+              <Ionicons name="globe-outline" size={20} color={colors.textSecondary} style={styles.itemIcon} />
+              <Text style={styles.label}>デフォルトブラウザ</Text>
+            </View>
             <View style={styles.rowRight}>
               <Text style={styles.value}>{browserLabel[settings.default_browser]}</Text>
               <Text style={styles.chevron}>›</Text>
@@ -137,6 +144,7 @@ export function DrawerContent() {
           </TouchableOpacity>
           <View style={styles.separator} />
           <View style={styles.toggleRow}>
+            <Ionicons name="camera-outline" size={20} color={colors.textSecondary} style={styles.itemIcon} />
             <View style={styles.toggleText}>
               <Text style={styles.label}>サムネ撮影</Text>
               <Text style={styles.description}>
@@ -168,17 +176,22 @@ function SectionTitle({ children }: { children: string }) {
 
 function DrawerLinkItem({
   label,
+  icon,
   onPress,
   isLast,
 }: {
   label: string
+  icon: keyof typeof Ionicons.glyphMap
   onPress: () => void
   isLast?: boolean
 }) {
   return (
     <>
       <TouchableOpacity style={styles.row} onPress={onPress} activeOpacity={0.7}>
-        <Text style={styles.label}>{label}</Text>
+        <View style={styles.rowLeft}>
+          <Ionicons name={icon} size={20} color={colors.textSecondary} style={styles.itemIcon} />
+          <Text style={styles.label}>{label}</Text>
+        </View>
         <Text style={styles.chevron}>›</Text>
       </TouchableOpacity>
       {!isLast && <View style={styles.separator} />}
@@ -243,15 +256,24 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 14,
   },
+  rowLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    flex: 1,
+    minWidth: 0,
+  },
   rowRight: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
   },
+  itemIcon: {
+    width: 22,
+  },
   toggleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     gap: 12,
     paddingHorizontal: 14,
     paddingVertical: 14,
