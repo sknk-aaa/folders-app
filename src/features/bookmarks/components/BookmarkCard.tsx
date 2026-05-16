@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, Alert, Dimensions, Linking } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet, Alert, Linking } from 'react-native'
 import { Image } from 'expo-image'
 import { CustomActionSheet } from '../../../shared/components/CustomActionSheet'
 import { MoreButton } from '../../../shared/components/MoreButton'
@@ -11,8 +11,7 @@ import { useSettingsStore } from '../../settings/store'
 import { BookmarkEditModal } from './BookmarkEditModal'
 import type { Bookmark, Folder } from '../../../shared/types'
 
-const { width: SCREEN_W } = Dimensions.get('window')
-const CARD_W = (SCREEN_W - spacing.lg * 2 - spacing.sm) / 2
+const IMAGE_ASPECT = 1 / 0.72 // 約1.389:1 (W:H) - 列数によらず固定
 
 type Props = {
   bookmark: Bookmark
@@ -24,7 +23,6 @@ type Props = {
 }
 
 export function BookmarkCard({ bookmark, allFolders, onDelete, onMove, drag, isActive }: Props) {
-  const imageH = CARD_W * 0.72
   const { update } = useBookmarksStore()
   const { settings } = useSettingsStore()
   const [editVisible, setEditVisible] = useState(false)
@@ -55,11 +53,11 @@ export function BookmarkCard({ bookmark, allFolders, onDelete, onMove, drag, isA
         {bookmark.thumbnailPath ? (
           <Image
             source={{ uri: bookmark.thumbnailPath }}
-            style={[styles.image, { height: imageH }]}
+            style={styles.image}
             contentFit="cover"
           />
         ) : (
-          <PlaceholderImage width={CARD_W} height={imageH} style={styles.image} />
+          <PlaceholderImage style={styles.image} />
         )}
 
         {/* Meta row */}
@@ -149,6 +147,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
+    aspectRatio: IMAGE_ASPECT,
     overflow: 'hidden',
   },
   meta: {
