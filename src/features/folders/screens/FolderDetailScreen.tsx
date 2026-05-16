@@ -97,30 +97,31 @@ export function FolderDetailScreen() {
         hideBorder
       />
 
-      {!isSearching && (
-        <FolderHeaderSummary
-          folder={folder}
-          thumbnail={mosaicThumbnails[0]}
-          bookmarkCount={bookmarks.length}
-        />
-      )}
-
-      <GestureDetector gesture={pinchGesture}>
-        <View collapsable={false} style={{ flex: 1 }}>
-          <BookmarkCollectionList
-            bookmarks={filteredBookmarks}
-            allFolders={folders}
-            viewMode={viewMode}
-            onGridPress={() => setViewMode('grid')}
-            onListPress={() => setViewMode('list')}
-            onDelete={(bookmark) => remove(bookmark.id)}
-            onMove={(bookmark, targetFolderId) => move(bookmark.id, targetFolderId)}
-            onReorder={(nextBookmarks) => reorder(folderId, nextBookmarks)}
-            emptyText="このフォルダにはまだブックマークがありません"
-            columns={columns}
+      <View style={styles.collectionWrap}>
+        <GestureDetector gesture={pinchGesture}>
+          <View collapsable={false} style={{ flex: 1 }}>
+            <BookmarkCollectionList
+              bookmarks={filteredBookmarks}
+              allFolders={folders}
+              viewMode={viewMode}
+              onGridPress={() => setViewMode('grid')}
+              onListPress={() => setViewMode('list')}
+              onDelete={(bookmark) => remove(bookmark.id)}
+              onMove={(bookmark, targetFolderId) => move(bookmark.id, targetFolderId)}
+              onReorder={(nextBookmarks) => reorder(folderId, nextBookmarks)}
+              emptyText="このフォルダにはまだブックマークがありません"
+              columns={columns}
+            />
+          </View>
+        </GestureDetector>
+        {!isSearching && (
+          <FolderHeaderSummary
+            folder={folder}
+            thumbnail={mosaicThumbnails[0]}
+            bookmarkCount={bookmarks.length}
           />
-        </View>
-      </GestureDetector>
+        )}
+      </View>
 
       <FolderEditModal
         visible={editModalVisible}
@@ -145,19 +146,21 @@ function FolderHeaderSummary({
   bookmarkCount: number
 }) {
   return (
-    <View style={styles.folderSummary}>
-      <Image
-        source={thumbnail ? { uri: thumbnail } : FOLDER_PLACEHOLDER}
-        style={styles.folderThumb}
-        contentFit="cover"
-      />
-      <View style={styles.titleBlock}>
-        <Text style={styles.headerTitle} numberOfLines={1}>
-          {folder.name}
-        </Text>
-        <Text style={styles.headerSub} numberOfLines={1}>
-          {bookmarkCount}件のブックマーク
-        </Text>
+    <View style={styles.folderSummaryWrap} pointerEvents="none">
+      <View style={styles.folderSummary}>
+        <Image
+          source={thumbnail ? { uri: thumbnail } : FOLDER_PLACEHOLDER}
+          style={styles.folderThumb}
+          contentFit="cover"
+        />
+        <View style={styles.titleBlock}>
+          <Text style={styles.headerTitle} numberOfLines={1}>
+            {folder.name}
+          </Text>
+          <Text style={styles.headerSub} numberOfLines={1}>
+            {bookmarkCount}件のブックマーク
+          </Text>
+        </View>
       </View>
     </View>
   )
@@ -165,12 +168,25 @@ function FolderHeaderSummary({
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
+  collectionWrap: {
+    flex: 1,
+    position: 'relative',
+  },
+  folderSummaryWrap: {
+    position: 'absolute',
+    top: -30,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    paddingHorizontal: PADDING,
+    zIndex: 10,
+    elevation: 10,
+  },
   folderSummary: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: PADDING,
-    paddingTop: 8,
-    paddingBottom: 12,
+    maxWidth: 260,
+    minWidth: 0,
   },
   folderThumb: {
     width: 68,
