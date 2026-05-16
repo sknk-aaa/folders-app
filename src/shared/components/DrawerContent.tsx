@@ -45,11 +45,7 @@ export function DrawerContent() {
 
   const handleReportBug = () => {
     close()
-    const subject = encodeURIComponent('Bookrest 不具合・要望')
-    const body = encodeURIComponent(
-      '不具合の内容や改善要望をお書きください：\n\n\n\n---\n（以下は開発者用情報です。削除しないでください）\nアプリ: Bookrest 1.0.0\n',
-    )
-    void Linking.openURL(`mailto:625.somq2525@gmail.com?subject=${subject}&body=${body}`)
+    void Linking.openURL('https://tally.so/r/WOKNyL')
   }
 
   const handlePro = () => {
