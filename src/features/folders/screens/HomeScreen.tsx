@@ -377,7 +377,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: colors.background,
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.separator,
+    borderColor: colors.cardBorder,
   },
   folderRowActive: {
     opacity: 0.96,
@@ -418,11 +418,11 @@ const styles = StyleSheet.create({
   recentCard: {
     marginRight: 10,
     minHeight: 150,
-    borderRadius: 10,
+    borderRadius: 16,
     backgroundColor: '#fff',
     overflow: 'hidden',
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.separator,
+    borderColor: colors.cardBorder,
     shadowColor: '#000',
     shadowOpacity: 0.08,
     shadowRadius: 8,

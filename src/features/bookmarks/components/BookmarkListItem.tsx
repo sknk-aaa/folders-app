@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: spacing.sm,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.separator,
+    borderBottomColor: colors.cardBorder,
     gap: spacing.md,
   },
   thumb: {

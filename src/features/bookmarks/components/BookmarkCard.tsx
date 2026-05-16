@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: colors.separator,
+    borderColor: colors.cardBorder,
     shadowColor: '#000',
     shadowOpacity: 0.08,
     shadowRadius: 8,
