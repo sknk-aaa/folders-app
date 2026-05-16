@@ -34,6 +34,16 @@ export default function App() {
   const [ready, setReady] = useState(false)
   const [initError, setInitError] = useState<Error | null>(null)
   const pendingUrl = useRef<string | null>(null)
+  const readyRef = useRef(false)
+  const navReadyRef = useRef(false)
+
+  const processPendingUrl = () => {
+    if (!pendingUrl.current) return
+    if (!readyRef.current || !navReadyRef.current) return
+    const url = pendingUrl.current
+    pendingUrl.current = null
+    handleIncomingUrl(url)
+  }
 
   useEffect(() => {
     const init = async () => {
@@ -51,6 +61,8 @@ export default function App() {
         setInitError(error instanceof Error ? error : new Error(String(error)))
       } finally {
         setReady(true)
+        readyRef.current = true
+        processPendingUrl()
       }
     }
     void init()
@@ -58,7 +70,10 @@ export default function App() {
     // アプリが閉じた状態で URL スキームから起動された場合
     Linking.getInitialURL()
       .then((url) => {
-        if (url) pendingUrl.current = url
+        if (url) {
+          pendingUrl.current = url
+          processPendingUrl()
+        }
       })
       .catch((error) => {
         console.error('Failed to get initial URL', error)
@@ -66,25 +81,16 @@ export default function App() {
 
     // アプリがバックグラウンドにいるときに URL スキームが来た場合
     const sub = Linking.addEventListener('url', ({ url }) => {
-      if (ready) {
-        handleIncomingUrl(url)
-      } else {
-        pendingUrl.current = url
-      }
+      pendingUrl.current = url
+      processPendingUrl()
     })
 
     return () => sub.remove()
   }, [])
 
   const handleNavigationReady = () => {
-    const { settings } = useSettingsStore.getState()
-    if (!settings.tutorial_completed) return
-
-    // Share Extension から来た URL があれば AddBookmark へ
-    if (pendingUrl.current) {
-      handleIncomingUrl(pendingUrl.current)
-      pendingUrl.current = null
-    }
+    navReadyRef.current = true
+    processPendingUrl()
   }
 
   if (!ready) {
