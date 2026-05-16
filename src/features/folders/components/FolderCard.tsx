@@ -167,9 +167,9 @@ function FolderMosaic({
     <View style={styles.threeMosaic}>
       <Image source={{ uri: main }} style={styles.mosaicMain} contentFit="cover" />
       <View style={styles.mosaicSide}>
-        <Image source={{ uri: sub1 }} style={styles.mosaicSideImage} contentFit="cover" />
+        <Image source={{ uri: sub1 }} style={styles.mosaicSub1} contentFit="cover" />
         <View style={styles.mosaicDivider} />
-        <Image source={{ uri: sub2 }} style={styles.mosaicSideImage} contentFit="cover" />
+        <Image source={{ uri: sub2 }} style={styles.mosaicSub2} contentFit="cover" />
       </View>
     </View>
   )
@@ -228,7 +228,10 @@ const styles = StyleSheet.create({
     borderLeftWidth: 1,
     borderLeftColor: 'rgba(255,255,255,0.9)',
   },
-  mosaicSideImage: {
+  mosaicSub1: {
+    flex: 1.4,
+  },
+  mosaicSub2: {
     flex: 1,
   },
   mosaicDivider: {
