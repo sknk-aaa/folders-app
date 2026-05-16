@@ -28,7 +28,7 @@ export const MOCK_BOOKMARKS: MockBookmark[] = [
     folderName: '記事',
     name: '週末に楽しむブックカフェ巡り',
     url: 'https://bookcafe-tokyo.jp',
-    thumbnailPath: 'https://images.unsplash.com/photo-1457369804613-52c61a9bcefc?w=720&q=80',
+    thumbnailPath: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=720&q=80',
   },
   {
     folderName: '記事',
