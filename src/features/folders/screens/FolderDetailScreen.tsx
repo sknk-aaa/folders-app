@@ -97,6 +97,14 @@ export function FolderDetailScreen() {
         hideBorder
       />
 
+      {!isSearching && (
+        <FolderHeaderSummary
+          folder={folder}
+          thumbnail={mosaicThumbnails[0]}
+          bookmarkCount={bookmarks.length}
+        />
+      )}
+
       <GestureDetector gesture={pinchGesture}>
         <View collapsable={false} style={{ flex: 1 }}>
           <BookmarkCollectionList
@@ -110,15 +118,6 @@ export function FolderDetailScreen() {
             onReorder={(nextBookmarks) => reorder(folderId, nextBookmarks)}
             emptyText="このフォルダにはまだブックマークがありません"
             columns={columns}
-            headerAccessory={
-              isSearching ? undefined : (
-                <FolderHeaderSummary
-                  folder={folder}
-                  thumbnail={mosaicThumbnails[0]}
-                  bookmarkCount={bookmarks.length}
-                />
-              )
-            }
           />
         </View>
       </GestureDetector>
@@ -146,21 +145,19 @@ function FolderHeaderSummary({
   bookmarkCount: number
 }) {
   return (
-    <View style={styles.folderSummaryWrap} pointerEvents="none">
-      <View style={styles.folderSummary}>
-        <Image
-          source={thumbnail ? { uri: thumbnail } : FOLDER_PLACEHOLDER}
-          style={styles.folderThumb}
-          contentFit="cover"
-        />
-        <View style={styles.titleBlock}>
-          <Text style={styles.headerTitle} numberOfLines={1}>
-            {folder.name}
-          </Text>
-          <Text style={styles.headerSub} numberOfLines={1}>
-            {bookmarkCount}件のブックマーク
-          </Text>
-        </View>
+    <View style={styles.folderSummary}>
+      <Image
+        source={thumbnail ? { uri: thumbnail } : FOLDER_PLACEHOLDER}
+        style={styles.folderThumb}
+        contentFit="cover"
+      />
+      <View style={styles.titleBlock}>
+        <Text style={styles.headerTitle} numberOfLines={1}>
+          {folder.name}
+        </Text>
+        <Text style={styles.headerSub} numberOfLines={1}>
+          {bookmarkCount}件のブックマーク
+        </Text>
       </View>
     </View>
   )
@@ -168,19 +165,12 @@ function FolderHeaderSummary({
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
-  folderSummaryWrap: {
-    position: 'absolute',
-    top: -30,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
-    paddingHorizontal: PADDING,
-  },
   folderSummary: {
     flexDirection: 'row',
     alignItems: 'center',
-    maxWidth: 260,
-    minWidth: 0,
+    paddingHorizontal: PADDING,
+    paddingTop: 8,
+    paddingBottom: 12,
   },
   folderThumb: {
     width: 68,
