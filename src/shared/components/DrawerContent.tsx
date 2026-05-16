@@ -10,6 +10,7 @@ import { ProUpgradeModal } from '../../features/pro/components/ProUpgradeModal'
 import { colors, spacing } from '../theme'
 
 const APP_ICON = require('../../../assets/icon.png')
+const APP_LOGO = require('../../../assets/Bookrest-logo.png')
 
 export function DrawerContent() {
   const insets = useSafeAreaInsets()
@@ -77,13 +78,13 @@ export function DrawerContent() {
     <View style={[styles.container, { paddingTop: insets.top + 12 }]}>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
+        contentContainerStyle={{ paddingBottom: 24 }}
       >
-        {/* Header: app icon + name */}
+        {/* Header: app icon + logo */}
         <View style={styles.header}>
           <Image source={APP_ICON} style={styles.icon} />
           <View style={styles.headerText}>
-            <Text style={styles.appName}>Bookrest</Text>
+            <Image source={APP_LOGO} style={styles.logo} resizeMode="contain" />
             <Text style={styles.appTagline}>{settings.is_premium ? 'Pro' : 'お気に入りをひとまとめに'}</Text>
           </View>
         </View>
@@ -152,12 +153,10 @@ export function DrawerContent() {
           </View>
         </View>
 
-        {/* Footer */}
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>Bookrest v1.0.0</Text>
-          <Text style={styles.footerText}>© 2026 s-knk</Text>
-        </View>
       </ScrollView>
+      <View style={[styles.footer, { paddingBottom: insets.bottom + 12 }]}>
+        <Text style={styles.footerText}>v1.0.0</Text>
+      </View>
       <ProUpgradeModal visible={proModalVisible} onClose={() => setProModalVisible(false)} />
     </View>
   )
@@ -210,11 +209,10 @@ const styles = StyleSheet.create({
     flex: 1,
     minWidth: 0,
   },
-  appName: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: colors.text,
-    letterSpacing: 0.2,
+  logo: {
+    width: 110,
+    height: 22,
+    alignSelf: 'flex-start',
   },
   appTagline: {
     fontSize: 12,
@@ -321,9 +319,10 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   footer: {
-    marginTop: 32,
+    paddingTop: 12,
     alignItems: 'center',
-    gap: 4,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: colors.cardBorder,
   },
   footerText: {
     fontSize: 11,
