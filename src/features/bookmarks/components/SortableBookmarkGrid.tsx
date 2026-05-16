@@ -12,6 +12,7 @@ type Props = {
   cardHeight: number
   gap: number
   columns?: number
+  compact?: boolean
   onDelete: (bookmark: Bookmark) => void
   onMove: (bookmark: Bookmark, folderId: string) => void
   onReorder: (bookmarks: Bookmark[]) => void
@@ -28,6 +29,7 @@ export function SortableBookmarkGrid({
   cardHeight,
   gap,
   columns = 2,
+  compact,
   onDelete,
   onMove,
   onReorder,
@@ -146,6 +148,7 @@ export function SortableBookmarkGrid({
             x={position.x}
             y={position.y}
             hidden={isActive}
+            compact={compact}
             onDelete={() => onDelete(bookmark)}
             onMove={(folderId) => onMove(bookmark, folderId)}
             onDragStart={beginDrag}
@@ -173,6 +176,7 @@ export function SortableBookmarkGrid({
             onDelete={() => onDelete(activeBookmark)}
             onMove={(folderId) => onMove(activeBookmark, folderId)}
             isActive
+            compact={compact}
           />
         </View>
       ) : null}
@@ -187,6 +191,7 @@ function SortableBookmarkCell({
   x,
   y,
   hidden,
+  compact,
   onDelete,
   onMove,
   onDragStart,
@@ -199,6 +204,7 @@ function SortableBookmarkCell({
   x: number
   y: number
   hidden: boolean
+  compact?: boolean
   onDelete: () => void
   onMove: (folderId: string) => void
   onDragStart: (id: string) => void
@@ -240,6 +246,7 @@ function SortableBookmarkCell({
           allFolders={allFolders}
           onDelete={onDelete}
           onMove={onMove}
+          compact={compact}
         />
       </View>
     </GestureDetector>

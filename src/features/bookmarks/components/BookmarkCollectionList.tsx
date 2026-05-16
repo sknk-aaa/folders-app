@@ -64,8 +64,10 @@ export function BookmarkCollectionList({
 
   const emptyComponent = <Text style={styles.emptyText}>{emptyText}</Text>
 
+  const compact = columnsProp >= 3
+  const metaH = compact ? 38 : 64
   if (isDraggable && onReorder && viewMode === 'grid') {
-    const cardH = cardW * 0.72 + 64
+    const cardH = cardW * 0.72 + metaH
     return (
       <ScrollView contentContainerStyle={styles.listContent}>
         {toolbar}
@@ -79,6 +81,7 @@ export function BookmarkCollectionList({
             cardHeight={cardH}
             gap={GAP}
             columns={columnsProp}
+            compact={compact}
             onDelete={onDelete}
             onMove={onMove}
             onReorder={onReorder}
@@ -111,6 +114,7 @@ export function BookmarkCollectionList({
               allFolders,
               onDelete,
               onMove,
+              compact,
             })
           }
         />
@@ -137,6 +141,7 @@ export function BookmarkCollectionList({
             allFolders,
             onDelete,
             onMove,
+            compact,
           })
         }
       />
@@ -153,6 +158,7 @@ function renderBookmark({
   allFolders,
   onDelete,
   onMove,
+  compact,
 }: {
   item: Bookmark
   drag?: () => void
@@ -162,6 +168,7 @@ function renderBookmark({
   allFolders: Folder[]
   onDelete: (bookmark: Bookmark) => void
   onMove: (bookmark: Bookmark, folderId: string) => void
+  compact?: boolean
 }) {
   if (viewMode === 'list') {
     return (
@@ -183,6 +190,7 @@ function renderBookmark({
         onMove={(folderId) => onMove(item, folderId)}
         drag={drag}
         isActive={isActive}
+        compact={compact}
       />
     </View>
   )

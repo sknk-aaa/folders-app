@@ -20,9 +20,10 @@ type Props = {
   onMove: (folderId: string) => void
   drag?: () => void
   isActive?: boolean
+  compact?: boolean
 }
 
-export function BookmarkCard({ bookmark, allFolders, onDelete, onMove, drag, isActive }: Props) {
+export function BookmarkCard({ bookmark, allFolders, onDelete, onMove, drag, isActive, compact }: Props) {
   const { update } = useBookmarksStore()
   const { settings } = useSettingsStore()
   const [editVisible, setEditVisible] = useState(false)
@@ -61,12 +62,14 @@ export function BookmarkCard({ bookmark, allFolders, onDelete, onMove, drag, isA
         )}
 
         {/* Meta row */}
-        <View style={styles.meta}>
+        <View style={[styles.meta, compact && styles.metaCompact]}>
           <View style={styles.metaLeft}>
-            <FaviconCircle url={bookmark.url} />
+            <FaviconCircle url={bookmark.url} size={compact ? 18 : 22} />
             <View style={styles.textBlock}>
-              <Text style={styles.name} numberOfLines={2}>{bookmark.name}</Text>
-              <Text style={styles.domain} numberOfLines={1}>{getDomain(bookmark.url)}</Text>
+              <Text style={styles.name} numberOfLines={compact ? 1 : 2}>{bookmark.name}</Text>
+              {!compact && (
+                <Text style={styles.domain} numberOfLines={1}>{getDomain(bookmark.url)}</Text>
+              )}
             </View>
           </View>
           <MoreButton onPress={() => setSheetVisible(true)} />
@@ -158,6 +161,10 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.sm,
     gap: spacing.xs,
     backgroundColor: '#fff',
+  },
+  metaCompact: {
+    alignItems: 'center',
+    paddingVertical: 6,
   },
   metaLeft: {
     flex: 1,
