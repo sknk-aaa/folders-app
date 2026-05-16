@@ -46,7 +46,11 @@ export function AddBookmarkScreen() {
   const { settings, set: setSetting } = useSettingsStore()
 
   const initialFolderId =
-    route.params?.folderId ?? settings.last_selected_folder_id ?? folders[0]?.id ?? ''
+    route.params?.folderId ??
+    settings.default_folder_id ??
+    settings.last_selected_folder_id ??
+    folders[0]?.id ??
+    ''
   const [step, setStep] = useState<Step>(route.params?.url ? 'loading' : 'url-input')
   const [urlInput, setUrlInput] = useState(route.params?.url ?? '')
   const [name, setName] = useState(route.params?.title ?? '')

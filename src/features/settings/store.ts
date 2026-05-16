@@ -10,6 +10,7 @@ const DEFAULTS: Settings = {
   is_premium: false,
   tutorial_completed: false,
   last_selected_folder_id: null,
+  default_folder_id: null,
 }
 
 type SettingsStore = {
@@ -27,6 +28,7 @@ function parse(key: keyof Settings, raw: string): Settings[keyof Settings] {
     case 'grid_columns':
       return (parseInt(raw, 10) || 2) as GridColumns
     case 'last_selected_folder_id':
+    case 'default_folder_id':
       return raw || null
     default:
       return raw

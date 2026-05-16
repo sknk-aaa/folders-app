@@ -46,6 +46,7 @@ export type Settings = {
   is_premium: boolean
   tutorial_completed: boolean
   last_selected_folder_id: string | null
+  default_folder_id: string | null
 }
 
 export type RootStackParamList = {

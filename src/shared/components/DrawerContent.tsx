@@ -5,6 +5,7 @@ import { DrawerActions, useNavigation } from '@react-navigation/native'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import type { RootStackParamList } from '../types'
 import { useSettingsStore } from '../../features/settings/store'
+import { useFoldersStore } from '../../features/folders/store'
 import { ProUpgradeModal } from '../../features/pro/components/ProUpgradeModal'
 import { colors, spacing } from '../theme'
 
@@ -12,7 +13,21 @@ export function DrawerContent() {
   const insets = useSafeAreaInsets()
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
   const { settings, set } = useSettingsStore()
+  const { folders } = useFoldersStore()
   const [proModalVisible, setProModalVisible] = useState(false)
+
+  const defaultFolderName =
+    folders.find((f) => f.id === settings.default_folder_id)?.name ?? '未設定'
+
+  const handleDefaultFolderChange = () => {
+    Alert.alert('デフォルトの保存先', 'ブクマ追加時の初期フォルダを選択', [
+      ...folders.map((f) => ({
+        text: f.name,
+        onPress: () => set('default_folder_id', f.id),
+      })),
+      { text: 'キャンセル', style: 'cancel' as const },
+    ])
+  }
 
   const close = () => navigation.dispatch(DrawerActions.closeDrawer())
 
@@ -72,6 +87,10 @@ export function DrawerContent() {
         <View style={styles.divider} />
 
         <View style={styles.section}>
+          <TouchableOpacity style={styles.row} onPress={handleDefaultFolderChange}>
+            <Text style={styles.label}>デフォルトの保存先</Text>
+            <Text style={styles.value}>{defaultFolderName}</Text>
+          </TouchableOpacity>
           <TouchableOpacity style={styles.row} onPress={handleBrowserChange}>
             <Text style={styles.label}>デフォルトブラウザ</Text>
             <Text style={styles.value}>{browserLabel[settings.default_browser]}</Text>
