@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
     minWidth: 0,
   },
   folderThumb: {
-    width: 58,
+    width: 68,
     height: 58,
     borderRadius: radius.md,
     overflow: 'hidden',
@@ -195,8 +195,8 @@ const styles = StyleSheet.create({
     marginLeft: spacing.sm,
   },
   headerTitle: {
-    fontSize: 18,
-    fontWeight: '700',
+    fontSize: 16,
+    fontWeight: '500',
     color: colors.text,
   },
   headerSub: {

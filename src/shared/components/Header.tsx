@@ -153,8 +153,8 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    height: 62,
-    paddingTop: 12,
+    height: 56,
+    paddingTop: 10,
     paddingHorizontal: spacing.lg,
   },
   left: {
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
     fontWeight: '300',
   },
   title: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '600',
     color: colors.text,
   },

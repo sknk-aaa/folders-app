@@ -1,11 +1,12 @@
 import type { ReactNode } from 'react'
-import { Dimensions, FlatList, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, FlatList, ScrollView, StyleSheet, Text, View } from 'react-native'
 import DraggableFlatList, { ScaleDecorator } from 'react-native-draggable-flatlist'
 import { ViewModeToggle } from '../../../shared/components/ViewModeToggle'
 import { colors, spacing } from '../../../shared/theme'
 import type { Bookmark, Folder, ViewMode } from '../../../shared/types'
 import { BookmarkCard } from './BookmarkCard'
 import { BookmarkListItem } from './BookmarkListItem'
+import { SortableBookmarkGrid } from './SortableBookmarkGrid'
 
 const { width: SCREEN_W } = Dimensions.get('window')
 const PADDING = spacing.lg
@@ -62,6 +63,30 @@ export function BookmarkCollectionList({
   )
 
   const emptyComponent = <Text style={styles.emptyText}>{emptyText}</Text>
+
+  if (isDraggable && onReorder && viewMode === 'grid') {
+    const cardH = cardW * 0.72 + 64
+    return (
+      <ScrollView contentContainerStyle={styles.listContent}>
+        {toolbar}
+        {bookmarks.length === 0 ? (
+          emptyComponent
+        ) : (
+          <SortableBookmarkGrid
+            bookmarks={bookmarks}
+            allFolders={allFolders}
+            cardWidth={cardW}
+            cardHeight={cardH}
+            gap={GAP}
+            columns={columnsProp}
+            onDelete={onDelete}
+            onMove={onMove}
+            onReorder={onReorder}
+          />
+        )}
+      </ScrollView>
+    )
+  }
 
   if (isDraggable && onReorder) {
     return (

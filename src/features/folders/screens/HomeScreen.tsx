@@ -344,8 +344,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: GRID_PADDING,
-    paddingTop: spacing.lg,
-    paddingBottom: spacing.md,
+    paddingTop: 10,
+    paddingBottom: 12,
   },
   recentHeader: {
     flexDirection: 'row',
@@ -356,7 +356,7 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.md,
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '600',
     color: colors.text,
   },

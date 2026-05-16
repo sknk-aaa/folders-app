@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
   },
   button: {
     width: 36,
-    height: 30,
+    height: 28,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 10,
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     height: 15,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 3,
+    gap: 2,
   },
   gridDot: {
     width: 6,
@@ -72,10 +72,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.text,
   },
   listIcon: {
-    gap: 4,
+    gap: 2.7,
   },
   listLine: {
-    width: 17,
+    width: 15,
     height: 2,
     borderRadius: 1,
     backgroundColor: colors.text,

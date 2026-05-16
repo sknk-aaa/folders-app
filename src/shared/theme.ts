@@ -4,7 +4,7 @@ export const colors = {
   textSecondary: '#8A8A8E',
   textTertiary: '#C7C7CC',
   separator: '#D0D0D0',
-  cardBorder: '#DDDDDD',
+  cardBorder: '#E6E6E6',
   divider: '#E8E8E8',
   placeholderBg: '#F2F2F2',
   accent: '#007AFF',

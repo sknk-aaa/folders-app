@@ -23,7 +23,7 @@ type DragOrigin = {
   y: number
 }
 
-const CARD_ASPECT_RATIO = 1.05
+const CARD_ASPECT_RATIO = 1.15
 const LONG_PRESS_MS = 180
 
 export function SortableFolderGrid({
