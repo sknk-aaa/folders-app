@@ -68,6 +68,7 @@ export function AddBookmarkScreen() {
   const [proModalVisible, setProModalVisible] = useState(false)
 
   const webviewRef = useRef<WebView>(null)
+  const webviewWrapRef = useRef<View>(null)
   const autoStartedRef = useRef(false)
 
   useEffect(() => {
@@ -148,10 +149,13 @@ export function AddBookmarkScreen() {
   }
 
   const handleWebViewCapture = async () => {
-    if (!webviewRef.current) return
+    if (!webviewWrapRef.current) return
     try {
-      const uri = await captureRef(webviewRef, { format: 'jpg', quality: 0.9 })
+      console.log('[capture] start')
+      const uri = await captureRef(webviewWrapRef, { format: 'jpg', quality: 0.9 })
+      console.log('[capture] captured uri:', uri)
       const info = await ImageManipulator.manipulateAsync(uri, [], { base64: false })
+      console.log('[capture] image size:', info.width, 'x', info.height)
       const cropW = info.width * FRAME_WIDTH_RATIO
       const cropH = cropW / THUMB_ASPECT
       const originX = (info.width - cropW) / 2
@@ -161,14 +165,17 @@ export function AddBookmarkScreen() {
         [{ crop: { originX, originY, width: cropW, height: cropH } }],
         { compress: 0.85, format: ImageManipulator.SaveFormat.JPEG },
       )
+      console.log('[capture] cropped result uri:', result.uri)
       await FileSystem.makeDirectoryAsync(`${FileSystem.documentDirectory}thumbnails/`, {
         intermediates: true,
       })
       const dest = `${FileSystem.documentDirectory}thumbnails/${Date.now()}.jpg`
       await FileSystem.moveAsync({ from: result.uri, to: dest })
+      console.log('[capture] moved to dest:', dest)
       setThumbnailUri(dest)
       setStep('meta')
-    } catch {
+    } catch (e) {
+      console.error('[capture] error:', e)
       showToast('スクリーンショットの取得に失敗しました')
       setStep('meta')
     }
@@ -196,6 +203,7 @@ export function AddBookmarkScreen() {
     }
 
     setSetting('last_selected_folder_id', folderId)
+    console.log('[save] thumbnailUri:', thumbnailUri)
     add({
       folderId,
       name: name.trim(),
@@ -302,13 +310,15 @@ export function AddBookmarkScreen() {
         </View>
         <Text style={styles.webviewHint}>枠の中が保存されます</Text>
         <View style={styles.webviewWrap}>
-          <WebView
-            ref={webviewRef}
-            source={{ uri: url }}
-            style={{ flex: 1 }}
-            onLoad={handleWebViewLoad}
-          />
-          {/* Frame overlay (1.4:1) */}
+          <View ref={webviewWrapRef} collapsable={false} style={{ flex: 1 }}>
+            <WebView
+              ref={webviewRef}
+              source={{ uri: url }}
+              style={{ flex: 1 }}
+              onLoad={handleWebViewLoad}
+            />
+          </View>
+          {/* Frame overlay (1.4:1) - 別Viewで重ねる（キャプチャ対象外） */}
           <View pointerEvents="none" style={styles.frameOverlay}>
             <View style={[styles.frameMaskSide, { width: sideMaskWidth }]} />
             <View style={styles.frameMiddleColumn}>
