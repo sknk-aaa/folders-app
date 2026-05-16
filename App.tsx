@@ -21,8 +21,11 @@ function handleIncomingUrl(url: string) {
   const isAddRoute = parsed.path === 'add' || parsed.hostname === 'add'
   if (isAddRoute && parsed.queryParams?.url) {
     const targetUrl = decodeURIComponent(parsed.queryParams.url as string)
+    const targetTitle = parsed.queryParams?.name
+      ? decodeURIComponent(parsed.queryParams.name as string)
+      : undefined
     if (navigationRef.isReady()) {
-      navigationRef.navigate('AddBookmark', { url: targetUrl })
+      navigationRef.navigate('AddBookmark', { url: targetUrl, title: targetTitle })
     }
   }
 }

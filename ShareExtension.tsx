@@ -1,15 +1,20 @@
+import { useState } from 'react'
 import { StyleSheet, TouchableOpacity } from 'react-native'
-import { Text, View } from 'expo-share-extension'
+import { Text, TextInput, View } from 'expo-share-extension'
 import { close, openHostApp, type InitialProps } from 'expo-share-extension'
 
 export default function ShareExtension({ url }: InitialProps) {
+  const [name, setName] = useState('')
+
   const handleAdd = () => {
     if (!url) {
       close()
       return
     }
-    const encoded = encodeURIComponent(url)
-    openHostApp(`add?url=${encoded}`)
+    const params = new URLSearchParams()
+    params.set('url', url)
+    if (name.trim()) params.set('name', name.trim())
+    openHostApp(`add?${params.toString()}`)
   }
 
   return (
@@ -29,6 +34,21 @@ export default function ShareExtension({ url }: InitialProps) {
         <Text style={styles.noUrl} allowFontScaling={false}>
           URLを取得できませんでした
         </Text>
+      )}
+
+      {url && (
+        <View style={styles.field}>
+          <Text style={styles.label} allowFontScaling={false}>サイト名</Text>
+          <TextInput
+            style={styles.input}
+            value={name}
+            onChangeText={setName}
+            placeholder="任意（後で変更できます）"
+            placeholderTextColor="#C7C7CC"
+            allowFontScaling={false}
+            returnKeyType="done"
+          />
+        </View>
       )}
 
       <View style={styles.buttons}>
@@ -87,6 +107,24 @@ const styles = StyleSheet.create({
     color: '#FF3B30',
     textAlign: 'center',
     marginBottom: 24,
+  },
+  field: {
+    marginBottom: 20,
+  },
+  label: {
+    fontSize: 12,
+    color: '#8A8A8E',
+    marginBottom: 6,
+  },
+  input: {
+    height: 42,
+    borderWidth: 1,
+    borderColor: '#DDDDDD',
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    fontSize: 15,
+    color: '#000000',
+    backgroundColor: '#FFFFFF',
   },
   buttons: {
     flexDirection: 'row',
