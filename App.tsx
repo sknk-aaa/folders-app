@@ -17,8 +17,9 @@ export const navigationRef = createNavigationContainerRef<RootStackParamList>()
 
 function handleIncomingUrl(url: string) {
   const parsed = Linking.parse(url)
-  // foldersapp://add?url=...
-  if (parsed.path === 'add' && parsed.queryParams?.url) {
+  // foldersapp://add?url=... のとき、'add' は parser によって hostname または path に入る
+  const isAddRoute = parsed.path === 'add' || parsed.hostname === 'add'
+  if (isAddRoute && parsed.queryParams?.url) {
     const targetUrl = decodeURIComponent(parsed.queryParams.url as string)
     if (navigationRef.isReady()) {
       navigationRef.navigate('AddBookmark', { url: targetUrl })
