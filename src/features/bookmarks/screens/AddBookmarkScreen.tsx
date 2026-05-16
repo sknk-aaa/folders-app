@@ -70,6 +70,7 @@ export function AddBookmarkScreen() {
   const webviewRef = useRef<WebView>(null)
   const webviewWrapRef = useRef<View>(null)
   const autoStartedRef = useRef(false)
+  const fromShareRef = useRef<boolean>(Boolean(route.params?.url))
 
   useEffect(() => {
     if (route.params?.url && !autoStartedRef.current) {
@@ -100,7 +101,10 @@ export function AddBookmarkScreen() {
     setUrl(finalUrl)
     setStep('loading')
 
-    if (settings.capture_thumbnail) {
+    // 共有経由なら capture_thumbnail 設定を無視して OGP を使う（高速化）
+    const useWebView = !fromShareRef.current && settings.capture_thumbnail
+
+    if (useWebView) {
       // WebView mode: load page then let user capture
       setStep('webview')
     } else {
@@ -358,6 +362,11 @@ export function AddBookmarkScreen() {
             ) : (
               <PlaceholderImage width={120} height={80} style={{ borderRadius: radius.sm }} />
             )}
+            <TouchableOpacity style={styles.retakeBtn} onPress={() => setStep('webview')}>
+              <Text style={styles.retakeText}>
+                {thumbnailUri ? 'サムネを撮り直す' : 'サムネを撮影する'}
+              </Text>
+            </TouchableOpacity>
           </View>
 
           <View style={styles.section}>
@@ -501,8 +510,19 @@ const styles = StyleSheet.create({
     borderColor: '#fff',
   },
   metaContent: { paddingBottom: 32 },
-  thumbPreview: { alignItems: 'center', paddingTop: spacing.xl },
+  thumbPreview: { alignItems: 'center', paddingTop: spacing.xl, gap: 10 },
   thumbImg: { width: 120, height: 80, borderRadius: radius.sm },
+  retakeBtn: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: radius.sm,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.separator,
+  },
+  retakeText: {
+    fontSize: 13,
+    color: colors.text,
+  },
   folderScroll: { marginTop: 0 },
   folderChip: {
     paddingHorizontal: 14,
