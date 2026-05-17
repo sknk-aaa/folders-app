@@ -438,6 +438,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     paddingTop: 7,
     paddingBottom: 7,
+    borderBottomLeftRadius: 16,
+    borderBottomRightRadius: 16,
+    borderLeftWidth: StyleSheet.hairlineWidth,
+    borderRightWidth: StyleSheet.hairlineWidth,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.cardBorder,
   },
   recentName: {
     fontSize: 11,
