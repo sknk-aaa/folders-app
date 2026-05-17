@@ -64,6 +64,7 @@ export default function ShareExtension({ url, preprocessingResults }: Props) {
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.pickerRow}
+        style={styles.pickerScroll}
       >
         {candidates.map((opt) => {
           const active = selectedImage === opt
@@ -232,6 +233,9 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#8A8A8E',
   },
+  pickerScroll: {
+    flexGrow: 0,
+  },
   pickerRow: {
     gap: 8,
     paddingRight: 8,
@@ -310,7 +314,8 @@ const styles = StyleSheet.create({
   buttons: {
     flexDirection: 'row',
     gap: 12,
-    marginTop: 8,
+    marginTop: 'auto',
+    paddingTop: 16,
   },
   cancelBtn: {
     flex: 1,
