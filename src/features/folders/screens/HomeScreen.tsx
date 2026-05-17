@@ -22,7 +22,6 @@ import { CustomActionSheet } from '../../../shared/components/CustomActionSheet'
 import { ViewModeToggle } from '../../../shared/components/ViewModeToggle'
 import { MoreButton } from '../../../shared/components/MoreButton'
 import { PinEntryModal } from '../components/PinEntryModal'
-import { FolderCard } from '../components/FolderCard'
 import { FolderEditModal } from '../components/FolderEditModal'
 import { SortableFolderGrid } from '../components/SortableFolderGrid'
 import { PlaceholderImage } from '../../../shared/components/PlaceholderImage'
@@ -374,6 +373,7 @@ const styles = StyleSheet.create({
     marginHorizontal: GRID_PADDING,
     marginBottom: GRID_GAP,
     padding: spacing.sm,
+    paddingRight: 16,
     borderRadius: 16,
     backgroundColor: colors.background,
     borderWidth: StyleSheet.hairlineWidth,
@@ -403,8 +403,8 @@ const styles = StyleSheet.create({
     marginLeft: spacing.md,
   },
   folderRowName: {
-    fontSize: 16,
-    fontWeight: '700',
+    fontSize: 15,
+    fontWeight: '500',
     color: colors.text,
   },
   folderRowCount: {
@@ -438,12 +438,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     paddingTop: 7,
     paddingBottom: 7,
-    borderBottomLeftRadius: 16,
-    borderBottomRightRadius: 16,
-    borderLeftWidth: StyleSheet.hairlineWidth,
-    borderRightWidth: StyleSheet.hairlineWidth,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.cardBorder,
   },
   recentName: {
     fontSize: 11,
