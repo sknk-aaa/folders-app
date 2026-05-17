@@ -61,7 +61,7 @@ const PAGES: Page[] = [
     key: '1',
     visual: {
       kind: 'single',
-      image: require('../../../assets/オンボーディング画像/1.トップ画面.PNG'),
+      image: require('../../../assets/onboarding/01-home.png'),
     },
     number: '01',
     title: 'サイトをサムネで残す',
@@ -80,7 +80,7 @@ const PAGES: Page[] = [
     key: '3',
     visual: {
       kind: 'single',
-      image: require('../../../assets/オンボーディング画像/2.その他をタップ.png'),
+      image: require('../../../assets/onboarding/02-tap-more.png'),
     },
     number: '03',
     title: '「その他」をタップ',
@@ -91,7 +91,7 @@ const PAGES: Page[] = [
     key: '4',
     visual: {
       kind: 'single',
-      image: require('../../../assets/オンボーディング画像/3.サムネブクマをonに.PNG'),
+      image: require('../../../assets/onboarding/03-toggle-on.png'),
     },
     number: '04',
     title: 'サムネブクマをONに',
@@ -102,8 +102,8 @@ const PAGES: Page[] = [
     key: '5',
     visual: {
       kind: 'duo',
-      first: require('../../../assets/オンボーディング画像/4.サムネブクマをタップ.png'),
-      second: require('../../../assets/オンボーディング画像/5.名前や画像を選ぶ.PNG'),
+      first: require('../../../assets/onboarding/04-tap-app.png'),
+      second: require('../../../assets/onboarding/05-save-screen.png'),
     },
     number: '05',
     title: '共有から1タップで保存',
