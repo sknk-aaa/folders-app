@@ -70,6 +70,7 @@ export function AddBookmarkScreen() {
   const webviewRef = useRef<WebView>(null)
   const webviewWrapRef = useRef<View>(null)
   const autoStartedRef = useRef(false)
+  const fromShareRef = useRef<boolean>(Boolean(route.params?.url))
 
   useEffect(() => {
     if (route.params?.url && !autoStartedRef.current) {
@@ -100,8 +101,13 @@ export function AddBookmarkScreen() {
     setUrl(finalUrl)
     setStep('loading')
 
-    // 常にOGPで自動取得。WebViewキャプチャはmetaステップの「撮り直す」から
-    {
+    // 共有経由なら capture_thumbnail 設定を無視して OGP を使う（高速化）
+    const useWebView = !fromShareRef.current && settings.capture_thumbnail
+
+    if (useWebView) {
+      // WebView mode: load page then let user capture
+      setStep('webview')
+    } else {
       // OGP mode
       try {
         const ogp = await fetchOgp(finalUrl)

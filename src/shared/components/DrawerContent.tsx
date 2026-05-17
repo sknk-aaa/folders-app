@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert, Linking, Image } from 'react-native'
+import { View, Text, TouchableOpacity, Switch, StyleSheet, ScrollView, Alert, Linking, Image } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { DrawerActions, useNavigation } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
@@ -141,6 +141,23 @@ export function DrawerContent() {
               <Text style={styles.chevron}>›</Text>
             </View>
           </TouchableOpacity>
+          <View style={styles.separator} />
+          <View style={styles.toggleRow}>
+            <Ionicons name="camera-outline" size={20} color={colors.textSecondary} style={styles.itemIcon} />
+            <View style={styles.toggleText}>
+              <Text style={styles.label}>サムネ撮影</Text>
+              <Text style={styles.description}>
+                {settings.capture_thumbnail
+                  ? 'サイトを開いて保存したい画面をサムネに'
+                  : 'サイト画像を自動取得してサムネに'}
+              </Text>
+            </View>
+            <Switch
+              value={settings.capture_thumbnail}
+              onValueChange={(v) => set('capture_thumbnail', v)}
+              trackColor={{ true: '#34C759' }}
+            />
+          </View>
         </View>
 
       </ScrollView>
