@@ -84,7 +84,7 @@ export function ProUpgradeModal({ visible, onClose }: Props) {
           <Text style={styles.badgeText}>PRO</Text>
         </View>
 
-        <Text style={styles.title}>Bookrest Pro</Text>
+        <Text style={styles.title}>サムネブクマ Pro</Text>
         <Text style={styles.subtitle}>一度購入すれば、ずっと使える</Text>
 
         <View style={styles.featureList}>

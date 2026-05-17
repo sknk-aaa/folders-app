@@ -11,7 +11,6 @@ import { ProUpgradeModal } from '../../features/pro/components/ProUpgradeModal'
 import { colors, spacing } from '../theme'
 
 const APP_ICON = require('../../../assets/icon.png')
-const APP_LOGO = require('../../../assets/Bookrest-logo.png')
 
 export function DrawerContent() {
   const insets = useSafeAreaInsets()
@@ -81,11 +80,11 @@ export function DrawerContent() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 24 }}
       >
-        {/* Header: app icon + logo */}
+        {/* Header: app icon + name */}
         <View style={styles.header}>
           <Image source={APP_ICON} style={styles.icon} />
           <View style={styles.headerText}>
-            <Image source={APP_LOGO} style={styles.logo} resizeMode="contain" />
+            <Text style={styles.appName}>サムネブックマーク</Text>
             <Text style={styles.appTagline}>{settings.is_premium ? 'Pro' : 'お気に入りをひとまとめに'}</Text>
           </View>
         </View>
@@ -109,7 +108,7 @@ export function DrawerContent() {
                   <Text style={styles.proBadgeText}>PRO</Text>
                 </View>
                 <View style={styles.proTextBlock}>
-                  <Text style={styles.proTitle}>Bookrest Pro</Text>
+                  <Text style={styles.proTitle}>サムネブクマ Pro</Text>
                   <Text style={styles.proSub}>無制限保存・フォルダPINロック</Text>
                 </View>
                 <Text style={styles.chevron}>›</Text>
@@ -222,10 +221,11 @@ const styles = StyleSheet.create({
     flex: 1,
     minWidth: 0,
   },
-  logo: {
-    width: 110,
-    height: 22,
-    alignSelf: 'flex-start',
+  appName: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: colors.text,
+    letterSpacing: 0.2,
   },
   appTagline: {
     fontSize: 12,
