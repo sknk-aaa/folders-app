@@ -155,11 +155,8 @@ export function AddBookmarkScreen() {
   const handleWebViewCapture = async () => {
     if (!webviewWrapRef.current) return
     try {
-      console.log('[capture] start')
       const uri = await captureRef(webviewWrapRef, { format: 'jpg', quality: 0.9 })
-      console.log('[capture] captured uri:', uri)
       const info = await ImageManipulator.manipulateAsync(uri, [], { base64: false })
-      console.log('[capture] image size:', info.width, 'x', info.height)
       const cropW = info.width * FRAME_WIDTH_RATIO
       const cropH = cropW / THUMB_ASPECT
       const originX = (info.width - cropW) / 2
@@ -169,17 +166,14 @@ export function AddBookmarkScreen() {
         [{ crop: { originX, originY, width: cropW, height: cropH } }],
         { compress: 0.85, format: ImageManipulator.SaveFormat.JPEG },
       )
-      console.log('[capture] cropped result uri:', result.uri)
       await FileSystem.makeDirectoryAsync(`${FileSystem.documentDirectory}thumbnails/`, {
         intermediates: true,
       })
       const dest = `${FileSystem.documentDirectory}thumbnails/${Date.now()}.jpg`
       await FileSystem.moveAsync({ from: result.uri, to: dest })
-      console.log('[capture] moved to dest:', dest)
       setThumbnailUri(dest)
       setStep('meta')
-    } catch (e) {
-      console.error('[capture] error:', e)
+    } catch {
       showToast('スクリーンショットの取得に失敗しました')
       setStep('meta')
     }
@@ -207,7 +201,6 @@ export function AddBookmarkScreen() {
     }
 
     setSetting('last_selected_folder_id', folderId)
-    console.log('[save] thumbnailUri:', thumbnailUri)
     add({
       folderId,
       name: name.trim(),
