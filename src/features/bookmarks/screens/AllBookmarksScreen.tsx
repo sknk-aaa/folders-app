@@ -8,6 +8,7 @@ import { useFoldersStore } from '../../folders/store'
 import { Header } from '../../../shared/components/Header'
 import { InlineSearchBar } from '../../../shared/components/InlineSearchBar'
 import { BookmarkCollectionList } from '../components/BookmarkCollectionList'
+import { FolderEditModal } from '../../folders/components/FolderEditModal'
 import { colors } from '../../../shared/theme'
 import type { RootStackParamList, ViewMode } from '../../../shared/types'
 
@@ -22,6 +23,7 @@ export function AllBookmarksScreen() {
   const [columns, setColumns] = useState(2)
   const [searchVisible, setSearchVisible] = useState(false)
   const [query, setQuery] = useState('')
+  const [manageModalVisible, setManageModalVisible] = useState(false)
 
   const pinchGesture = useMemo(
     () =>
@@ -64,8 +66,8 @@ export function AllBookmarksScreen() {
         onBack={searchVisible ? closeSearch : handleBack}
         showSearch={!searchVisible}
         onSearch={openSearch}
-        showAdd={!searchVisible}
-        onAdd={() => navigation.navigate('AddBookmark', {})}
+        showMore={!searchVisible}
+        onMore={() => setManageModalVisible(true)}
         contentSlot={
           searchVisible ? (
             <InlineSearchBar
@@ -94,6 +96,14 @@ export function AllBookmarksScreen() {
           />
         </View>
       </GestureDetector>
+
+      <FolderEditModal
+        visible={manageModalVisible}
+        onClose={() => setManageModalVisible(false)}
+        bookmarks={bookmarks}
+        onDeleteBookmarks={(ids) => ids.forEach((id) => remove(id))}
+        manageOnly
+      />
     </View>
   )
 }

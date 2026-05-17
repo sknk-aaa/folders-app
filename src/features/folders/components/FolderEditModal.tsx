@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import {
-  Alert,
   FlatList,
   Modal,
   View,
@@ -24,10 +23,11 @@ import { colors, spacing, radius } from '../../../shared/theme'
 type Props = {
   visible: boolean
   folder?: Folder
-  onSave: (name: string, iconId: FolderIconId) => void
+  onSave?: (name: string, iconId: FolderIconId) => void
   onClose: () => void
   bookmarks?: Bookmark[]
   onDeleteBookmarks?: (ids: string[]) => void
+  manageOnly?: boolean
 }
 
 export function FolderEditModal({
@@ -37,6 +37,7 @@ export function FolderEditModal({
   onClose,
   bookmarks,
   onDeleteBookmarks,
+  manageOnly = false,
 }: Props) {
   const insets = useSafeAreaInsets()
   const [name, setName] = useState(folder?.name ?? '')
@@ -54,8 +55,16 @@ export function FolderEditModal({
   }
 
   const handleSave = () => {
-    if (!name.trim()) return
-    onSave(name.trim(), folder?.iconId ?? 'default')
+    // フォルダ編集モードでは名前必須
+    if (!manageOnly && !name.trim()) return
+    // 選択中のブクマを削除
+    if (selectedIds.size > 0 && onDeleteBookmarks) {
+      onDeleteBookmarks(Array.from(selectedIds))
+    }
+    // フォルダ編集モードのみ名前保存
+    if (!manageOnly && onSave) {
+      onSave(name.trim(), folder?.iconId ?? 'default')
+    }
     onClose()
   }
 
@@ -69,25 +78,6 @@ export function FolderEditModal({
       }
       return next
     })
-  }
-
-  const handleDeleteSelected = () => {
-    const count = selectedIds.size
-    Alert.alert(
-      `${count}件を削除`,
-      'この操作は取り消せません。',
-      [
-        { text: 'キャンセル', style: 'cancel' },
-        {
-          text: '削除',
-          style: 'destructive',
-          onPress: () => {
-            onDeleteBookmarks?.(Array.from(selectedIds))
-            setSelectedIds(new Set())
-          },
-        },
-      ],
-    )
   }
 
   const hasBookmarks = bookmarks && bookmarks.length > 0
@@ -106,19 +96,23 @@ export function FolderEditModal({
         <View style={[styles.container, { paddingBottom: insets.bottom + 16 }]}>
           <View style={styles.handle} />
 
-          <Text style={styles.title}>{folder ? 'フォルダを編集' : '新しいフォルダ'}</Text>
+          <Text style={styles.title}>
+            {manageOnly ? 'ブックマーク管理' : folder ? 'フォルダを編集' : '新しいフォルダ'}
+          </Text>
 
-          <TextInput
-            style={styles.input}
-            value={name}
-            onChangeText={setName}
-            placeholder="フォルダ名"
-            placeholderTextColor={colors.textTertiary}
-            returnKeyType="done"
-            onSubmitEditing={handleSave}
-          />
+          {!manageOnly && (
+            <TextInput
+              style={styles.input}
+              value={name}
+              onChangeText={setName}
+              placeholder="フォルダ名"
+              placeholderTextColor={colors.textTertiary}
+              returnKeyType="done"
+              onSubmitEditing={handleSave}
+            />
+          )}
 
-          {folder && (
+          {!manageOnly && folder && (
             <TouchableOpacity
               style={styles.lockRow}
               onPress={() => {
@@ -135,11 +129,13 @@ export function FolderEditModal({
           {hasBookmarks && onDeleteBookmarks ? (
             <View style={styles.bookmarkSection}>
               <View style={styles.bookmarkHeader}>
-                <Text style={styles.bookmarkSectionTitle}>ブックマーク管理</Text>
+                <Text style={styles.bookmarkSectionTitle}>
+                  {manageOnly ? '削除するブックマークを選択' : 'ブックマーク管理'}
+                </Text>
                 {selectedIds.size > 0 && (
-                  <TouchableOpacity onPress={handleDeleteSelected} style={styles.deleteBtn}>
-                    <Text style={styles.deleteBtnText}>{selectedIds.size}件を削除</Text>
-                  </TouchableOpacity>
+                  <View style={styles.selectionBadge}>
+                    <Text style={styles.selectionBadgeText}>{selectedIds.size}件選択中</Text>
+                  </View>
                 )}
               </View>
               <FlatList
@@ -163,9 +159,9 @@ export function FolderEditModal({
               <Text style={styles.cancelText}>キャンセル</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.saveBtn, !name.trim() && styles.saveBtnDisabled]}
+              style={[styles.saveBtn, !manageOnly && !name.trim() && styles.saveBtnDisabled]}
               onPress={handleSave}
-              disabled={!name.trim()}
+              disabled={!manageOnly && !name.trim()}
             >
               <Text style={styles.saveText}>保存</Text>
             </TouchableOpacity>
@@ -269,16 +265,16 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: colors.text,
   },
-  deleteBtn: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+  selectionBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
     borderRadius: radius.sm,
-    backgroundColor: '#FF3B30',
+    backgroundColor: colors.placeholderBg,
   },
-  deleteBtnText: {
-    fontSize: 13,
+  selectionBadgeText: {
+    fontSize: 12,
     fontWeight: '600',
-    color: '#fff',
+    color: colors.textSecondary,
   },
   bookmarkList: {
     flex: 1,
