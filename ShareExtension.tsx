@@ -310,7 +310,7 @@ const styles = StyleSheet.create({
   buttons: {
     flexDirection: 'row',
     gap: 12,
-    marginTop: 'auto',
+    marginTop: 8,
   },
   cancelBtn: {
     flex: 1,
