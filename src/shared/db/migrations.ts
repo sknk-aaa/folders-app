@@ -2,7 +2,7 @@ import { getDb } from './client'
 import { createId } from '../utils/id'
 import { MOCK_BOOKMARKS, MOCK_FOLDERS } from '../mockVisuals'
 
-const CURRENT_MOCK_SEED_VERSION = '6'
+const CURRENT_MOCK_SEED_VERSION = '7'
 
 export function migrateSchema(): void {
   const db = getDb()
@@ -121,8 +121,15 @@ function migrateLegacyDefaultData(): void {
 
   if (seedVersion === CURRENT_MOCK_SEED_VERSION) return
 
-  // v1〜v5 → v6 への移行（未編集のモックデータなら再シード）
-  if (seedVersion === '1' || seedVersion === '2' || seedVersion === '3' || seedVersion === '4' || seedVersion === '5') {
+  // v1〜v6 → v7 への移行（未編集のモックデータなら再シード）
+  if (
+    seedVersion === '1' ||
+    seedVersion === '2' ||
+    seedVersion === '3' ||
+    seedVersion === '4' ||
+    seedVersion === '5' ||
+    seedVersion === '6'
+  ) {
     // 手付かずのモックデータかチェック（フォルダ名一致 + ブックマークが全部 picsum or images.unsplash）
     const folders = db.getAllSync<{ name: string }>(
       'SELECT name FROM folders ORDER BY sort_order ASC',
