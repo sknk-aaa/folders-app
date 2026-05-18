@@ -15,10 +15,17 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { PlaceholderImage } from '../../../shared/components/PlaceholderImage'
 import { PinEntryModal } from './PinEntryModal'
 import { useFoldersStore } from '../store'
+import { useUnlockStore } from '../unlockStore'
 import { useProStore } from '../../pro/store'
 import { ProUpgradeModal } from '../../pro/components/ProUpgradeModal'
+import {
+  pickAndSaveFolderThumbnail,
+  deleteFolderThumbnail,
+} from '../../../shared/utils/folderThumbnail'
 import type { Bookmark, Folder, FolderIconId } from '../../../shared/types'
 import { colors, spacing, radius } from '../../../shared/theme'
+
+type PinFlow = 'idle' | 'set' | 'changeVerify' | 'changeSet' | 'removeVerify'
 
 type Props = {
   visible: boolean
@@ -42,16 +49,40 @@ export function FolderEditModal({
   const insets = useSafeAreaInsets()
   const [name, setName] = useState(folder?.name ?? '')
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
-  const [pinModalMode, setPinModalMode] = useState<'set' | 'unlock' | null>(null)
-  const { folders, setPin, removePin } = useFoldersStore()
-  const currentFolder = folder ? folders.find((f) => f.id === folder.id) : undefined
-  const isPro = useProStore((s) => s.isPro)
+  const [pinFlow, setPinFlow] = useState<PinFlow>('idle')
   const [proModalVisible, setProModalVisible] = useState(false)
+  const { folders, setPin, removePin, setCustomThumbnail, removeCustomThumbnail } = useFoldersStore()
+  const currentFolder = folder ? folders.find((f) => f.id === folder.id) : undefined
+  const hasPin = Boolean(currentFolder?.pinCode)
+  const hasCustomThumb = Boolean(currentFolder?.customThumbnailPath)
+  const isPro = useProStore((s) => s.isPro)
 
   const handleOpen = () => {
     setName(folder?.name ?? '')
     setSelectedIds(new Set())
-    setPinModalMode(null)
+    setPinFlow('idle')
+    setProModalVisible(false)
+  }
+
+  const handleSetThumb = async () => {
+    if (!isPro) {
+      setProModalVisible(true)
+      return
+    }
+    if (!folder) return
+    const prevPath = currentFolder?.customThumbnailPath
+    const path = await pickAndSaveFolderThumbnail(folder.id)
+    if (path) {
+      if (prevPath) {
+        await deleteFolderThumbnail(prevPath)
+      }
+      setCustomThumbnail(folder.id, path)
+    }
+  }
+
+  const handleRemoveThumb = async () => {
+    if (!folder) return
+    await removeCustomThumbnail(folder.id)
   }
 
   const handleSave = () => {
@@ -120,17 +151,84 @@ export function FolderEditModal({
           )}
 
           {!manageOnly && folder && (
-            <TouchableOpacity
-              style={styles.lockRow}
-              onPress={() => {
-                if (!isPro) { setProModalVisible(true); return }
-                setPinModalMode(currentFolder?.pinCode ? 'unlock' : 'set')
-              }}
-            >
-              <Text style={styles.lockRowText}>
-                {currentFolder?.pinCode ? '🔒 PINロックを解除' : '🔓 PINロックを設定'}
+            <View style={styles.lockSection}>
+              <View style={styles.lockRow}>
+                <Text style={styles.lockRowLabel}>PINロック</Text>
+                <View style={styles.lockActions}>
+                  {hasPin ? (
+                    <>
+                      <TouchableOpacity
+                        style={styles.lockBtn}
+                        onPress={() => setPinFlow('changeVerify')}
+                        activeOpacity={0.7}
+                      >
+                        <Text style={styles.lockBtnText}>変更</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={styles.lockBtn}
+                        onPress={() => setPinFlow('removeVerify')}
+                        activeOpacity={0.7}
+                      >
+                        <Text style={styles.lockBtnDestructive}>解除</Text>
+                      </TouchableOpacity>
+                    </>
+                  ) : (
+                    <TouchableOpacity
+                      style={styles.lockBtn}
+                      onPress={() => setPinFlow('set')}
+                      activeOpacity={0.7}
+                    >
+                      <Text style={styles.lockBtnText}>設定する</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              </View>
+              <Text style={styles.lockCaption}>
+                ロック中のフォルダは「最近追加」「すべてのブックマーク」「検索」にも表示されません
               </Text>
-            </TouchableOpacity>
+            </View>
+          )}
+
+          {!manageOnly && folder && (
+            <View style={styles.thumbSection}>
+              <View style={styles.thumbRow}>
+                <View style={styles.thumbLabelRow}>
+                  <Text style={styles.thumbLabel}>サムネイル画像</Text>
+                  <View style={styles.proBadge}>
+                    <Text style={styles.proBadgeText}>PRO</Text>
+                  </View>
+                </View>
+                <View style={styles.lockActions}>
+                  {hasCustomThumb ? (
+                    <>
+                      <TouchableOpacity
+                        style={styles.lockBtn}
+                        onPress={handleSetThumb}
+                        activeOpacity={0.7}
+                      >
+                        <Text style={styles.lockBtnText}>変更</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={styles.lockBtn}
+                        onPress={handleRemoveThumb}
+                        activeOpacity={0.7}
+                      >
+                        <Text style={styles.lockBtnDestructive}>削除</Text>
+                      </TouchableOpacity>
+                    </>
+                  ) : (
+                    <TouchableOpacity
+                      style={styles.lockBtn}
+                      onPress={handleSetThumb}
+                      activeOpacity={0.7}
+                    >
+                      <Text style={styles.lockBtnText}>設定する</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              </View>
+              <Text style={styles.lockCaption}>フォルダのサムネイル画像を設定できます</Text>
+            </View>
           )}
 
           {hasBookmarks && onDeleteBookmarks ? (
@@ -196,19 +294,45 @@ export function FolderEditModal({
         </View>
       </KeyboardAvoidingView>
 
-      {pinModalMode === 'set' && folder && (
+      {pinFlow === 'set' && folder && (
         <PinEntryModal
           mode="set"
-          onSet={(pin) => { setPin(folder.id, pin); setPinModalMode(null) }}
-          onCancel={() => setPinModalMode(null)}
+          onSet={(pin) => {
+            setPin(folder.id, pin)
+            useUnlockStore.getState().unlock(folder.id)
+            setPinFlow('idle')
+          }}
+          onCancel={() => setPinFlow('idle')}
         />
       )}
-      {pinModalMode === 'unlock' && currentFolder?.pinCode && (
+      {pinFlow === 'changeVerify' && currentFolder?.pinCode && (
         <PinEntryModal
           mode="unlock"
           correctPin={currentFolder.pinCode}
-          onSuccess={() => { removePin(folder!.id); setPinModalMode(null) }}
-          onCancel={() => setPinModalMode(null)}
+          onSuccess={() => setPinFlow('changeSet')}
+          onCancel={() => setPinFlow('idle')}
+        />
+      )}
+      {pinFlow === 'changeSet' && folder && (
+        <PinEntryModal
+          mode="set"
+          onSet={(pin) => {
+            setPin(folder.id, pin)
+            useUnlockStore.getState().unlock(folder.id)
+            setPinFlow('idle')
+          }}
+          onCancel={() => setPinFlow('idle')}
+        />
+      )}
+      {pinFlow === 'removeVerify' && currentFolder?.pinCode && folder && (
+        <PinEntryModal
+          mode="unlock"
+          correctPin={currentFolder.pinCode}
+          onSuccess={() => {
+            removePin(folder.id)
+            setPinFlow('idle')
+          }}
+          onCancel={() => setPinFlow('idle')}
         />
       )}
       <ProUpgradeModal visible={proModalVisible} onClose={() => setProModalVisible(false)} />
@@ -396,15 +520,83 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: colors.background,
   },
-  lockRow: {
-    paddingVertical: 14,
-    paddingHorizontal: 4,
+  lockSection: {
     marginBottom: 16,
+    paddingBottom: 12,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: colors.separator,
   },
-  lockRowText: {
+  lockRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 14,
+    paddingHorizontal: 4,
+  },
+  lockCaption: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    paddingHorizontal: 4,
+    lineHeight: 17,
+  },
+  lockRowLabel: {
     fontSize: 15,
+    fontWeight: '500',
     color: colors.text,
+  },
+  lockActions: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  lockBtn: {
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    borderRadius: 14,
+    backgroundColor: colors.placeholderBg,
+  },
+  lockBtnText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: colors.text,
+  },
+  lockBtnDestructive: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#FF3B30',
+  },
+  thumbSection: {
+    marginBottom: 16,
+    paddingBottom: 12,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.separator,
+  },
+  thumbRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 14,
+    paddingHorizontal: 4,
+  },
+  thumbLabelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  thumbLabel: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: colors.text,
+  },
+  proBadge: {
+    backgroundColor: '#1C1C1E',
+    borderRadius: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+  },
+  proBadgeText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#FFD60A',
+    letterSpacing: 1,
   },
 })

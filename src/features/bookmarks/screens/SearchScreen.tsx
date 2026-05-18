@@ -31,18 +31,21 @@ export function SearchScreen() {
   const folderId = route.params?.folderId
   const insets = useSafeAreaInsets()
 
-  const { bookmarks, remove, move } = useBookmarksStore()
+  const bookmarks = useBookmarksStore((s) => s.bookmarks)
+  const { remove, move, publicBookmarks } = useBookmarksStore()
   const { folders } = useFoldersStore()
   const [query, setQuery] = useState('')
 
   const results = useMemo(() => {
-    const pool = folderId ? bookmarks.filter((b) => b.folderId === folderId) : bookmarks
+    const pool = folderId
+      ? bookmarks.filter((b) => b.folderId === folderId)
+      : publicBookmarks()
     if (!query.trim()) return pool
     const q = query.toLowerCase()
     return pool.filter(
       (b) => b.name.toLowerCase().includes(q) || b.url.toLowerCase().includes(q)
     )
-  }, [query, bookmarks, folderId])
+  }, [query, bookmarks, folders, folderId, publicBookmarks])
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>

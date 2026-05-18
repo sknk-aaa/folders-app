@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Alert, Pressable } from 'reac
 import { Image } from 'expo-image'
 import { CustomActionSheet } from '../../../shared/components/CustomActionSheet'
 import { PinEntryModal } from './PinEntryModal'
+import { useUnlockStore } from '../unlockStore'
 import type { Folder, Bookmark } from '../../../shared/types'
 import { colors, spacing, radius } from '../../../shared/theme'
 import { FOLDER_PLACEHOLDER } from '../../../shared/mockVisuals'
@@ -35,12 +36,15 @@ export function FolderCard({
     .map((b) => b.thumbnailPath as string)
   const count = realThumbnails.length
 
+  const isUnlocked = useUnlockStore((s) => Boolean(s.unlockedIds[folder.id]))
+  const isLocked = Boolean(folder.pinCode) && !isUnlocked
+
   const [sheetVisible, setSheetVisible] = useState(false)
   const [pinVisible, setPinVisible] = useState(false)
 
   const handleMore = () => setSheetVisible(true)
   const handlePress = () => {
-    if (folder.pinCode) {
+    if (isLocked) {
       setPinVisible(true)
     } else {
       onPress()
@@ -67,11 +71,16 @@ export function FolderCard({
       style={[styles.card, isActive && styles.cardActive]}
     >
       <View style={styles.mosaic}>
-        <FolderMosaic count={count} realThumbnails={realThumbnails} />
-        {folder.pinCode && (
-          <View style={styles.lockBadge}>
-            <Text style={styles.lockIcon}>🔒</Text>
-          </View>
+        {isLocked ? (
+          <LockedThumbnail />
+        ) : folder.customThumbnailPath ? (
+          <Image
+            source={{ uri: folder.customThumbnailPath }}
+            style={StyleSheet.absoluteFill}
+            contentFit="cover"
+          />
+        ) : (
+          <FolderMosaic count={count} realThumbnails={realThumbnails} />
         )}
       </View>
 
@@ -108,11 +117,23 @@ export function FolderCard({
       <PinEntryModal
         mode="unlock"
         correctPin={folder.pinCode}
-        onSuccess={() => { setPinVisible(false); onPress() }}
+        onSuccess={() => {
+          setPinVisible(false)
+          useUnlockStore.getState().unlock(folder.id)
+          onPress()
+        }}
         onCancel={() => setPinVisible(false)}
       />
     )}
     </>
+  )
+}
+
+function LockedThumbnail() {
+  return (
+    <View style={[StyleSheet.absoluteFill, styles.lockedThumb]}>
+      <Text style={styles.lockedThumbIcon}>🔒</Text>
+    </View>
   )
 }
 
@@ -202,17 +223,15 @@ const styles = StyleSheet.create({
     backgroundColor: colors.placeholderBg,
     position: 'relative',
   },
-  lockBadge: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    backgroundColor: 'rgba(0,0,0,0.35)',
-    borderRadius: 12,
-    paddingHorizontal: 6,
-    paddingVertical: 3,
+  lockedThumb: {
+    backgroundColor: colors.placeholderBg,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  lockIcon: {
-    fontSize: 13,
+  lockedThumbIcon: {
+    fontSize: 28,
+    color: colors.textSecondary,
+    opacity: 0.7,
   },
   threeMosaic: {
     flex: 1,

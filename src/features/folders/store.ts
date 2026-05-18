@@ -2,6 +2,8 @@ import { create } from 'zustand'
 import { getDb } from '../../shared/db/client'
 import { createId } from '../../shared/utils/id'
 import { setFolders as setSharedFolders } from '../../shared/storage/sharedStorage'
+import { deleteFolderThumbnail } from '../../shared/utils/folderThumbnail'
+import { useUnlockStore } from './unlockStore'
 import type { Folder, FolderIconId } from '../../shared/types'
 
 function syncToShared(folders: Folder[]) {
@@ -19,6 +21,8 @@ type FoldersStore = {
   reorder: (folders: Folder[]) => void
   setPin: (id: string, pin: string) => void
   removePin: (id: string) => void
+  setCustomThumbnail: (id: string, path: string) => void
+  removeCustomThumbnail: (id: string) => Promise<void>
 }
 
 function toFolder(row: Record<string, unknown>): Folder {
@@ -30,6 +34,7 @@ function toFolder(row: Record<string, unknown>): Folder {
     createdAt: row.created_at as number,
     isDefault: row.is_default as number,
     pinCode: (row.pin_code as string | null) ?? null,
+    customThumbnailPath: (row.custom_thumbnail_path as string | null) ?? null,
   }
 }
 
@@ -63,6 +68,7 @@ export const useFoldersStore = create<FoldersStore>((setState, getState) => ({
       createdAt: now,
       isDefault: 0,
       pinCode: null,
+      customThumbnailPath: null,
     }
     setState((s) => ({ folders: [...s.folders, folder] }))
     syncToShared(getState().folders)
@@ -80,10 +86,15 @@ export const useFoldersStore = create<FoldersStore>((setState, getState) => ({
 
   remove: (id) => {
     const db = getDb()
+    const target = getState().folders.find((f) => f.id === id)
     db.runSync('DELETE FROM bookmarks WHERE folder_id = ?', [id])
     db.runSync('DELETE FROM folders WHERE id = ?', [id])
     setState((s) => ({ folders: s.folders.filter((f) => f.id !== id) }))
     syncToShared(getState().folders)
+    useUnlockStore.getState().forget(id)
+    if (target?.customThumbnailPath) {
+      void deleteFolderThumbnail(target.customThumbnailPath)
+    }
   },
 
   reorder: (folders) => {
@@ -109,5 +120,26 @@ export const useFoldersStore = create<FoldersStore>((setState, getState) => ({
     setState((s) => ({
       folders: s.folders.map((f) => (f.id === id ? { ...f, pinCode: null } : f)),
     }))
+    useUnlockStore.getState().forget(id)
+  },
+
+  setCustomThumbnail: (id, path) => {
+    const db = getDb()
+    db.runSync('UPDATE folders SET custom_thumbnail_path = ? WHERE id = ?', [path, id])
+    setState((s) => ({
+      folders: s.folders.map((f) => (f.id === id ? { ...f, customThumbnailPath: path } : f)),
+    }))
+  },
+
+  removeCustomThumbnail: async (id) => {
+    const db = getDb()
+    const target = getState().folders.find((f) => f.id === id)
+    db.runSync('UPDATE folders SET custom_thumbnail_path = NULL WHERE id = ?', [id])
+    setState((s) => ({
+      folders: s.folders.map((f) => (f.id === id ? { ...f, customThumbnailPath: null } : f)),
+    }))
+    if (target?.customThumbnailPath) {
+      await deleteFolderThumbnail(target.customThumbnailPath)
+    }
   },
 }))

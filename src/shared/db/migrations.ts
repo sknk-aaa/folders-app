@@ -12,6 +12,12 @@ export function migrateSchema(): void {
   if (!hasPinCode) {
     db.execSync('ALTER TABLE folders ADD COLUMN pin_code TEXT')
   }
+  const hasCustomThumb = db.getFirstSync<{ count: number }>(
+    "SELECT COUNT(*) as count FROM pragma_table_info('folders') WHERE name='custom_thumbnail_path'",
+  )?.count ?? 0
+  if (!hasCustomThumb) {
+    db.execSync('ALTER TABLE folders ADD COLUMN custom_thumbnail_path TEXT')
+  }
 }
 
 export function initializeDatabase(): void {
@@ -23,7 +29,9 @@ export function initializeDatabase(): void {
       icon_id TEXT NOT NULL DEFAULT 'default',
       sort_order INTEGER NOT NULL DEFAULT 0,
       created_at INTEGER NOT NULL,
-      is_default INTEGER NOT NULL DEFAULT 0
+      is_default INTEGER NOT NULL DEFAULT 0,
+      pin_code TEXT,
+      custom_thumbnail_path TEXT
     );
     CREATE TABLE IF NOT EXISTS bookmarks (
       id TEXT PRIMARY KEY,

@@ -17,7 +17,8 @@ type Nav = NativeStackNavigationProp<RootStackParamList>
 
 export function AllBookmarksScreen() {
   const navigation = useNavigation<Nav>()
-  const { bookmarks, remove, move } = useBookmarksStore()
+  const bookmarks = useBookmarksStore((s) => s.bookmarks)
+  const { remove, move, publicBookmarks } = useBookmarksStore()
   const { folders } = useFoldersStore()
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
   const [columns, setColumns] = useState(2)
@@ -35,14 +36,16 @@ export function AllBookmarksScreen() {
     [],
   )
 
+  const visibleBookmarks = useMemo(() => publicBookmarks(), [bookmarks, folders, publicBookmarks])
+
   const sortedBookmarks = useMemo(() => {
     const q = query.trim().toLowerCase()
     const filtered = q
-      ? bookmarks.filter((b) => b.name.toLowerCase().includes(q) || b.url.toLowerCase().includes(q))
-      : bookmarks
+      ? visibleBookmarks.filter((b) => b.name.toLowerCase().includes(q) || b.url.toLowerCase().includes(q))
+      : visibleBookmarks
 
     return [...filtered].sort((a, b) => b.createdAt - a.createdAt)
-  }, [bookmarks, query])
+  }, [visibleBookmarks, query])
 
   const handleBack = () => {
     if (navigation.canGoBack()) {
@@ -100,7 +103,7 @@ export function AllBookmarksScreen() {
       <FolderEditModal
         visible={manageModalVisible}
         onClose={() => setManageModalVisible(false)}
-        bookmarks={bookmarks}
+        bookmarks={visibleBookmarks}
         onDeleteBookmarks={(ids) => ids.forEach((id) => remove(id))}
         manageOnly
       />

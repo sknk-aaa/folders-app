@@ -17,6 +17,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import DraggableFlatList, { ScaleDecorator, ShadowDecorator } from 'react-native-draggable-flatlist'
 import { useFoldersStore } from '../store'
 import { useBookmarksStore } from '../../bookmarks/store'
+import { useUnlockStore } from '../unlockStore'
 import { Header } from '../../../shared/components/Header'
 import { CustomActionSheet } from '../../../shared/components/CustomActionSheet'
 import { ViewModeToggle } from '../../../shared/components/ViewModeToggle'
@@ -81,6 +82,9 @@ export function HomeScreen() {
   const renderFolder = useCallback(
     ({ item: folder, drag, isActive }: { item: Folder; drag: () => void; isActive: boolean }) => {
       const bookmarks = byFolder(folder.id)
+      const firstThumb =
+        folder.customThumbnailPath ??
+        (bookmarks.find((b) => b.thumbnailPath)?.thumbnailPath ?? null)
       const openFolder = () => navigation.navigate('FolderDetail', { folderId: folder.id })
 
       return (
@@ -89,6 +93,7 @@ export function HomeScreen() {
             <FolderListRow
               folder={folder}
               count={bookmarks.length}
+              firstThumbnail={firstThumb}
               onPress={openFolder}
               onEdit={() => openEdit(folder)}
               onDelete={() => remove(folder.id)}
@@ -250,6 +255,7 @@ function RecentItem({
 function FolderListRow({
   folder,
   count,
+  firstThumbnail,
   onPress,
   onEdit,
   onDelete,
@@ -258,19 +264,21 @@ function FolderListRow({
 }: {
   folder: Folder
   count: number
+  firstThumbnail: string | null
   onPress: () => void
   onEdit: () => void
   onDelete: () => void
   drag: () => void
   isActive: boolean
 }) {
-  const visual = MOCK_BOOKMARKS[folder.sortOrder % MOCK_BOOKMARKS.length]
+  const isUnlocked = useUnlockStore((s) => Boolean(s.unlockedIds[folder.id]))
+  const isLocked = Boolean(folder.pinCode) && !isUnlocked
 
   const [sheetVisible, setSheetVisible] = useState(false)
   const [pinVisible, setPinVisible] = useState(false)
 
   const handlePress = () => {
-    if (folder.pinCode) {
+    if (isLocked) {
       setPinVisible(true)
     } else {
       onPress()
@@ -296,18 +304,25 @@ function FolderListRow({
         delayLongPress={160}
         style={[styles.folderRow, isActive && styles.folderRowActive]}
       >
-        <Image
-          source={{ uri: visual.thumbnailPath }}
-          style={styles.folderRowImage}
-          contentFit="cover"
-        />
+        {isLocked ? (
+          <View style={[styles.folderRowImage, styles.folderRowLocked]}>
+            <Text style={styles.folderRowLockedIcon}>🔒</Text>
+          </View>
+        ) : firstThumbnail ? (
+          <Image
+            source={{ uri: firstThumbnail }}
+            style={styles.folderRowImage}
+            contentFit="cover"
+          />
+        ) : (
+          <View style={[styles.folderRowImage, styles.folderRowLocked]} />
+        )}
         <View style={styles.folderRowText}>
           <Text style={styles.folderRowName} numberOfLines={1}>
             {folder.name}
           </Text>
           <Text style={styles.folderRowCount}>{count}件</Text>
         </View>
-        {folder.pinCode && <Text style={styles.folderRowLock}>🔒</Text>}
         <MoreButton onPress={() => setSheetVisible(true)} />
       </Pressable>
 
@@ -325,7 +340,11 @@ function FolderListRow({
         <PinEntryModal
           mode="unlock"
           correctPin={folder.pinCode}
-          onSuccess={() => { setPinVisible(false); onPress() }}
+          onSuccess={() => {
+            setPinVisible(false)
+            useUnlockStore.getState().unlock(folder.id)
+            onPress()
+          }}
           onCancel={() => setPinVisible(false)}
         />
       )}
@@ -394,9 +413,14 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     backgroundColor: colors.placeholderBg,
   },
-  folderRowLock: {
-    fontSize: 14,
-    marginRight: 4,
+  folderRowLocked: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  folderRowLockedIcon: {
+    fontSize: 22,
+    color: colors.textSecondary,
+    opacity: 0.7,
   },
   folderRowText: {
     flex: 1,

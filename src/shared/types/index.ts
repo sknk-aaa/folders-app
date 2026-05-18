@@ -21,6 +21,7 @@ export type Folder = {
   createdAt: number
   isDefault: number
   pinCode: string | null
+  customThumbnailPath: string | null
 }
 
 export type Bookmark = {

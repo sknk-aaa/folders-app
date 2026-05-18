@@ -79,6 +79,7 @@ export function FolderDetailScreen() {
     .filter((b) => b.thumbnailPath)
     .slice(0, 1)
     .map((b) => b.thumbnailPath as string)
+  const headerThumbnail = folder.customThumbnailPath ?? mosaicThumbnails[0]
 
   return (
     <View style={styles.container}>
@@ -117,7 +118,7 @@ export function FolderDetailScreen() {
         {!isSearching && (
           <FolderHeaderSummary
             folder={folder}
-            thumbnail={mosaicThumbnails[0]}
+            thumbnail={headerThumbnail}
             bookmarkCount={bookmarks.length}
           />
         )}

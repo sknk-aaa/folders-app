@@ -3,7 +3,17 @@ import { getDb } from '../../shared/db/client'
 import { createId } from '../../shared/utils/id'
 import { drainQueue } from '../../shared/storage/sharedStorage'
 import { downloadAndCropOgp } from '../../shared/utils/thumbnail'
+import { useFoldersStore } from '../folders/store'
 import type { Bookmark } from '../../shared/types'
+
+function getLockedFolderIds(): Set<string> {
+  return new Set(
+    useFoldersStore
+      .getState()
+      .folders.filter((f) => f.pinCode)
+      .map((f) => f.id),
+  )
+}
 
 type BookmarksStore = {
   bookmarks: Bookmark[]
@@ -15,6 +25,7 @@ type BookmarksStore = {
   reorder: (folderId: string, bookmarks: Bookmark[]) => void
   byFolder: (folderId: string) => Bookmark[]
   recent: (limit?: number) => Bookmark[]
+  publicBookmarks: () => Bookmark[]
   total: () => number
   drainShareQueue: () => Promise<number>
 }
@@ -108,8 +119,18 @@ export const useBookmarksStore = create<BookmarksStore>((setState, getState) => 
       .bookmarks.filter((b) => b.folderId === folderId)
       .sort((a, b) => a.sortOrder - b.sortOrder),
 
-  recent: (limit = 10) =>
-    [...getState().bookmarks].sort((a, b) => b.createdAt - a.createdAt).slice(0, limit),
+  recent: (limit = 10) => {
+    const locked = getLockedFolderIds()
+    return [...getState().bookmarks]
+      .filter((b) => !locked.has(b.folderId))
+      .sort((a, b) => b.createdAt - a.createdAt)
+      .slice(0, limit)
+  },
+
+  publicBookmarks: () => {
+    const locked = getLockedFolderIds()
+    return getState().bookmarks.filter((b) => !locked.has(b.folderId))
+  },
 
   total: () => getState().bookmarks.length,
 
