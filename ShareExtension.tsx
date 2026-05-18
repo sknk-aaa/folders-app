@@ -89,82 +89,89 @@ export default function ShareExtension({ url, preprocessingResults }: Props) {
         ブックマークを追加
       </Text>
 
-      {!actualUrl ? (
-        <Text style={styles.noUrl} allowFontScaling={false}>
-          URLを取得できませんでした
-        </Text>
-      ) : (
-        <>
-          {renderPreview()}
-
-          {candidates.length > 0 && (
-            <TouchableOpacity
-              onPress={() => setShowPicker((v) => !v)}
-              style={styles.toggleBtn}
-            >
-              <Text style={styles.toggleText} allowFontScaling={false}>
-                {showPicker ? '閉じる' : '別の画像にする ▽'}
-              </Text>
-            </TouchableOpacity>
-          )}
-
-          {renderPicker()}
-
-          <Text style={styles.url} numberOfLines={1} allowFontScaling={false}>
-            {actualUrl}
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
+        {!actualUrl ? (
+          <Text style={styles.noUrl} allowFontScaling={false}>
+            URLを取得できませんでした
           </Text>
+        ) : (
+          <>
+            {renderPreview()}
 
-          <View style={styles.field}>
-            <Text style={styles.label} allowFontScaling={false}>
-              サイト名
-            </Text>
-            <TextInput
-              style={styles.input}
-              value={name}
-              onChangeText={setName}
-              placeholder="サイト名"
-              placeholderTextColor="#C7C7CC"
-              allowFontScaling={false}
-              returnKeyType="done"
-            />
-          </View>
-
-          <View style={styles.field}>
-            <Text style={styles.label} allowFontScaling={false}>
-              保存先
-            </Text>
-            {folders.length === 0 ? (
-              <Text style={styles.noFolder} allowFontScaling={false}>
-                フォルダがありません。先にアプリを起動してください。
-              </Text>
-            ) : (
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.chipRow}
+            {candidates.length > 0 && (
+              <TouchableOpacity
+                onPress={() => setShowPicker((v) => !v)}
+                style={styles.toggleBtn}
               >
-                {folders.map((f) => {
-                  const active = f.id === folderId
-                  return (
-                    <TouchableOpacity
-                      key={f.id}
-                      onPress={() => setFolderId(f.id)}
-                      style={[styles.chip, active && styles.chipActive]}
-                    >
-                      <Text
-                        style={[styles.chipText, active && styles.chipTextActive]}
-                        allowFontScaling={false}
-                      >
-                        {f.name}
-                      </Text>
-                    </TouchableOpacity>
-                  )
-                })}
-              </ScrollView>
+                <Text style={styles.toggleText} allowFontScaling={false}>
+                  {showPicker ? '閉じる' : '別の画像にする ▽'}
+                </Text>
+              </TouchableOpacity>
             )}
-          </View>
-        </>
-      )}
+
+            {renderPicker()}
+
+            <Text style={styles.url} numberOfLines={1} allowFontScaling={false}>
+              {actualUrl}
+            </Text>
+
+            <View style={styles.field}>
+              <Text style={styles.label} allowFontScaling={false}>
+                サイト名
+              </Text>
+              <TextInput
+                style={styles.input}
+                value={name}
+                onChangeText={setName}
+                placeholder="サイト名"
+                placeholderTextColor="#C7C7CC"
+                allowFontScaling={false}
+                returnKeyType="done"
+              />
+            </View>
+
+            <View style={styles.field}>
+              <Text style={styles.label} allowFontScaling={false}>
+                保存先
+              </Text>
+              {folders.length === 0 ? (
+                <Text style={styles.noFolder} allowFontScaling={false}>
+                  フォルダがありません。先にアプリを起動してください。
+                </Text>
+              ) : (
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={styles.chipRow}
+                >
+                  {folders.map((f) => {
+                    const active = f.id === folderId
+                    return (
+                      <TouchableOpacity
+                        key={f.id}
+                        onPress={() => setFolderId(f.id)}
+                        style={[styles.chip, active && styles.chipActive]}
+                      >
+                        <Text
+                          style={[styles.chipText, active && styles.chipTextActive]}
+                          allowFontScaling={false}
+                        >
+                          {f.name}
+                        </Text>
+                      </TouchableOpacity>
+                    )
+                  })}
+                </ScrollView>
+              )}
+            </View>
+          </>
+        )}
+      </ScrollView>
 
       <View style={styles.buttons}>
         <TouchableOpacity style={styles.cancelBtn} onPress={close}>
@@ -311,11 +318,16 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#8A8A8E',
   },
+  scroll: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 8,
+  },
   buttons: {
     flexDirection: 'row',
     gap: 12,
-    marginTop: 'auto',
-    paddingTop: 16,
+    paddingTop: 12,
   },
   cancelBtn: {
     flex: 1,
