@@ -15,7 +15,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { PlaceholderImage } from '../../../shared/components/PlaceholderImage'
 import { PinEntryModal } from './PinEntryModal'
 import { useFoldersStore } from '../store'
-import { useUnlockStore } from '../unlockStore'
 import { useProStore } from '../../pro/store'
 import { ProUpgradeModal } from '../../pro/components/ProUpgradeModal'
 import {
@@ -299,7 +298,6 @@ export function FolderEditModal({
           mode="set"
           onSet={(pin) => {
             setPin(folder.id, pin)
-            useUnlockStore.getState().unlock(folder.id)
             setPinFlow('idle')
           }}
           onCancel={() => setPinFlow('idle')}
@@ -318,7 +316,6 @@ export function FolderEditModal({
           mode="set"
           onSet={(pin) => {
             setPin(folder.id, pin)
-            useUnlockStore.getState().unlock(folder.id)
             setPinFlow('idle')
           }}
           onCancel={() => setPinFlow('idle')}
