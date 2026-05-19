@@ -21,7 +21,7 @@ type Props = {
 
 const FEATURES: { label: string; soon?: boolean }[] = [
   { label: 'ブックマークを無制限に保存' },
-  { label: 'フォルダをPINロックで保護' },
+  { label: 'フォルダのサムネイル画像を設定' },
   { label: '複数デバイスでiCloud同期', soon: true },
 ]
 
