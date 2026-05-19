@@ -145,7 +145,7 @@ export function DrawerContent() {
 
       </ScrollView>
       <View style={[styles.footer, { paddingBottom: insets.bottom + 12 }]}>
-        <Text style={styles.footerText}>v1.0.0</Text>
+        <Text style={styles.footerText}>v1.1.0</Text>
       </View>
       <ProUpgradeModal visible={proModalVisible} onClose={() => setProModalVisible(false)} />
     </View>
