@@ -13,6 +13,8 @@ export async function pickAndSaveFolderThumbnail(folderId: string): Promise<stri
     allowsEditing: true,
     aspect: [5, 3],
     quality: 1,
+    preferredAssetRepresentationMode:
+      ImagePicker.UIImagePickerPreferredAssetRepresentationMode.Compatible,
   })
   if (result.canceled || !result.assets[0]) return null
 
