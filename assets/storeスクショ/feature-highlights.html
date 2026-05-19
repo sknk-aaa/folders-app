@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Feature Highlights</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700;900&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 1284px;
+      height: 2778px;
+      overflow: hidden;
+    }
+
+    body {
+      background: #EEE4D2;
+      font-family: 'Noto Sans JP', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ── ヘッダー ── */
+    .header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 210px;
+    }
+
+    .app-icon {
+      width: 168px;
+      height: 168px;
+      border-radius: 38px;
+      box-shadow:
+        0 4px 8px rgba(70,45,15,0.1),
+        0 16px 40px rgba(70,45,15,0.2),
+        0 40px 80px rgba(70,45,15,0.12);
+      margin-bottom: 32px;
+    }
+
+    .app-name {
+      font-size: 46px;
+      font-weight: 700;
+      color: #1A1008;
+      letter-spacing: 0.07em;
+      margin-bottom: 14px;
+    }
+
+    .tagline {
+      font-size: 28px;
+      font-weight: 300;
+      color: #9E8C74;
+      letter-spacing: 0.06em;
+    }
+
+    /* ── 区切り ── */
+    .rule {
+      width: 1084px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 86px 0;
+    }
+
+    .rule-line {
+      flex: 1;
+      height: 1px;
+      background: rgba(70,45,15,0.2);
+    }
+
+    .rule-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: rgba(70,45,15,0.28);
+      flex-shrink: 0;
+    }
+
+    /* ── 特徴エリア ── */
+    .features {
+      width: 1084px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding-bottom: 190px;
+    }
+
+    .feature {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .feature-sep {
+      width: 100%;
+      height: 1px;
+      background: rgba(70,45,15,0.14);
+    }
+
+    /* アウトライン数字 */
+    .feature-num {
+      font-size: 300px;
+      font-weight: 900;
+      color: transparent;
+      -webkit-text-stroke: 2px rgba(70,45,15,0.11);
+      line-height: 0.78;
+      letter-spacing: -0.06em;
+      margin-bottom: -36px;
+      user-select: none;
+    }
+
+    .feature-title {
+      font-size: 108px;
+      font-weight: 900;
+      color: #1A1008;
+      line-height: 1.06;
+      letter-spacing: -0.03em;
+      margin-bottom: 18px;
+    }
+
+    .feature-desc {
+      font-size: 34px;
+      font-weight: 300;
+      color: #8C7A62;
+      line-height: 1.85;
+      letter-spacing: 0.02em;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <img src="icon.png" class="app-icon" alt="サムネブックマーク">
+    <div class="app-name">サムネブックマーク</div>
+    <div class="tagline">お気に入りを、もっと美しく。</div>
+  </div>
+
+  <div class="rule">
+    <div class="rule-line"></div>
+    <div class="rule-dot"></div>
+    <div class="rule-line"></div>
+  </div>
+
+  <div class="features">
+
+    <div class="feature">
+      <div class="feature-num">01</div>
+      <div class="feature-title">広告なし</div>
+      <div class="feature-desc">余計な広告なし。<br>快適に使い続けられます。</div>
+    </div>
+
+    <div class="feature-sep"></div>
+
+    <div class="feature">
+      <div class="feature-num">02</div>
+      <div class="feature-title">ログイン不要</div>
+      <div class="feature-desc">アカウント登録なしで、<br>すぐ使い始められます。</div>
+    </div>
+
+    <div class="feature-sep"></div>
+
+    <div class="feature">
+      <div class="feature-num">03</div>
+      <div class="feature-title">サムネで<br>視覚的に管理</div>
+      <div class="feature-desc">サイトのサムネ付きで、<br>一目でどのページかわかります。</div>
+    </div>
+
+  </div>
+
+</body>
+</html>
