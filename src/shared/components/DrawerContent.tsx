@@ -109,7 +109,7 @@ export function DrawerContent() {
                 </View>
                 <View style={styles.proTextBlock}>
                   <Text style={styles.proTitle}>サムネブクマ Pro</Text>
-                  <Text style={styles.proSub}>無制限保存・フォルダPINロック</Text>
+                  <Text style={styles.proSub}>無制限保存・サムネイル画像設定</Text>
                 </View>
                 <Text style={styles.chevron}>›</Text>
               </TouchableOpacity>
