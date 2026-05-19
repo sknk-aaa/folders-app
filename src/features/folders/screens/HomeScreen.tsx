@@ -14,7 +14,6 @@ import {
 import { Image } from 'expo-image'
 import { useNavigation } from '@react-navigation/native'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import DraggableFlatList, { ScaleDecorator, ShadowDecorator } from 'react-native-draggable-flatlist'
 import { useFoldersStore } from '../store'
 import { useBookmarksStore } from '../../bookmarks/store'
 import { useUnlockStore } from '../unlockStore'
@@ -80,7 +79,7 @@ export function HomeScreen() {
   }
 
   const renderFolder = useCallback(
-    ({ item: folder, drag, isActive }: { item: Folder; drag: () => void; isActive: boolean }) => {
+    ({ item: folder }: { item: Folder }) => {
       const bookmarks = byFolder(folder.id)
       const firstThumb =
         folder.customThumbnailPath ??
@@ -88,20 +87,14 @@ export function HomeScreen() {
       const openFolder = () => navigation.navigate('FolderDetail', { folderId: folder.id })
 
       return (
-        <ShadowDecorator opacity={0.3} radius={14}>
-          <ScaleDecorator activeScale={1.03}>
-            <FolderListRow
-              folder={folder}
-              count={bookmarks.length}
-              firstThumbnail={firstThumb}
-              onPress={openFolder}
-              onEdit={() => openEdit(folder)}
-              onDelete={() => remove(folder.id)}
-              drag={drag}
-              isActive={isActive}
-            />
-          </ScaleDecorator>
-        </ShadowDecorator>
+        <FolderListRow
+          folder={folder}
+          count={bookmarks.length}
+          firstThumbnail={firstThumb}
+          onPress={openFolder}
+          onEdit={() => openEdit(folder)}
+          onDelete={() => remove(folder.id)}
+        />
       )
     },
     [byFolder, navigation, remove],
@@ -179,18 +172,14 @@ export function HomeScreen() {
           {listFooter}
         </ScrollView>
       ) : (
-        <DraggableFlatList
+        <FlatList
           data={folders}
           keyExtractor={(f) => f.id}
-          onDragEnd={({ data }) => reorder(data)}
           renderItem={renderFolder}
           ListHeaderComponent={listHeader}
           ListFooterComponent={listFooter}
           contentContainerStyle={styles.listContent}
-          activationDistance={0}
-          autoscrollThreshold={80}
-          autoscrollSpeed={180}
-          dragItemOverflow
+          showsVerticalScrollIndicator={false}
         />
       )}
 
@@ -259,8 +248,6 @@ function FolderListRow({
   onPress,
   onEdit,
   onDelete,
-  drag,
-  isActive,
 }: {
   folder: Folder
   count: number
@@ -268,8 +255,6 @@ function FolderListRow({
   onPress: () => void
   onEdit: () => void
   onDelete: () => void
-  drag: () => void
-  isActive: boolean
 }) {
   const isUnlocked = useUnlockStore((s) => Boolean(s.unlockedIds[folder.id]))
   const isLocked = Boolean(folder.pinCode) && !isUnlocked
@@ -300,9 +285,7 @@ function FolderListRow({
     <>
       <Pressable
         onPress={handlePress}
-        onLongPress={drag}
-        delayLongPress={160}
-        style={[styles.folderRow, isActive && styles.folderRowActive]}
+        style={styles.folderRow}
       >
         {isLocked ? (
           <View style={[styles.folderRowImage, styles.folderRowLocked]}>
