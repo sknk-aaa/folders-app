@@ -155,19 +155,23 @@ export function HomeScreen() {
         >
           {listHeader}
           <View style={styles.gridWrapper}>
-            <SortableFolderGrid
-              folders={folders}
-              getBookmarks={byFolder}
-              cardWidth={CARD_W}
-              gap={GRID_GAP}
-              onPressFolder={(folder) =>
-                navigation.navigate('FolderDetail', { folderId: folder.id })
-              }
-              onEditFolder={openEdit}
-              onDeleteFolder={(folder) => remove(folder.id)}
-              onReorder={reorder}
-              onDragStateChange={setIsGridDragging}
-            />
+            {folders.length === 0 ? (
+              <FolderEmptyHint />
+            ) : (
+              <SortableFolderGrid
+                folders={folders}
+                getBookmarks={byFolder}
+                cardWidth={CARD_W}
+                gap={GRID_GAP}
+                onPressFolder={(folder) =>
+                  navigation.navigate('FolderDetail', { folderId: folder.id })
+                }
+                onEditFolder={openEdit}
+                onDeleteFolder={(folder) => remove(folder.id)}
+                onReorder={reorder}
+                onDragStateChange={setIsGridDragging}
+              />
+            )}
           </View>
           {listFooter}
         </ScrollView>
@@ -178,6 +182,7 @@ export function HomeScreen() {
           renderItem={renderFolder}
           ListHeaderComponent={listHeader}
           ListFooterComponent={listFooter}
+          ListEmptyComponent={<FolderEmptyHint />}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
         />
@@ -198,6 +203,16 @@ export function HomeScreen() {
         ]}
         onCancel={() => setAddSheetVisible(false)}
       />
+    </View>
+  )
+}
+
+function FolderEmptyHint() {
+  return (
+    <View style={styles.folderEmptyHint}>
+      <Text style={styles.folderEmptyIcon}>📁</Text>
+      <Text style={styles.folderEmptyTitle}>フォルダがありません</Text>
+      <Text style={styles.folderEmptyDesc}>右上の + からフォルダを追加できます</Text>
     </View>
   )
 }
@@ -461,5 +476,25 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.textSecondary,
     paddingHorizontal: GRID_PADDING,
+  },
+  folderEmptyHint: {
+    alignItems: 'center',
+    paddingTop: 48,
+    paddingBottom: 24,
+  },
+  folderEmptyIcon: {
+    fontSize: 40,
+    marginBottom: 16,
+  },
+  folderEmptyTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: 8,
+  },
+  folderEmptyDesc: {
+    fontSize: 13,
+    color: colors.textSecondary,
+    textAlign: 'center',
   },
 })
