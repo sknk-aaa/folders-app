@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react'
 import { Dimensions, FlatList, ScrollView, StyleSheet, Text, View } from 'react-native'
-import DraggableFlatList, { ScaleDecorator } from 'react-native-draggable-flatlist'
 import { ViewModeToggle } from '../../../shared/components/ViewModeToggle'
 import { colors, spacing } from '../../../shared/theme'
 import type { Bookmark, Folder, ViewMode } from '../../../shared/types'
@@ -91,37 +90,6 @@ export function BookmarkCollectionList({
     )
   }
 
-  if (isDraggable && onReorder) {
-    return (
-      <>
-        {toolbar}
-        <DraggableFlatList
-          key={listKey}
-          data={bookmarks}
-          keyExtractor={(b) => b.id}
-          numColumns={columns}
-          onDragEnd={({ data }) => onReorder(data)}
-          columnWrapperStyle={columnWrapperStyle}
-          contentContainerStyle={styles.listContent}
-          ListEmptyComponent={emptyComponent}
-          renderItem={({ item, drag, isActive }) =>
-            renderBookmark({
-              item,
-              drag,
-              isActive,
-              viewMode,
-              cardW,
-              allFolders,
-              onDelete,
-              onMove,
-              compact,
-            })
-          }
-        />
-      </>
-    )
-  }
-
   return (
     <>
       {toolbar}
@@ -195,7 +163,7 @@ function renderBookmark({
     </View>
   )
 
-  return drag ? <ScaleDecorator>{card}</ScaleDecorator> : card
+  return card
 }
 
 const styles = StyleSheet.create({
