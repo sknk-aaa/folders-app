@@ -10,8 +10,6 @@ export async function pickAndSaveFolderThumbnail(folderId: string): Promise<stri
 
   const result = await ImagePicker.launchImageLibraryAsync({
     mediaTypes: ['images'],
-    allowsEditing: true,
-    aspect: [5, 3],
     quality: 1,
     preferredAssetRepresentationMode:
       ImagePicker.UIImagePickerPreferredAssetRepresentationMode.Compatible,
