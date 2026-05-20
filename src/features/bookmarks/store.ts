@@ -20,6 +20,7 @@ type BookmarksStore = {
   load: () => void
   add: (data: Omit<Bookmark, 'id' | 'createdAt' | 'sortOrder'>) => Bookmark
   update: (id: string, name: string, url: string) => void
+  updateThumbnail: (id: string, thumbnailPath: string | null) => void
   move: (id: string, folderId: string) => void
   remove: (id: string) => void
   reorder: (folderId: string, bookmarks: Bookmark[]) => void
@@ -87,6 +88,14 @@ export const useBookmarksStore = create<BookmarksStore>((setState, getState) => 
     }))
   },
 
+  updateThumbnail: (id, thumbnailPath) => {
+    const db = getDb()
+    db.runSync('UPDATE bookmarks SET thumbnail_path = ? WHERE id = ?', [thumbnailPath, id])
+    setState((s) => ({
+      bookmarks: s.bookmarks.map((b) => (b.id === id ? { ...b, thumbnailPath } : b)),
+    }))
+  },
+
   move: (id, folderId) => {
     const db = getDb()
     db.runSync('UPDATE bookmarks SET folder_id = ? WHERE id = ?', [folderId, id])
@@ -137,19 +146,33 @@ export const useBookmarksStore = create<BookmarksStore>((setState, getState) => 
   drainShareQueue: async () => {
     const queued = drainQueue()
     if (queued.length === 0) return 0
+    const folders = useFoldersStore.getState().folders
+    const validFolderIds = new Set(folders.map((f) => f.id))
+    const fallbackFolderId = folders[0]?.id
+    if (!fallbackFolderId) return 0
+
+    let addedCount = 0
     for (const q of queued) {
-      let thumbnailPath: string | null = null
-      if (q.ogImageUrl) {
-        thumbnailPath = await downloadAndCropOgp(q.ogImageUrl)
-      }
-      getState().add({
-        folderId: q.folderId,
+      const folderId = validFolderIds.has(q.folderId) ? q.folderId : fallbackFolderId
+      const bookmark = getState().add({
+        folderId,
         name: q.name,
         url: q.url,
         faviconUrl: null,
-        thumbnailPath,
+        thumbnailPath: null,
       })
+      addedCount += 1
+
+      if (q.ogImageUrl) {
+        void downloadAndCropOgp(q.ogImageUrl)
+          .then((thumbnailPath) => {
+            if (thumbnailPath) {
+              getState().updateThumbnail(bookmark.id, thumbnailPath)
+            }
+          })
+          .catch(() => {})
+      }
     }
-    return queued.length
+    return addedCount
   },
 }))

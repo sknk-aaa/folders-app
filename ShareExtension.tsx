@@ -14,10 +14,27 @@ type Preprocessing = {
 
 type Props = InitialProps & { preprocessingResults?: Preprocessing }
 
-export default function ShareExtension({ url, preprocessingResults }: Props) {
+const URL_PATTERN = /https?:\/\/[^\s<>"']+/i
+
+function extractUrlFromText(text?: string): string {
+  return text?.match(URL_PATTERN)?.[0]?.replace(/[),.、。]+$/, '') ?? ''
+}
+
+function extractTitleFromText(text: string | undefined, extractedUrl: string): string {
+  if (!text) return ''
+  return (
+    text
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .find((line) => line && line !== extractedUrl && !URL_PATTERN.test(line)) ?? ''
+  )
+}
+
+export default function ShareExtension({ url, text, preprocessingResults }: Props) {
   const pp = preprocessingResults ?? {}
-  const actualUrl = pp.url ?? url ?? ''
-  const defaultTitle = pp.ogTitle ?? pp.title ?? ''
+  const actualUrl = pp.url || url || extractUrlFromText(text)
+  const textTitle = extractTitleFromText(text, actualUrl)
+  const defaultTitle = pp.ogTitle || pp.title || textTitle
   const ogImage = pp.ogImage ?? null
   const candidates = pp.candidates ?? []
 
@@ -208,7 +225,6 @@ const styles = StyleSheet.create({
   },
   keyboardAvoid: {
     flex: 1,
-    paddingBottom: 34,
   },
   handle: {
     width: 36,
@@ -223,11 +239,11 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#000000',
     textAlign: 'center',
-    marginBottom: 14,
+    marginBottom: 10,
   },
   preview: {
     width: '100%',
-    aspectRatio: 1.4,
+    aspectRatio: 1.7,
     borderRadius: 10,
     backgroundColor: '#F2F2F7',
   },
@@ -242,8 +258,8 @@ const styles = StyleSheet.create({
   toggleBtn: {
     alignSelf: 'center',
     paddingHorizontal: 12,
-    paddingVertical: 8,
-    marginTop: 6,
+    paddingVertical: 6,
+    marginTop: 4,
   },
   toggleText: {
     fontSize: 13,
@@ -255,7 +271,7 @@ const styles = StyleSheet.create({
   pickerRow: {
     gap: 8,
     paddingRight: 8,
-    paddingVertical: 4,
+    paddingVertical: 2,
   },
   pickerThumb: {
     width: 56,
@@ -276,8 +292,8 @@ const styles = StyleSheet.create({
   url: {
     fontSize: 12,
     color: '#8A8A8E',
-    marginTop: 12,
-    marginBottom: 14,
+    marginTop: 8,
+    marginBottom: 10,
   },
   noUrl: {
     fontSize: 13,
@@ -286,7 +302,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   field: {
-    marginBottom: 14,
+    marginBottom: 10,
   },
   label: {
     fontSize: 12,
@@ -331,12 +347,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 8,
+    paddingBottom: 72,
   },
   buttons: {
     flexDirection: 'row',
     gap: 12,
-    paddingTop: 12,
+    paddingTop: 10,
+    paddingBottom: Platform.OS === 'ios' ? 18 : 12,
+    backgroundColor: '#FFFFFF',
   },
   cancelBtn: {
     flex: 1,

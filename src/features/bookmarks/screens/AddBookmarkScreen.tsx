@@ -51,10 +51,13 @@ export function AddBookmarkScreen() {
   const { folders } = useFoldersStore()
   const { settings, set: setSetting } = useSettingsStore()
 
+  const folderIds = new Set(folders.map((f) => f.id))
   const initialFolderId =
-    route.params?.folderId ??
-    settings.default_folder_id ??
-    settings.last_selected_folder_id ??
+    [
+      route.params?.folderId,
+      settings.default_folder_id,
+      settings.last_selected_folder_id,
+    ].find((id): id is string => Boolean(id && folderIds.has(id))) ??
     folders[0]?.id ??
     ''
   const [step, setStep] = useState<Step>(route.params?.url ? 'loading' : 'url-input')

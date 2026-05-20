@@ -5,6 +5,7 @@ import { setFolders as setSharedFolders } from '../../shared/storage/sharedStora
 import { deleteFolderThumbnail } from '../../shared/utils/folderThumbnail'
 import { useUnlockStore } from './unlockStore'
 import { useBookmarksStore } from '../bookmarks/store'
+import { useSettingsStore } from '../settings/store'
 import type { Folder, FolderIconId } from '../../shared/types'
 
 function syncToShared(folders: Folder[]) {
@@ -92,7 +93,16 @@ export const useFoldersStore = create<FoldersStore>((setState, getState) => ({
     db.runSync('DELETE FROM folders WHERE id = ?', [id])
     setState((s) => ({ folders: s.folders.filter((f) => f.id !== id) }))
     useBookmarksStore.setState((s) => ({ bookmarks: s.bookmarks.filter((b) => b.folderId !== id) }))
-    syncToShared(getState().folders)
+    const nextFolders = getState().folders
+    const fallbackFolderId = nextFolders[0]?.id ?? null
+    const settings = useSettingsStore.getState().settings
+    if (settings.default_folder_id === id) {
+      useSettingsStore.getState().set('default_folder_id', fallbackFolderId)
+    }
+    if (settings.last_selected_folder_id === id) {
+      useSettingsStore.getState().set('last_selected_folder_id', fallbackFolderId)
+    }
+    syncToShared(nextFolders)
     useUnlockStore.getState().forget(id)
     if (target?.customThumbnailPath) {
       void deleteFolderThumbnail(target.customThumbnailPath)
