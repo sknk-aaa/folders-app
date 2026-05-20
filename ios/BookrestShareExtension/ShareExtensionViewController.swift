@@ -130,6 +130,22 @@ class ShareExtensionViewController: UIViewController {
       
       configureRootView(reactNativeRootView, withBackgroundColorDict: backgroundFromInfoPlist, withHeight: heightFromInfoPlist)
       view.addSubview(reactNativeRootView)
+      let guide = self.view.safeAreaLayoutGuide
+      if let heightFromInfoPlist = heightFromInfoPlist {
+        NSLayoutConstraint.activate([
+          reactNativeRootView.leadingAnchor.constraint(equalTo: guide.leadingAnchor),
+          reactNativeRootView.trailingAnchor.constraint(equalTo: guide.trailingAnchor),
+          reactNativeRootView.bottomAnchor.constraint(equalTo: guide.bottomAnchor),
+          reactNativeRootView.heightAnchor.constraint(equalToConstant: heightFromInfoPlist)
+        ])
+      } else {
+        NSLayoutConstraint.activate([
+          reactNativeRootView.leadingAnchor.constraint(equalTo: guide.leadingAnchor),
+          reactNativeRootView.trailingAnchor.constraint(equalTo: guide.trailingAnchor),
+          reactNativeRootView.topAnchor.constraint(equalTo: guide.topAnchor),
+          reactNativeRootView.bottomAnchor.constraint(equalTo: guide.bottomAnchor)
+        ])
+      }
 
       // Hide loading indicator once React content is ready
       self.loadingIndicator.stopAnimating()
@@ -139,25 +155,7 @@ class ShareExtensionViewController: UIViewController {
   
   private func configureRootView(_ rootView: UIView, withBackgroundColorDict dict: [String: CGFloat]?, withHeight: CGFloat?) {
     rootView.backgroundColor = backgroundColor(from: dict)
-
-    // Get the screen bounds
-    let screenBounds = UIScreen.main.bounds
-
-    // Calculate proper frame
-    let frame: CGRect
-    if let withHeight = withHeight {
-      rootView.autoresizingMask = [.flexibleWidth, .flexibleTopMargin]
-      frame = CGRect(
-        x: 0,
-        y: screenBounds.height - withHeight,
-        width: screenBounds.width,
-        height: withHeight
-      )
-    } else {
-      rootView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-      frame = screenBounds
-    }
-    rootView.frame = frame
+    rootView.translatesAutoresizingMaskIntoConstraints = false
   }
   
   private func setupLoadingIndicator() {
@@ -271,6 +269,29 @@ class ShareExtensionViewController: UIViewController {
     let alpha = dict["alpha"] ?? 1
     return UIColor(red: red / 255.0, green: green / 255.0, blue: blue / 255.0, alpha: alpha)
   }
+
+  private func firstURLString(in text: String) -> String? {
+    guard let detector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue) else {
+      return nil
+    }
+    let range = NSRange(text.startIndex..<text.endIndex, in: text)
+    return detector
+      .matches(in: text, options: [], range: range)
+      .compactMap { $0.url?.absoluteString }
+      .first { $0.hasPrefix("http://") || $0.hasPrefix("https://") }
+  }
+
+  private func setTextIfUseful(_ text: String?, into sharedItems: inout [String: Any]) {
+    guard let text = text?.trimmingCharacters(in: .whitespacesAndNewlines), !text.isEmpty else {
+      return
+    }
+    if sharedItems["text"] == nil {
+      sharedItems["text"] = text
+    }
+    if sharedItems["url"] == nil, let url = firstURLString(in: text) {
+      sharedItems["url"] = url
+    }
+  }
   
   private func getShareData(completion: @escaping ([String: Any]?) -> Void) {
     guard let extensionItems = extensionContext?.inputItems as? [NSExtensionItem] else {
@@ -285,12 +306,21 @@ class ShareExtensionViewController: UIViewController {
     let fileManager = FileManager.default
     
     for item in extensionItems {
+      setTextIfUseful(item.attributedContentText?.string, into: &sharedItems)
+      setTextIfUseful(item.attributedTitle?.string, into: &sharedItems)
+
       for provider in item.attachments ?? [] {
         if provider.hasItemConformingToTypeIdentifier(UTType.url.identifier) {
           group.enter()
           provider.loadItem(forTypeIdentifier: UTType.url.identifier, options: nil) { (urlItem, error) in
             DispatchQueue.main.async {
-              if let sharedURL = urlItem as? URL {
+              if let sharedURLString = urlItem as? String {
+                if let parsedURL = URL(string: sharedURLString), parsedURL.scheme?.hasPrefix("http") == true {
+                  sharedItems["url"] = parsedURL.absoluteString
+                } else {
+                  self.setTextIfUseful(sharedURLString, into: &sharedItems)
+                }
+              } else if let sharedURL = urlItem as? URL {
                 if sharedURL.isFileURL {
                   // Screenshot overlay sends public.url (file URLs) instead of public.image
                   let fileExtension = sharedURL.pathExtension.lowercased()
@@ -345,6 +375,11 @@ class ShareExtensionViewController: UIViewController {
                 } else {
                   sharedItems["url"] = sharedURL.absoluteString
                 }
+              } else if let sharedNSURL = urlItem as? NSURL {
+                let sharedURL = sharedNSURL as URL
+                if !sharedURL.isFileURL {
+                  sharedItems["url"] = sharedURL.absoluteString
+                }
               }
               group.leave()
             }
@@ -366,18 +401,21 @@ class ShareExtensionViewController: UIViewController {
           }
         }
 
-        // Only check for plain text if no URL was found
-        if !provider.hasItemConformingToTypeIdentifier(UTType.url.identifier) && provider.hasItemConformingToTypeIdentifier(UTType.text.identifier) {
+        if provider.hasItemConformingToTypeIdentifier(UTType.text.identifier) {
           group.enter()
           provider.loadItem(forTypeIdentifier: UTType.text.identifier, options: nil) { (textItem, error) in
             DispatchQueue.main.async {
               if let text = textItem as? String {
-                sharedItems["text"] = text
+                self.setTextIfUseful(text, into: &sharedItems)
+              } else if let attrText = textItem as? NSAttributedString {
+                self.setTextIfUseful(attrText.string, into: &sharedItems)
               }
               group.leave()
             }
           }
-        } else if provider.hasItemConformingToTypeIdentifier(UTType.image.identifier) {
+        }
+
+        if provider.hasItemConformingToTypeIdentifier(UTType.image.identifier) {
           group.enter()
           provider.loadItem(forTypeIdentifier: UTType.image.identifier, options: nil) { (imageItem, error) in
             DispatchQueue.main.async {
