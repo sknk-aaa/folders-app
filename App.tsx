@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
-import { View, ActivityIndicator, Text } from 'react-native'
+import { AppState, View, ActivityIndicator, Text } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { NavigationContainer, createNavigationContainerRef } from '@react-navigation/native'
@@ -87,7 +87,17 @@ export default function App() {
       processPendingUrl()
     })
 
-    return () => sub.remove()
+    // フォアグラウンドに復帰したとき Share Extension のキューを処理
+    const appStateSub = AppState.addEventListener('change', (nextState) => {
+      if (nextState === 'active') {
+        void useBookmarksStore.getState().drainShareQueue()
+      }
+    })
+
+    return () => {
+      sub.remove()
+      appStateSub.remove()
+    }
   }, [])
 
   const handleNavigationReady = () => {
