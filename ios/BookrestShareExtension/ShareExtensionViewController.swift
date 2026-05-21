@@ -281,6 +281,22 @@ class ShareExtensionViewController: UIViewController {
       .first { $0.hasPrefix("http://") || $0.hasPrefix("https://") }
   }
 
+  private func setURLIfUseful(_ value: Any?, into sharedItems: inout [String: Any]) {
+    guard sharedItems["url"] == nil else { return }
+    let url: URL?
+    if let value = value as? URL {
+      url = value
+    } else if let value = value as? NSURL {
+      url = value as URL
+    } else if let value = value as? String {
+      url = URL(string: value)
+    } else {
+      url = nil
+    }
+    guard let url = url, url.scheme?.hasPrefix("http") == true else { return }
+    sharedItems["url"] = url.absoluteString
+  }
+
   private func setTextIfUseful(_ text: String?, into sharedItems: inout [String: Any]) {
     guard let text = text?.trimmingCharacters(in: .whitespacesAndNewlines), !text.isEmpty else {
       return
@@ -290,6 +306,19 @@ class ShareExtensionViewController: UIViewController {
     }
     if sharedItems["url"] == nil, let url = firstURLString(in: text) {
       sharedItems["url"] = url
+    }
+  }
+
+  private func setAttributedTextIfUseful(_ attributedText: NSAttributedString?, into sharedItems: inout [String: Any]) {
+    guard let attributedText = attributedText, attributedText.length > 0 else {
+      return
+    }
+    setTextIfUseful(attributedText.string, into: &sharedItems)
+    attributedText.enumerateAttribute(.link, in: NSRange(location: 0, length: attributedText.length), options: []) { value, _, stop in
+      setURLIfUseful(value, into: &sharedItems)
+      if sharedItems["url"] != nil {
+        stop.pointee = true
+      }
     }
   }
   
@@ -306,8 +335,8 @@ class ShareExtensionViewController: UIViewController {
     let fileManager = FileManager.default
     
     for item in extensionItems {
-      setTextIfUseful(item.attributedContentText?.string, into: &sharedItems)
-      setTextIfUseful(item.attributedTitle?.string, into: &sharedItems)
+      setAttributedTextIfUseful(item.attributedContentText, into: &sharedItems)
+      setAttributedTextIfUseful(item.attributedTitle, into: &sharedItems)
 
       for provider in item.attachments ?? [] {
         if provider.hasItemConformingToTypeIdentifier(UTType.url.identifier) {
@@ -315,9 +344,8 @@ class ShareExtensionViewController: UIViewController {
           provider.loadItem(forTypeIdentifier: UTType.url.identifier, options: nil) { (urlItem, error) in
             DispatchQueue.main.async {
               if let sharedURLString = urlItem as? String {
-                if let parsedURL = URL(string: sharedURLString), parsedURL.scheme?.hasPrefix("http") == true {
-                  sharedItems["url"] = parsedURL.absoluteString
-                } else {
+                self.setURLIfUseful(sharedURLString, into: &sharedItems)
+                if sharedItems["url"] == nil {
                   self.setTextIfUseful(sharedURLString, into: &sharedItems)
                 }
               } else if let sharedURL = urlItem as? URL {
@@ -373,13 +401,10 @@ class ShareExtensionViewController: UIViewController {
                     print("Failed to copy file: \(error)")
                   }
                 } else {
-                  sharedItems["url"] = sharedURL.absoluteString
+                  self.setURLIfUseful(sharedURL, into: &sharedItems)
                 }
               } else if let sharedNSURL = urlItem as? NSURL {
-                let sharedURL = sharedNSURL as URL
-                if !sharedURL.isFileURL {
-                  sharedItems["url"] = sharedURL.absoluteString
-                }
+                self.setURLIfUseful(sharedNSURL, into: &sharedItems)
               }
               group.leave()
             }
@@ -408,7 +433,7 @@ class ShareExtensionViewController: UIViewController {
               if let text = textItem as? String {
                 self.setTextIfUseful(text, into: &sharedItems)
               } else if let attrText = textItem as? NSAttributedString {
-                self.setTextIfUseful(attrText.string, into: &sharedItems)
+                self.setAttributedTextIfUseful(attrText, into: &sharedItems)
               }
               group.leave()
             }

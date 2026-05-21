@@ -7,15 +7,27 @@ class ShareExtensionPreprocessor {
       return meta ? meta.getAttribute('content') : null
     }
 
+    function absoluteUrl(url) {
+      if (!url) return null
+      try {
+        return new URL(url, window.location.href).href
+      } catch (e) {
+        return null
+      }
+    }
+
+    var canonical = document.querySelector('link[rel="canonical"]')
+    var pageUrl =
+      absoluteUrl(window.location.href) ||
+      absoluteUrl(document.URL) ||
+      absoluteUrl(canonical ? canonical.getAttribute('href') : null)
+
     var candidates = []
     var seen = {}
     function add(url, w, h) {
       if (!url) return
-      try {
-        url = new URL(url, window.location.href).href
-      } catch (e) {
-        return
-      }
+      url = absoluteUrl(url)
+      if (!url) return
       if (url.indexOf('data:') === 0) return
       if (seen[url]) return
       seen[url] = true
@@ -63,7 +75,7 @@ class ShareExtensionPreprocessor {
     }
 
     args.completionFunction({
-      url: window.location.href,
+      url: pageUrl,
       title: document.title || '',
       ogTitle: og('og:title'),
       ogImage: ogImage,

@@ -53,11 +53,9 @@ export function AddBookmarkScreen() {
 
   const folderIds = new Set(folders.map((f) => f.id))
   const initialFolderId =
-    [
-      route.params?.folderId,
-      settings.default_folder_id,
-      settings.last_selected_folder_id,
-    ].find((id): id is string => Boolean(id && folderIds.has(id))) ??
+    [route.params?.folderId, settings.default_folder_id, settings.last_selected_folder_id].find(
+      (id): id is string => Boolean(id && folderIds.has(id)),
+    ) ??
     folders[0]?.id ??
     ''
   const [step, setStep] = useState<Step>(route.params?.url ? 'loading' : 'url-input')
@@ -226,49 +224,58 @@ export function AddBookmarkScreen() {
             <View style={{ width: 60 }} />
           </View>
 
-          <View style={styles.section}>
-            <Text style={styles.label}>URL</Text>
-            <TextInput
-              style={styles.input}
-              value={urlInput}
-              onChangeText={setUrlInput}
-              placeholder="https://..."
-              placeholderTextColor={colors.textTertiary}
-              autoCapitalize="none"
-              autoCorrect={false}
-              keyboardType="url"
-              returnKeyType="next"
-            />
-          </View>
-
-          <View style={styles.section}>
-            <Text style={styles.label}>サイト名</Text>
-            <TextInput
-              style={styles.input}
-              value={name}
-              onChangeText={setName}
-              placeholder="サイト名"
-              placeholderTextColor={colors.textTertiary}
-              returnKeyType="done"
-              onSubmitEditing={handleUrlSubmit}
-            />
-          </View>
-
-          <View style={styles.section}>
-            <Text style={styles.label}>保存先フォルダ</Text>
-            <FolderPicker folders={folders} folderId={folderId} onSelect={setFolderId} />
-          </View>
-
-          <TouchableOpacity
-            style={[
-              styles.primaryBtn,
-              (!urlInput.trim() || !folderId) && styles.primaryBtnDisabled,
-            ]}
-            onPress={handleUrlSubmit}
-            disabled={!urlInput.trim() || !folderId}
+          <ScrollView
+            style={styles.formScroll}
+            contentContainerStyle={styles.formContent}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
           >
-            <Text style={styles.primaryBtnText}>次へ</Text>
-          </TouchableOpacity>
+            <View style={styles.section}>
+              <Text style={styles.label}>URL</Text>
+              <TextInput
+                style={styles.input}
+                value={urlInput}
+                onChangeText={setUrlInput}
+                placeholder="https://..."
+                placeholderTextColor={colors.textTertiary}
+                autoCapitalize="none"
+                autoCorrect={false}
+                keyboardType="url"
+                returnKeyType="next"
+              />
+            </View>
+
+            <View style={styles.section}>
+              <Text style={styles.label}>サイト名</Text>
+              <TextInput
+                style={styles.input}
+                value={name}
+                onChangeText={setName}
+                placeholder="サイト名"
+                placeholderTextColor={colors.textTertiary}
+                returnKeyType="done"
+                onSubmitEditing={handleUrlSubmit}
+              />
+            </View>
+
+            <View style={styles.section}>
+              <Text style={styles.label}>保存先フォルダ</Text>
+              <FolderPicker folders={folders} folderId={folderId} onSelect={setFolderId} />
+            </View>
+          </ScrollView>
+
+          <View style={[styles.bottomActions, { paddingBottom: insets.bottom + 12 }]}>
+            <TouchableOpacity
+              style={[
+                styles.primaryBtn,
+                (!urlInput.trim() || !folderId) && styles.primaryBtnDisabled,
+              ]}
+              onPress={handleUrlSubmit}
+              disabled={!urlInput.trim() || !folderId}
+            >
+              <Text style={styles.primaryBtnText}>次へ</Text>
+            </TouchableOpacity>
+          </View>
 
           <Toast message={toastMsg} visible={toastVisible} onHide={() => setToastVisible(false)} />
         </View>
@@ -344,7 +351,9 @@ export function AddBookmarkScreen() {
           </TouchableOpacity>
         </View>
 
-        <ScrollView contentContainerStyle={styles.metaContent}>
+        <ScrollView
+          contentContainerStyle={[styles.metaContent, { paddingBottom: insets.bottom + 32 }]}
+        >
           {/* Thumbnail preview */}
           <View style={styles.thumbPreview}>
             {thumbnailUri ? (
@@ -457,9 +466,20 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: colors.text,
   },
+  formScroll: {
+    flex: 1,
+  },
+  formContent: {
+    paddingBottom: spacing.xl,
+  },
+  bottomActions: {
+    paddingHorizontal: spacing.lg,
+    paddingTop: 12,
+    backgroundColor: colors.background,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: colors.separator,
+  },
   primaryBtn: {
-    marginHorizontal: spacing.lg,
-    marginTop: spacing.xl,
     backgroundColor: colors.text,
     padding: 16,
     borderRadius: radius.md,

@@ -1,5 +1,12 @@
 import { useState } from 'react'
-import { Image, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TouchableOpacity } from 'react-native'
+import {
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native'
 import { Text, TextInput, View } from 'expo-share-extension'
 import { close, type InitialProps } from 'expo-share-extension'
 import { getFolders, queueBookmark } from './src/shared/storage/sharedStorage'
@@ -14,10 +21,19 @@ type Preprocessing = {
 
 type Props = InitialProps & { preprocessingResults?: Preprocessing }
 
-const URL_PATTERN = /https?:\/\/[^\s<>"']+/i
+const URL_PATTERN = /(https?:\/\/[^\s<>"']+|www\.[^\s<>"']+)/i
+
+function normalizeUrlCandidate(value?: string): string {
+  const trimmed = value?.trim().replace(/[)\]}>、。,.]+$/, '') ?? ''
+  if (!trimmed) return ''
+  if (trimmed.startsWith('www.')) return `https://${trimmed}`
+  if (!trimmed.includes('://') && /^[^\s/]+\.[^\s]+$/.test(trimmed)) return `https://${trimmed}`
+  if (!/^https?:\/\//i.test(trimmed)) return ''
+  return trimmed
+}
 
 function extractUrlFromText(text?: string): string {
-  return text?.match(URL_PATTERN)?.[0]?.replace(/[),.、。]+$/, '') ?? ''
+  return normalizeUrlCandidate(text?.match(URL_PATTERN)?.[0])
 }
 
 function extractTitleFromText(text: string | undefined, extractedUrl: string): string {
@@ -32,8 +48,11 @@ function extractTitleFromText(text: string | undefined, extractedUrl: string): s
 
 export default function ShareExtension({ url, text, preprocessingResults }: Props) {
   const pp = preprocessingResults ?? {}
-  const actualUrl = pp.url || url || extractUrlFromText(text)
-  const textTitle = extractTitleFromText(text, actualUrl)
+  const initialUrl =
+    normalizeUrlCandidate(pp.url) || normalizeUrlCandidate(url) || extractUrlFromText(text)
+  const [editableUrl, setEditableUrl] = useState(initialUrl)
+  const actualUrl = normalizeUrlCandidate(editableUrl)
+  const textTitle = extractTitleFromText(text, initialUrl)
   const defaultTitle = pp.ogTitle || pp.title || textTitle
   const ogImage = pp.ogImage ?? null
   const candidates = pp.candidates ?? []
@@ -48,7 +67,6 @@ export default function ShareExtension({ url, text, preprocessingResults }: Prop
 
   const handleSave = () => {
     if (!actualUrl || !folderId) {
-      close()
       return
     }
     queueBookmark({
@@ -117,82 +135,103 @@ export default function ShareExtension({ url, text, preprocessingResults }: Prop
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
-          {!actualUrl ? (
+          {!initialUrl ? (
             <Text style={styles.noUrl} allowFontScaling={false}>
-              URLを取得できませんでした
+              URLを自動取得できませんでした。URLを入力してください。
             </Text>
-          ) : (
-            <>
-              {renderPreview()}
+          ) : null}
+          <>
+            {initialUrl ? (
+              <>
+                {renderPreview()}
 
-              {candidates.length > 0 && (
-                <TouchableOpacity
-                  onPress={() => setShowPicker((v) => !v)}
-                  style={styles.toggleBtn}
-                >
-                  <Text style={styles.toggleText} allowFontScaling={false}>
-                    {showPicker ? '閉じる' : '別の画像にする ▽'}
-                  </Text>
-                </TouchableOpacity>
-              )}
-
-              {renderPicker()}
-
-              <Text style={styles.url} numberOfLines={1} allowFontScaling={false}>
-                {actualUrl}
-              </Text>
-
-              <View style={styles.field}>
-                <Text style={styles.label} allowFontScaling={false}>
-                  サイト名
-                </Text>
-                <TextInput
-                  style={styles.input}
-                  value={name}
-                  onChangeText={setName}
-                  placeholder="サイト名"
-                  placeholderTextColor="#C7C7CC"
-                  allowFontScaling={false}
-                  returnKeyType="done"
-                />
-              </View>
-
-              <View style={styles.field}>
-                <Text style={styles.label} allowFontScaling={false}>
-                  保存先
-                </Text>
-                {folders.length === 0 ? (
-                  <Text style={styles.noFolder} allowFontScaling={false}>
-                    フォルダがありません。先にアプリを起動してください。
-                  </Text>
-                ) : (
-                  <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={styles.chipRow}
+                {candidates.length > 0 && (
+                  <TouchableOpacity
+                    onPress={() => setShowPicker((v) => !v)}
+                    style={styles.toggleBtn}
                   >
-                    {folders.map((f) => {
-                      const active = f.id === folderId
-                      return (
-                        <TouchableOpacity
-                          key={f.id}
-                          onPress={() => setFolderId(f.id)}
-                          style={[styles.chip, active && styles.chipActive]}
-                        >
-                          <Text
-                            style={[styles.chipText, active && styles.chipTextActive]}
-                            allowFontScaling={false}
-                          >
-                            {f.name}
-                          </Text>
-                        </TouchableOpacity>
-                      )
-                    })}
-                  </ScrollView>
+                    <Text style={styles.toggleText} allowFontScaling={false}>
+                      {showPicker ? '閉じる' : '別の画像にする ▽'}
+                    </Text>
+                  </TouchableOpacity>
                 )}
-              </View>
-            </>
-          )}
+
+                {renderPicker()}
+              </>
+            ) : null}
+
+            <Text style={styles.url} numberOfLines={1} allowFontScaling={false}>
+              {actualUrl || 'https://...'}
+            </Text>
+
+            <View style={styles.field}>
+              <Text style={styles.label} allowFontScaling={false}>
+                URL
+              </Text>
+              <TextInput
+                style={styles.input}
+                value={editableUrl}
+                onChangeText={setEditableUrl}
+                placeholder="https://..."
+                placeholderTextColor="#C7C7CC"
+                allowFontScaling={false}
+                autoCapitalize="none"
+                autoCorrect={false}
+                keyboardType="url"
+                returnKeyType="done"
+              />
+            </View>
+
+            <View style={styles.field}>
+              <Text style={styles.label} allowFontScaling={false}>
+                サイト名
+              </Text>
+              <TextInput
+                style={styles.input}
+                value={name}
+                onChangeText={setName}
+                placeholder="サイト名"
+                placeholderTextColor="#C7C7CC"
+                allowFontScaling={false}
+                returnKeyType="done"
+              />
+            </View>
+
+            <View style={styles.field}>
+              <Text style={styles.label} allowFontScaling={false}>
+                保存先
+              </Text>
+              {folders.length === 0 ? (
+                <Text style={styles.noFolder} allowFontScaling={false}>
+                  フォルダがありません。先にアプリを起動してください。
+                </Text>
+              ) : (
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={styles.chipRow}
+                >
+                  {folders.map((f) => {
+                    const active = f.id === folderId
+                    return (
+                      <TouchableOpacity
+                        key={f.id}
+                        onPress={() => setFolderId(f.id)}
+                        style={[styles.chip, active && styles.chipActive]}
+                      >
+                        <Text
+                          style={[styles.chipText, active && styles.chipTextActive]}
+                          allowFontScaling={false}
+                        >
+                          {f.name}
+                        </Text>
+                      </TouchableOpacity>
+                    )
+                  })}
+                </ScrollView>
+              )}
+            </View>
+          </>
         </ScrollView>
 
         <View style={styles.buttons}>
