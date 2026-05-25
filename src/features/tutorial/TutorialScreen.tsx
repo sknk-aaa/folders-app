@@ -66,11 +66,9 @@ const PAGES: Page[] = [
       kind: 'hero',
       image: require('../../../assets/onboarding/01-home.png'),
     },
-    bgColor: '#EDE8DF',
-    showDivider: true,
     number: '01',
-    title: 'あとで見るを、\nもっと探しやすく',
-    description: '気になったページを、画像付きで\nあなただけのフォルダーに。',
+    title: '',
+    description: '',
   },
   {
     key: '2',
@@ -259,17 +257,19 @@ function PageView({ page, active }: { page: Page; active: boolean }) {
         <Visual visual={page.visual} />
       </Animated.View>
 
-      <Animated.View
-        style={[
-          styles.textArea,
-          page.bgColor ? { backgroundColor: page.bgColor } : undefined,
-          { opacity, transform: [{ translateY }] },
-        ]}
-      >
-        <Text style={styles.title}>{page.title}</Text>
-        {page.showDivider && <View style={styles.titleDivider} />}
-        <Text style={styles.description}>{page.description}</Text>
-      </Animated.View>
+      {!isHero && (
+        <Animated.View
+          style={[
+            styles.textArea,
+            page.bgColor ? { backgroundColor: page.bgColor } : undefined,
+            { opacity, transform: [{ translateY }] },
+          ]}
+        >
+          <Text style={styles.title}>{page.title}</Text>
+          {page.showDivider && <View style={styles.titleDivider} />}
+          <Text style={styles.description}>{page.description}</Text>
+        </Animated.View>
+      )}
     </View>
   )
 }
