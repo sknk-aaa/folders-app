@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Modal,
   View,
@@ -21,6 +21,11 @@ type Props = {
 export function BookmarkEditModal({ bookmark, onClose, onSave }: Props) {
   const [name, setName] = useState(bookmark?.name ?? '')
   const [url, setUrl] = useState(bookmark?.url ?? '')
+
+  useEffect(() => {
+    setName(bookmark?.name ?? '')
+    setUrl(bookmark?.url ?? '')
+  }, [bookmark])
 
   if (!bookmark) return null
 

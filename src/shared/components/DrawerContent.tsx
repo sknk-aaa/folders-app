@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert, Linking, Image } from 'react-native'
+import * as StoreReview from 'expo-store-review'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { DrawerActions, useNavigation } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
@@ -34,9 +35,14 @@ export function DrawerContent() {
     ])
   }
 
-  const handleReview = () => {
+  const handleReview = async () => {
     close()
-    Alert.alert('準備中', 'App Store公開後にレビューをお願いします！')
+    const available = await StoreReview.isAvailableAsync()
+    if (available) {
+      await StoreReview.requestReview()
+    } else {
+      void Linking.openURL('https://apps.apple.com/jp/app/id6746045050')
+    }
   }
 
   const handleFaq = () => {
@@ -95,7 +101,7 @@ export function DrawerContent() {
           <DrawerLinkItem icon="compass-outline" label="使い方" onPress={openTutorial} />
           <DrawerLinkItem icon="help-circle-outline" label="よくある質問" onPress={handleFaq} />
           <DrawerLinkItem icon="chatbubble-ellipses-outline" label="不具合・要望を報告" onPress={handleReportBug} />
-          <DrawerLinkItem icon="star-outline" label="アプリを評価" onPress={handleReview} isLast />
+          <DrawerLinkItem icon="star-outline" label="レビューして応援する" onPress={() => { void handleReview() }} isLast />
         </View>
 
         {/* Pro */}
@@ -120,13 +126,13 @@ export function DrawerContent() {
         {/* 設定 */}
         <SectionTitle>設定</SectionTitle>
         <View style={styles.card}>
-          <TouchableOpacity style={styles.row} onPress={handleDefaultFolderChange}>
+          <TouchableOpacity style={styles.rowColumn} onPress={handleDefaultFolderChange}>
             <View style={styles.rowLeft}>
               <Ionicons name="folder-outline" size={20} color={colors.textSecondary} style={styles.itemIcon} />
               <Text style={styles.label}>デフォルトの保存先</Text>
             </View>
-            <View style={styles.rowRight}>
-              <Text style={styles.value}>{defaultFolderName}</Text>
+            <View style={styles.rowColumnRight}>
+              <Text style={styles.value} numberOfLines={1}>{defaultFolderName}</Text>
               <Text style={styles.chevron}>›</Text>
             </View>
           </TouchableOpacity>
@@ -284,6 +290,17 @@ const styles = StyleSheet.create({
     color: colors.textTertiary,
     fontWeight: '300',
     lineHeight: 18,
+  },
+  rowColumn: {
+    paddingHorizontal: 14,
+    paddingVertical: 14,
+    gap: 2,
+  },
+  rowColumnRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingLeft: 34,
   },
   separator: {
     height: StyleSheet.hairlineWidth,
