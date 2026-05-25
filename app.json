@@ -9,7 +9,7 @@
     "icon": "./assets/icon.png",
     "ios": {
       "bundleIdentifier": "com.sknk.foldersapp",
-      "buildNumber": "21",
+      "buildNumber": "22",
       "supportsTablet": false,
       "icon": "./assets/icon.png",
       "entitlements": {

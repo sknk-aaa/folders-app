@@ -14,6 +14,92 @@
 
 ---
 
+## 2026-05-26: v1.2.0 提出記録
+
+### 提出結果
+
+| 項目 | 値 |
+|---|---|
+| バージョン | `1.2.0` |
+| 提出した iOS build number | `22` |
+| EAS build ID | `e3c7f24f-36f5-4fd5-8d11-4ac1d0208d47` |
+| ビルド状態 | `FINISHED` |
+| ビルド元コミット | `7804d72` (`fix: use ASCII path for onboarding welcome asset`) |
+| App Store Connect 提出 | 完了（作業時確認） |
+
+`production` は `eas.json` で `autoIncrement: true`、かつ
+`appVersionSource: "local"`。提出後にローカルの `app.json` と iOS の
+`Info.plist` が build number `22` へ更新された。これをリポジトリにも残す。
+次回、同じ設定で production build を開始する場合は build number `23` になる。
+
+### 今回反映した内容
+
+- オンボーディングを調整し、1ページ目を新しいイラスト画像中心の構成に変更した。
+- 2、3、4ページ目の画像サイズを実機確認に合わせて調整した。
+- スワイプ中に次ページの表示が遅れて見える問題を解消した。
+- 5ページ目でも右上の「スキップ」を表示するようにした。
+- 1ページ目の画像は `assets/onboarding/welcome.png` を使用する。
+
+関連ファイル:
+
+- `src/features/tutorial/TutorialScreen.tsx`
+- `assets/onboarding/welcome.png`
+
+### 本番ビルドで発生した失敗と修正
+
+最初の production build (`1.2.0 (21)`) は JavaScript bundle 生成で失敗した。
+
+```text
+Unable to resolve module ../../../オンボ1.png
+```
+
+ローカルの Linux 環境では解決できたが、EAS の macOS 環境では日本語名の
+画像参照を解決できなかった。画像を ASCII ファイル名へ変更し、参照を
+`../../../assets/onboarding/welcome.png` に修正して解消した。
+
+再発防止:
+
+- アプリコードから参照する画像・フォント等の asset 名と配置パスは ASCII にする。
+- EAS build 前に、追加 asset が Git 管理されていることを確認する。
+- EAS build 前に `npx tsc --noEmit` を実行する。
+- EAS build 前に `npx expo export --platform ios --output-dir /tmp/folders-app-ios-export-check --clear` を実行し、対象 asset が出力一覧へ含まれることを確認する。
+- production build の失敗でも auto increment により build number が進むことがある。次のビルド前に `app.json` と iOS の `Info.plist` を確認する。
+
+### Share Extension の既知課題
+
+NAVITIME の以下のページを Safari から共有すると、URL が自動取得できず、
+手入力を求める画面になる事象が残っている。
+
+```text
+https://www.navitime.co.jp/bus/diagram/timelist?departure=00044561&arrival=00044580&line=00012661
+```
+
+今回入った防御的修正:
+
+- `preprocessing.js` の成功経路で `pageUrl` が取れない場合に `fallbackUrl` を返す。
+- ルートの `preprocessing.js` と `ios/BookrestShareExtension/preprocessing.js` を同期した。
+
+ただし、これらを含む development build でも NAVITIME の事象は解消しなかった。
+したがって、原因解決済みではなく、**一部サイトでは URL を手入力してもらう
+既知の制限を受け入れて v1.2.0 を提出した**という扱いにする。
+
+今後調査を再開する場合:
+
+- `ShareExtensionViewController.swift` 側で、受信した `url` / `text` /
+  `preprocessingResults` と最終的に渡した URL を画面表示または取得可能な
+  診断情報として仕込む。
+- その診断を含む development build を作り、同一の NAVITIME ページで確認する。
+- Safari の Share Extension 内のネイティブ処理失敗は、PC の Metro/bash
+  ログに出る前提で調査しない。
+
+### Development Build の注意
+
+- 通常アプリの React Native 画面調整は development build + Metro で再ビルドせず確認できる。
+- Share Extension の `preprocessing.js`、Swift、設定、バンドル済み資産の変更確認は iOS build が必要。
+- 共有拡張の問題については、既存 development build に PC 側だけで診断を追加して確認できると決めつけない。
+
+---
+
 ## 実装済みフェーズ
 
 ### Phase 1 ― コアアプリ（MVP）✅
@@ -147,7 +233,9 @@ npx eas-cli build --platform ios --profile development
 # ビルド完了後、TestFlight または EAS のインストールリンクからインストール
 ```
 
-> JS だけの変更（画面・ロジック）はホットリロードで即反映。EAS ビルドは不要。
+> 通常アプリの JS だけの変更（画面・ロジック）はホットリロードで即反映。
+> Share Extension の前処理・ネイティブ処理・組み込み asset の確認は別扱いで、
+> EAS ビルドが必要。
 
 ---
 
