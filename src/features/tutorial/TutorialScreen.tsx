@@ -59,7 +59,7 @@ const PAGES: Page[] = [
     key: '1',
     visual: {
       kind: 'welcome',
-      image: require('../../../オンボ1.png'),
+      image: require('../../../assets/onboarding/welcome.png'),
     },
     number: '01',
     title: '気になるページを、\nすっきり保存。',
