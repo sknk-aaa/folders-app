@@ -226,7 +226,7 @@ export function FolderEditModal({
                   )}
                 </View>
               </View>
-              <Text style={styles.lockCaption}>フォルダのサムネイル画像を設定できます</Text>
+              <Text style={styles.lockCaption}>フォルダカバーを自由に変更できます</Text>
             </View>
           )}
 
