@@ -1,6 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import {
-  Animated,
   Dimensions,
   FlatList,
   Image,
@@ -31,17 +30,13 @@ const PALETTE = {
 
 const PHONE_ASPECT = 0.46
 
-// Visual area = total H minus: safe areas(~78) + topBar(~44) + page paddingTop(8) + textArea(~154) + bottomBar(~142)
-// Targeting 70% fill ratio, same as HTML preview
-const CHROME_H = 426
-const AVAILABLE_VISUAL_H = Math.max(H - CHROME_H, 280)
-const SINGLE_PHONE_HEIGHT = Math.min(Math.max(Math.round(AVAILABLE_VISUAL_H * 0.70), 220), 310)
+const SINGLE_PHONE_HEIGHT = Math.min(H * 0.48, 390)
 const SINGLE_PHONE_WIDTH = SINGLE_PHONE_HEIGHT * PHONE_ASPECT
 
 type Nav = NativeStackNavigationProp<RootStackParamList>
 
 type PageVisual =
-  | { kind: 'hero'; image: ImageSourcePropType }
+  | { kind: 'welcome'; image: ImageSourcePropType }
   | { kind: 'single'; image: ImageSourcePropType; aspectRatio?: number }
   | { kind: 'duo'; first: ImageSourcePropType; second: ImageSourcePropType; firstAspect?: number; secondAspect?: number }
   | { kind: 'icon'; image: ImageSourcePropType; label?: string; singleHalo?: boolean }
@@ -63,12 +58,12 @@ const PAGES: Page[] = [
   {
     key: '1',
     visual: {
-      kind: 'hero',
-      image: require('../../../assets/onboarding/01-home.png'),
+      kind: 'welcome',
+      image: require('../../../オンボ1.png'),
     },
     number: '01',
-    title: '',
-    description: '',
+    title: '気になるページを、\nすっきり保存。',
+    description: 'ブラウザから1タップで、\n画像つきブックマークに。',
   },
   {
     key: '2',
@@ -155,22 +150,16 @@ export function TutorialScreen() {
             <Text style={styles.chapterTotal}> {'  /  '} {TOTAL}</Text>
           </Text>
         </View>
-        {!isLast ? (
-          <TouchableOpacity onPress={finish} hitSlop={12} style={styles.skipBtn}>
-            <Text style={styles.skipText}>スキップ</Text>
-          </TouchableOpacity>
-        ) : (
-          <View style={styles.skipBtnPlaceholder} />
-        )}
+        <TouchableOpacity onPress={finish} hitSlop={12} style={styles.skipBtn}>
+          <Text style={styles.skipText}>スキップ</Text>
+        </TouchableOpacity>
       </View>
 
       <FlatList
         ref={listRef}
         data={PAGES}
         keyExtractor={(p) => p.key}
-        renderItem={({ item, index }) => (
-          <PageView page={item} active={index === currentIndex} />
-        )}
+        renderItem={({ item }) => <PageView page={item} />}
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
@@ -207,88 +196,39 @@ export function TutorialScreen() {
   )
 }
 
-function PageView({ page, active }: { page: Page; active: boolean }) {
-  const opacity = useRef(new Animated.Value(0)).current
-  const translateY = useRef(new Animated.Value(16)).current
-  const visualOpacity = useRef(new Animated.Value(0)).current
-  const visualTranslate = useRef(new Animated.Value(10)).current
-
-  useEffect(() => {
-    if (active) {
-      Animated.stagger(40, [
-        Animated.parallel([
-          Animated.timing(visualOpacity, {
-            toValue: 1,
-            duration: 180,
-            useNativeDriver: true,
-          }),
-          Animated.timing(visualTranslate, {
-            toValue: 0,
-            duration: 180,
-            useNativeDriver: true,
-          }),
-        ]),
-        Animated.parallel([
-          Animated.timing(opacity, {
-            toValue: 1,
-            duration: 180,
-            useNativeDriver: true,
-          }),
-          Animated.timing(translateY, {
-            toValue: 0,
-            duration: 180,
-            useNativeDriver: true,
-          }),
-        ]),
-      ]).start()
-    } else {
-      opacity.setValue(0)
-      translateY.setValue(16)
-      visualOpacity.setValue(0)
-      visualTranslate.setValue(10)
-    }
-  }, [active, opacity, translateY, visualOpacity, visualTranslate])
-
-  const isHero = page.visual.kind === 'hero'
+function PageView({ page }: { page: Page }) {
+  const isWelcome = page.visual.kind === 'welcome'
+  const isDuo = page.visual.kind === 'duo'
 
   return (
-    <View style={[styles.page, { width: W, backgroundColor: page.bgColor, paddingTop: isHero ? 0 : undefined }]}>
-      <Animated.View
+    <View style={[styles.page, { width: W, backgroundColor: page.bgColor }]}>
+      <View
         style={[
           styles.visualArea,
-          isHero && styles.visualAreaHero,
-          { opacity: visualOpacity, transform: [{ translateY: visualTranslate }] },
+          isWelcome && styles.visualAreaWelcome,
+          isDuo && styles.visualAreaDuo,
         ]}
       >
         <Visual visual={page.visual} />
-      </Animated.View>
+      </View>
 
-      {!isHero && (
-        <Animated.View
-          style={[
-            styles.textArea,
-            page.bgColor ? { backgroundColor: page.bgColor } : undefined,
-            { opacity, transform: [{ translateY }] },
-          ]}
-        >
-          <Text style={styles.title}>{page.title}</Text>
-          {page.showDivider && <View style={styles.titleDivider} />}
-          <Text style={styles.description}>{page.description}</Text>
-        </Animated.View>
-      )}
+      <View
+        style={[
+          styles.textArea,
+          page.bgColor ? { backgroundColor: page.bgColor } : undefined,
+        ]}
+      >
+        <Text style={styles.title}>{page.title}</Text>
+        {page.showDivider && <View style={styles.titleDivider} />}
+        <Text style={styles.description}>{page.description}</Text>
+      </View>
     </View>
   )
 }
 
 function Visual({ visual }: { visual: PageVisual }) {
-  if (visual.kind === 'hero') {
-    return (
-      <Image
-        source={visual.image}
-        style={StyleSheet.absoluteFillObject}
-        resizeMode="cover"
-      />
-    )
+  if (visual.kind === 'welcome') {
+    return <WelcomeVisual image={visual.image} />
   }
   if (visual.kind === 'single') {
     const ratio = visual.aspectRatio ?? PHONE_ASPECT
@@ -311,10 +251,9 @@ function Visual({ visual }: { visual: PageVisual }) {
     const fa = visual.firstAspect ?? PHONE_ASPECT
     const sa = visual.secondAspect ?? PHONE_ASPECT
     const arrowSpace = 28
-    const frameWidth = (W - 48 - arrowSpace) / 2
-    const maxDuoH = Math.round(SINGLE_PHONE_HEIGHT * 0.88)
-    const h1 = Math.min(frameWidth / fa, maxDuoH)
-    const h2 = Math.min(frameWidth / sa, maxDuoH)
+    const frameWidth = Math.min((W - 4 - arrowSpace) / 2, 172)
+    const h1 = frameWidth / fa
+    const h2 = frameWidth / sa
     const shorterH = Math.min(h1, h2)
     return (
       <View style={[styles.duoRow, { alignItems: 'flex-end' }]}>
@@ -352,6 +291,14 @@ function Visual({ visual }: { visual: PageVisual }) {
         ))}
       </View>
       <Text style={styles.stepsCaption}>3つの簡単なステップ</Text>
+    </View>
+  )
+}
+
+function WelcomeVisual({ image }: { image: ImageSourcePropType }) {
+  return (
+    <View style={styles.welcomeArtworkFrame}>
+      <Image source={image} style={styles.welcomeArtwork} resizeMode="contain" />
     </View>
   )
 }
@@ -411,9 +358,6 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     paddingHorizontal: 6,
   },
-  skipBtnPlaceholder: {
-    width: 60,
-  },
   skipText: {
     fontSize: 13,
     color: PALETTE.textSecondary,
@@ -433,9 +377,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 20,
   },
-  visualAreaHero: {
-    paddingHorizontal: 0,
-    overflow: 'hidden',
+  visualAreaWelcome: {
+    paddingHorizontal: 4,
+  },
+  visualAreaDuo: {
+    paddingHorizontal: 2,
   },
   textArea: {
     paddingHorizontal: 32,
@@ -467,6 +413,16 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     letterSpacing: 0.2,
   },
+  welcomeArtworkFrame: {
+    width: Math.min(W - 8, 380),
+    aspectRatio: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  welcomeArtwork: {
+    width: '100%',
+    height: '100%',
+  },
   phoneFrame: {
     borderRadius: 24,
     overflow: 'hidden',
@@ -489,10 +445,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   duoArrowWrap: {
-    paddingHorizontal: 10,
+    width: 28,
+    alignItems: 'center',
   },
   duoArrow: {
-    fontSize: 38,
+    fontSize: 34,
     color: PALETTE.textMuted,
     fontWeight: '200',
     lineHeight: 40,
