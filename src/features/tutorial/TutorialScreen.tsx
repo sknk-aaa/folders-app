@@ -41,9 +41,10 @@ const DUO_PHONE_WIDTH = DUO_PHONE_HEIGHT * PHONE_ASPECT
 type Nav = NativeStackNavigationProp<RootStackParamList>
 
 type PageVisual =
-  | { kind: 'single'; image: ImageSourcePropType }
-  | { kind: 'duo'; first: ImageSourcePropType; second: ImageSourcePropType }
-  | { kind: 'icon'; image: ImageSourcePropType; label?: string }
+  | { kind: 'hero'; image: ImageSourcePropType }
+  | { kind: 'single'; image: ImageSourcePropType; aspectRatio?: number }
+  | { kind: 'duo'; first: ImageSourcePropType; second: ImageSourcePropType; firstAspect?: number; secondAspect?: number }
+  | { kind: 'icon'; image: ImageSourcePropType; label?: string; singleHalo?: boolean }
   | { kind: 'steps' }
 
 type Page = {
@@ -52,6 +53,8 @@ type Page = {
   number: string
   title: string
   description: string
+  bgColor?: string
+  showDivider?: boolean
 }
 
 const TOTAL = '05'
@@ -60,50 +63,52 @@ const PAGES: Page[] = [
   {
     key: '1',
     visual: {
-      kind: 'single',
+      kind: 'hero',
       image: require('../../../assets/onboarding/01-home.png'),
     },
+    bgColor: '#EDE8DF',
+    showDivider: true,
     number: '01',
-    title: 'サイトをサムネで残す',
-    description:
-      '気になったページを、画像付きで\nあなただけのギャラリーに。\nあとから一目で見返せます。',
+    title: 'あとで見るを、\nもっと探しやすく',
+    description: '気になったページを、画像付きで\nあなただけのフォルダーに。',
+  },
+  {
+    key: '2',
+    visual: {
+      kind: 'single',
+      image: require('../../../assets/onboarding/02-tap-more.png'),
+      aspectRatio: 1284 / 1731,
+    },
+    number: '02',
+    title: '「その他」をタップ',
+    description: '初回だけ準備が必要です。\nブラウザの共有メニューを開いて、\nアプリ一覧右端の「その他」を選びます。',
   },
   {
     key: '3',
     visual: {
       kind: 'single',
-      image: require('../../../assets/onboarding/02-tap-more.png'),
+      image: require('../../../assets/onboarding/03-toggle-on.png'),
+      aspectRatio: 828 / 1138,
     },
-    number: '02',
-    title: '「その他」をタップ',
-    description:
-      '初回だけ準備が必要です。\nブラウザの共有メニューを開いて、\nアプリ一覧右端の「その他」を選びます。',
+    number: '03',
+    title: 'サムネブクマをONに',
+    description: 'リストから「サムネブクマ」を有効化。\nこれで準備は完了です。',
   },
   {
     key: '4',
     visual: {
-      kind: 'single',
-      image: require('../../../assets/onboarding/03-toggle-on.png'),
-    },
-    number: '03',
-    title: 'サムネブクマをONに',
-    description:
-      'リストから「サムネブクマ」を有効化。\nこれで準備は完了です。',
-  },
-  {
-    key: '5',
-    visual: {
       kind: 'duo',
       first: require('../../../assets/onboarding/04-tap-app.png'),
       second: require('../../../assets/onboarding/05-save-screen.png'),
+      firstAspect: 1284 / 1819,
+      secondAspect: 828 / 1792,
     },
     number: '04',
     title: '共有から1タップで保存',
-    description:
-      '共有メニューから「サムネブクマ」をタップ。\nサムネ・名前・フォルダを選んで\n保存するだけ。',
+    description: '共有メニューから「サムネブクマ」をタップ。\nサムネ・名前・フォルダを選んで\n保存するだけ。',
   },
   {
-    key: '6',
+    key: '5',
     visual: {
       kind: 'icon',
       image: require('../../../assets/icon.png'),
@@ -240,15 +245,15 @@ function PageView({ page, active }: { page: Page; active: boolean }) {
     }
   }, [active, opacity, translateY, visualOpacity, visualTranslate])
 
+  const isHero = page.visual.kind === 'hero'
+
   return (
-    <View style={[styles.page, { width: W }]}>
+    <View style={[styles.page, { width: W, backgroundColor: page.bgColor, paddingTop: isHero ? 0 : undefined }]}>
       <Animated.View
         style={[
           styles.visualArea,
-          {
-            opacity: visualOpacity,
-            transform: [{ translateY: visualTranslate }],
-          },
+          isHero && styles.visualAreaHero,
+          { opacity: visualOpacity, transform: [{ translateY: visualTranslate }] },
         ]}
       >
         <Visual visual={page.visual} />
@@ -257,10 +262,12 @@ function PageView({ page, active }: { page: Page; active: boolean }) {
       <Animated.View
         style={[
           styles.textArea,
+          page.bgColor ? { backgroundColor: page.bgColor } : undefined,
           { opacity, transform: [{ translateY }] },
         ]}
       >
         <Text style={styles.title}>{page.title}</Text>
+        {page.showDivider && <View style={styles.titleDivider} />}
         <Text style={styles.description}>{page.description}</Text>
       </Animated.View>
     </View>
@@ -268,31 +275,47 @@ function PageView({ page, active }: { page: Page; active: boolean }) {
 }
 
 function Visual({ visual }: { visual: PageVisual }) {
-  if (visual.kind === 'single') {
+  if (visual.kind === 'hero') {
     return (
-      <PhoneFrame
-        image={visual.image}
-        width={SINGLE_PHONE_WIDTH}
-        height={SINGLE_PHONE_HEIGHT}
+      <Image
+        source={visual.image}
+        style={StyleSheet.absoluteFillObject}
+        resizeMode="cover"
       />
     )
   }
+  if (visual.kind === 'single') {
+    const ratio = visual.aspectRatio ?? PHONE_ASPECT
+    const maxWidth = W - 40
+    let width: number, height: number
+    if (ratio >= 1) {
+      width = Math.min(maxWidth, 310)
+      height = width / ratio
+    } else {
+      height = SINGLE_PHONE_HEIGHT
+      width = height * ratio
+      if (width > maxWidth) {
+        width = maxWidth
+        height = width / ratio
+      }
+    }
+    return <PhoneFrame image={visual.image} width={width} height={height} />
+  }
   if (visual.kind === 'duo') {
+    const fa = visual.firstAspect ?? PHONE_ASPECT
+    const sa = visual.secondAspect ?? PHONE_ASPECT
+    const arrowSpace = 28
+    const frameWidth = (W - 20 - arrowSpace) / 2
+    const h1 = frameWidth / fa
+    const h2 = frameWidth / sa
+    const shorterH = Math.min(h1, h2)
     return (
-      <View style={styles.duoRow}>
-        <PhoneFrame
-          image={visual.first}
-          width={DUO_PHONE_WIDTH}
-          height={DUO_PHONE_HEIGHT}
-        />
-        <View style={styles.duoArrowWrap}>
+      <View style={[styles.duoRow, { alignItems: 'flex-end' }]}>
+        <PhoneFrame image={visual.first} width={frameWidth} height={h1} />
+        <View style={[styles.duoArrowWrap, { height: shorterH, justifyContent: 'center' }]}>
           <Text style={styles.duoArrow}>›</Text>
         </View>
-        <PhoneFrame
-          image={visual.second}
-          width={DUO_PHONE_WIDTH}
-          height={DUO_PHONE_HEIGHT}
-        />
+        <PhoneFrame image={visual.second} width={frameWidth} height={h2} />
       </View>
     )
   }
@@ -300,7 +323,7 @@ function Visual({ visual }: { visual: PageVisual }) {
     return (
       <View style={styles.iconWrap}>
         <View style={styles.iconHaloOuter} />
-        <View style={styles.iconHaloInner} />
+        {!visual.singleHalo && <View style={styles.iconHaloInner} />}
         <Image source={visual.image} style={styles.iconImage} />
         {visual.label ? (
           <Text style={styles.iconLabel}>{visual.label}</Text>
@@ -403,16 +426,28 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 20,
   },
+  visualAreaHero: {
+    paddingHorizontal: 0,
+    overflow: 'hidden',
+  },
   textArea: {
     paddingHorizontal: 32,
     paddingTop: 28,
     paddingBottom: 8,
     minHeight: 140,
   },
+  titleDivider: {
+    width: 36,
+    height: 2,
+    backgroundColor: '#C4A47C',
+    alignSelf: 'center',
+    marginTop: 12,
+    marginBottom: 12,
+  },
   title: {
     fontSize: 26,
     fontWeight: '700',
-    color: PALETTE.ink,
+    color: '#2C1A10',
     letterSpacing: -0.4,
     lineHeight: 34,
     textAlign: 'center',
