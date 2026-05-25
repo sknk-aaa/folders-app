@@ -135,7 +135,9 @@ export function TutorialScreen() {
 
   const goNext = () => {
     if (currentIndex < PAGES.length - 1) {
-      listRef.current?.scrollToIndex({ index: currentIndex + 1, animated: true })
+      const next = currentIndex + 1
+      setCurrentIndex(next)
+      listRef.current?.scrollToIndex({ index: next, animated: true })
     } else {
       finish()
     }
@@ -173,6 +175,10 @@ export function TutorialScreen() {
         pagingEnabled
         showsHorizontalScrollIndicator={false}
         onMomentumScrollEnd={(e) => {
+          const index = Math.round(e.nativeEvent.contentOffset.x / W)
+          setCurrentIndex(index)
+        }}
+        onScrollEndDrag={(e) => {
           const index = Math.round(e.nativeEvent.contentOffset.x / W)
           setCurrentIndex(index)
         }}
