@@ -32,11 +32,8 @@ const PALETTE = {
 // iPhone screenshot aspect ratio (width / height)
 const PHONE_ASPECT = 0.46
 
-const SINGLE_PHONE_HEIGHT = Math.min(H * 0.52, 470)
+const SINGLE_PHONE_HEIGHT = Math.min(H * 0.44, 360)
 const SINGLE_PHONE_WIDTH = SINGLE_PHONE_HEIGHT * PHONE_ASPECT
-
-const DUO_PHONE_HEIGHT = Math.min(H * 0.4, 340)
-const DUO_PHONE_WIDTH = DUO_PHONE_HEIGHT * PHONE_ASPECT
 
 type Nav = NativeStackNavigationProp<RootStackParamList>
 
@@ -311,7 +308,7 @@ function Visual({ visual }: { visual: PageVisual }) {
     const fa = visual.firstAspect ?? PHONE_ASPECT
     const sa = visual.secondAspect ?? PHONE_ASPECT
     const arrowSpace = 28
-    const frameWidth = (W - 20 - arrowSpace) / 2
+    const frameWidth = (W - 48 - arrowSpace) / 2
     const h1 = frameWidth / fa
     const h2 = frameWidth / sa
     const shorterH = Math.min(h1, h2)
