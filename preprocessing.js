@@ -81,7 +81,7 @@ class ShareExtensionPreprocessor {
       }
 
       args.completionFunction({
-        url: pageUrl,
+        url: pageUrl || fallbackUrl,
         title: document.title || '',
         ogTitle: og('og:title'),
         ogImage: ogImage,
