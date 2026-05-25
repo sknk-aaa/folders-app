@@ -86,7 +86,7 @@ export default function ShareExtension({ url, text, preprocessingResults }: Prop
     return (
       <View style={[styles.preview, styles.previewPlaceholder]}>
         <Text style={styles.previewPlaceholderText} allowFontScaling={false}>
-          サムネなし
+          取得可能な画像がありません
         </Text>
       </View>
     )
