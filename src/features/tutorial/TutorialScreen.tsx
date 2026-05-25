@@ -29,10 +29,13 @@ const PALETTE = {
   border: '#EAE8E2',
 }
 
-// iPhone screenshot aspect ratio (width / height)
 const PHONE_ASPECT = 0.46
 
-const SINGLE_PHONE_HEIGHT = Math.min(H * 0.44, 360)
+// Visual area = total H minus: safe areas(~78) + topBar(~44) + page paddingTop(8) + textArea(~154) + bottomBar(~142)
+// Targeting 70% fill ratio, same as HTML preview
+const CHROME_H = 426
+const AVAILABLE_VISUAL_H = Math.max(H - CHROME_H, 280)
+const SINGLE_PHONE_HEIGHT = Math.min(Math.max(Math.round(AVAILABLE_VISUAL_H * 0.70), 220), 310)
 const SINGLE_PHONE_WIDTH = SINGLE_PHONE_HEIGHT * PHONE_ASPECT
 
 type Nav = NativeStackNavigationProp<RootStackParamList>
@@ -309,8 +312,9 @@ function Visual({ visual }: { visual: PageVisual }) {
     const sa = visual.secondAspect ?? PHONE_ASPECT
     const arrowSpace = 28
     const frameWidth = (W - 48 - arrowSpace) / 2
-    const h1 = frameWidth / fa
-    const h2 = frameWidth / sa
+    const maxDuoH = Math.round(SINGLE_PHONE_HEIGHT * 0.88)
+    const h1 = Math.min(frameWidth / fa, maxDuoH)
+    const h2 = Math.min(frameWidth / sa, maxDuoH)
     const shorterH = Math.min(h1, h2)
     return (
       <View style={[styles.duoRow, { alignItems: 'flex-end' }]}>
