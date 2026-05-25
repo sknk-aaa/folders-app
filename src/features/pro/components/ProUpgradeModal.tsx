@@ -17,6 +17,7 @@ import { colors, spacing, radius } from '../../../shared/theme'
 type Props = {
   visible: boolean
   onClose: () => void
+  hint?: string
 }
 
 const FEATURES: { label: string; soon?: boolean }[] = [
@@ -25,7 +26,7 @@ const FEATURES: { label: string; soon?: boolean }[] = [
   { label: '複数デバイスでiCloud同期', soon: true },
 ]
 
-export function ProUpgradeModal({ visible, onClose }: Props) {
+export function ProUpgradeModal({ visible, onClose, hint }: Props) {
   const insets = useSafeAreaInsets()
   const { isPro, isLoading, purchase, restore } = useProStore()
   const [priceString, setPriceString] = useState<string | null>(null)
@@ -79,6 +80,12 @@ export function ProUpgradeModal({ visible, onClose }: Props) {
     >
       <View style={[styles.container, { paddingBottom: insets.bottom + 24 }]}>
         <View style={styles.handle} />
+
+        {hint && (
+          <View style={styles.hintBanner}>
+            <Text style={styles.hintText}>{hint}</Text>
+          </View>
+        )}
 
         <View style={styles.badge}>
           <Text style={styles.badgeText}>PRO</Text>
@@ -267,5 +274,18 @@ const styles = StyleSheet.create({
   closeText: {
     fontSize: 16,
     color: colors.textSecondary,
+  },
+  hintBanner: {
+    backgroundColor: colors.placeholderBg,
+    borderRadius: radius.sm,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    marginBottom: 20,
+    width: '100%',
+  },
+  hintText: {
+    fontSize: 13,
+    color: colors.textSecondary,
+    textAlign: 'center',
   },
 })

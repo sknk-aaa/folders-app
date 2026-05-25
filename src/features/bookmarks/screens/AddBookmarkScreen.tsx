@@ -67,6 +67,8 @@ export function AddBookmarkScreen() {
   const [toastMsg, setToastMsg] = useState('')
   const [toastVisible, setToastVisible] = useState(false)
   const [proModalVisible, setProModalVisible] = useState(false)
+  const [proModalHint, setProModalHint] = useState<string | undefined>()
+  const [savedPendingNav, setSavedPendingNav] = useState(false)
 
   const webviewRef = useRef<WebView>(null)
   const webviewWrapRef = useRef<View>(null)
@@ -180,6 +182,18 @@ export function AddBookmarkScreen() {
     }
   }
 
+  const FREE_LIMIT = 30
+  const WARN_AT = 25
+
+  const handleProModalClose = () => {
+    setProModalVisible(false)
+    if (savedPendingNav) {
+      setSavedPendingNav(false)
+      showToast('ブックマークを追加しました')
+      setTimeout(() => navigation.goBack(), 500)
+    }
+  }
+
   const handleSave = async () => {
     if (!name.trim() || !url.trim() || !folderId) {
       Alert.alert('入力エラー', 'サイト名、URL、保存先フォルダを入力してください')
@@ -187,12 +201,11 @@ export function AddBookmarkScreen() {
     }
 
     const total = useBookmarksStore.getState().total()
-    if (!settings.is_premium && total >= 100) {
+
+    if (!settings.is_premium && total >= FREE_LIMIT) {
+      setProModalHint(undefined)
       setProModalVisible(true)
       return
-    }
-    if (!settings.is_premium && total === 90) {
-      showToast('残り10件です。Proで無制限に保存できます')
     }
 
     setSetting('last_selected_folder_id', folderId)
@@ -203,6 +216,20 @@ export function AddBookmarkScreen() {
       faviconUrl: null,
       thumbnailPath: thumbnailUri,
     })
+
+    const newTotal = total + 1
+    if (!settings.is_premium && newTotal === FREE_LIMIT) {
+      setProModalHint('無料プランの上限に達しました。Proで無制限に保存できます')
+      setSavedPendingNav(true)
+      setProModalVisible(true)
+      return
+    }
+    if (!settings.is_premium && newTotal === WARN_AT) {
+      setProModalHint(`あと${FREE_LIMIT - WARN_AT}件で上限です。Proで無制限に保存できます`)
+      setSavedPendingNav(true)
+      setProModalVisible(true)
+      return
+    }
 
     showToast('ブックマークを追加しました')
     setTimeout(() => navigation.goBack(), 500)
@@ -401,7 +428,7 @@ export function AddBookmarkScreen() {
         </ScrollView>
 
         <Toast message={toastMsg} visible={toastVisible} onHide={() => setToastVisible(false)} />
-        <ProUpgradeModal visible={proModalVisible} onClose={() => setProModalVisible(false)} />
+        <ProUpgradeModal visible={proModalVisible} onClose={handleProModalClose} hint={proModalHint} />
       </View>
     </KeyboardAvoidingView>
   )
