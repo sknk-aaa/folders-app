@@ -54,7 +54,7 @@ type Page = {
   description: string
 }
 
-const TOTAL = '06'
+const TOTAL = '05'
 
 const PAGES: Page[] = [
   {
@@ -69,23 +69,15 @@ const PAGES: Page[] = [
       '気になったページを、画像付きで\nあなただけのギャラリーに。\nあとから一目で見返せます。',
   },
   {
-    key: '2',
-    visual: { kind: 'steps' },
-    number: '02',
-    title: '初回セットアップ',
-    description:
-      'ブラウザの共有メニューから保存できるよう、\n最初に一度だけ準備します。\n約30秒で終わります。',
-  },
-  {
     key: '3',
     visual: {
       kind: 'single',
       image: require('../../../assets/onboarding/02-tap-more.png'),
     },
-    number: '03',
+    number: '02',
     title: '「その他」をタップ',
     description:
-      'ブラウザで共有を開いて、\nアプリ一覧の右端にある\n「その他」を選びます。',
+      '初回だけ準備が必要です。\nブラウザの共有メニューを開いて、\nアプリ一覧右端の「その他」を選びます。',
   },
   {
     key: '4',
@@ -93,7 +85,7 @@ const PAGES: Page[] = [
       kind: 'single',
       image: require('../../../assets/onboarding/03-toggle-on.png'),
     },
-    number: '04',
+    number: '03',
     title: 'サムネブクマをONに',
     description:
       'リストから「サムネブクマ」を有効化。\nこれで準備は完了です。',
@@ -105,7 +97,7 @@ const PAGES: Page[] = [
       first: require('../../../assets/onboarding/04-tap-app.png'),
       second: require('../../../assets/onboarding/05-save-screen.png'),
     },
-    number: '05',
+    number: '04',
     title: '共有から1タップで保存',
     description:
       '共有メニューから「サムネブクマ」をタップ。\nサムネ・名前・フォルダを選んで\n保存するだけ。',
@@ -117,7 +109,7 @@ const PAGES: Page[] = [
       image: require('../../../assets/icon.png'),
       label: 'サムネブクマ',
     },
-    number: '06',
+    number: '05',
     title: 'さあ、始めよう',
     description: 'あなただけのブックマーク集を\n作っていきましょう。',
   },
@@ -214,28 +206,28 @@ function PageView({ page, active }: { page: Page; active: boolean }) {
 
   useEffect(() => {
     if (active) {
-      Animated.stagger(80, [
+      Animated.stagger(40, [
         Animated.parallel([
           Animated.timing(visualOpacity, {
             toValue: 1,
-            duration: 550,
+            duration: 180,
             useNativeDriver: true,
           }),
           Animated.timing(visualTranslate, {
             toValue: 0,
-            duration: 550,
+            duration: 180,
             useNativeDriver: true,
           }),
         ]),
         Animated.parallel([
           Animated.timing(opacity, {
             toValue: 1,
-            duration: 600,
+            duration: 180,
             useNativeDriver: true,
           }),
           Animated.timing(translateY, {
             toValue: 0,
-            duration: 600,
+            duration: 180,
             useNativeDriver: true,
           }),
         ]),
