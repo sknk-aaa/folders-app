@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert, Linking, Image } from 'react-native'
-import * as StoreReview from 'expo-store-review'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { DrawerActions, useNavigation } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
@@ -35,14 +34,9 @@ export function DrawerContent() {
     ])
   }
 
-  const handleReview = async () => {
+  const handleReview = () => {
     close()
-    const available = await StoreReview.isAvailableAsync()
-    if (available) {
-      await StoreReview.requestReview()
-    } else {
-      void Linking.openURL('https://apps.apple.com/jp/app/id6746045050')
-    }
+    void Linking.openURL('https://apps.apple.com/jp/app/id6746045050?action=write-review')
   }
 
   const handleFaq = () => {
