@@ -6,6 +6,18 @@
     <string>group.com.sknk.foldersapp</string>
     <key>AppGroupIdentifier</key>
     <string>group.com.sknk.foldersapp</string>
+    <key>NSUbiquitousContainers</key>
+    <dict>
+      <key>iCloud.com.sknk.foldersapp</key>
+      <dict>
+        <key>NSUbiquitousContainerIsDocumentScopePublic</key>
+        <true/>
+        <key>NSUbiquitousContainerSupportedFolderLevels</key>
+        <string>Any</string>
+        <key>NSUbiquitousContainerName</key>
+        <string>folders-app</string>
+      </dict>
+    </dict>
     <key>CADisableMinimumFrameDurationOnPhone</key>
     <true/>
     <key>CFBundleDevelopmentRegion</key>

@@ -1,10 +1,12 @@
 import type { BackupStorage } from './types'
 import { localBackupStorage } from './localStorage'
+import { icloudBackupStorage } from './icloudStorage'
 
-// 現在有効なバックアップ保存先。
-// フェーズ2では、ここを iCloud 実装に差し替えるだけでよい。
+// 'icloud' が本番。'local' はロジック再検証用（Metroで切り替えられる）。
+const ACTIVE_BACKEND: 'icloud' | 'local' = 'icloud'
+
 export function getBackupStorage(): BackupStorage {
-  return localBackupStorage
+  return ACTIVE_BACKEND === 'icloud' ? icloudBackupStorage : localBackupStorage
 }
 
 export type { BackupStorage, BackupManifest } from './types'

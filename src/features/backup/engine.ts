@@ -133,6 +133,7 @@ async function deleteDbFiles(): Promise<void> {
  * サムネの絶対パスは端末ごとに変わるため、復元後に現在の documentDirectory へ書き換える。
  */
 export async function runRestore(storage: BackupStorage): Promise<BackupManifest> {
+  await storage.init()
   const manifest = await readManifest(storage)
   if (!manifest) {
     throw new Error('バックアップが見つかりません')

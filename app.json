@@ -42,6 +42,13 @@
         {
           "preprocessingFile": "./preprocessing.js"
         }
+      ],
+      [
+        "react-native-cloud-storage",
+        {
+          "iCloudContainerEnvironment": "Production",
+          "iCloudContainerIdentifier": "iCloud.com.sknk.foldersapp"
+        }
       ]
     ],
     "extra": {

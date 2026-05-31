@@ -38,7 +38,15 @@ build number 22、EAS build ID `e3c7f24f-36f5-4fd5-8d11-4ac1d0208d47`。
 
 | タスク | 詳細 |
 |---|---|
-| iCloud バックアップ | Pro機能。`expo-file-system` でSQLiteをiCloudコンテナにコピー |
+| （他に追加があればここへ） | |
+
+### 進行中: iCloudバックアップ（Pro）
+
+`react-native-cloud-storage` v3 で実装中。
+
+- **フェーズ1（ローカル検証）完了**: 保存先を抽象化(`src/features/backup/storage/`)、バックアップ/復元エンジン(`engine.ts`)を実装し、dev build + Metro で復元ロジックを実機検証済み。
+- **フェーズ2（iCloud実装）コード完了・未ビルド**: iCloudバックエンド実装、エンタイトルメント手動追記済み。**残：Developer Portalでコンテナ作成 → EAS dev build で実地確認 → 本番**。手順は [OPERATIONS.md](OPERATIONS.md) の「iCloudバックアップ セットアップ手順」参照。
+- 注意: dev=environment `Development` / 本番=`Production` に entitlements を切り替える。`DEV_FORCE_PRO` は本番前に false へ。
 
 ---
 
