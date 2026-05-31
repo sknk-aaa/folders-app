@@ -59,6 +59,15 @@ export function DrawerContent() {
     navigation.navigate('Tutorial')
   }
 
+  const handleBackup = () => {
+    close()
+    if (settings.is_premium) {
+      navigation.navigate('Backup')
+    } else {
+      setProModalVisible(true)
+    }
+  }
+
   const handleBrowserChange = () => {
     Alert.alert('デフォルトブラウザ', '使用するブラウザを選択してください', [
       { text: 'Safari', onPress: () => set('default_browser', 'safari') },
@@ -138,6 +147,21 @@ export function DrawerContent() {
             </View>
             <View style={styles.rowRight}>
               <Text style={styles.value}>{browserLabel[settings.default_browser]}</Text>
+              <Text style={styles.chevron}>›</Text>
+            </View>
+          </TouchableOpacity>
+          <View style={styles.separator} />
+          <TouchableOpacity style={styles.row} onPress={handleBackup}>
+            <View style={styles.rowLeft}>
+              <Ionicons name="cloud-outline" size={20} color={colors.textSecondary} style={styles.itemIcon} />
+              <Text style={styles.label}>iCloudバックアップ</Text>
+            </View>
+            <View style={styles.rowRight}>
+              {!settings.is_premium && (
+                <View style={styles.miniProBadge}>
+                  <Text style={styles.miniProBadgeText}>PRO</Text>
+                </View>
+              )}
               <Text style={styles.chevron}>›</Text>
             </View>
           </TouchableOpacity>
@@ -313,6 +337,18 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     paddingHorizontal: 8,
     paddingVertical: 3,
+  },
+  miniProBadge: {
+    backgroundColor: '#1C1C1E',
+    borderRadius: 5,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+  },
+  miniProBadgeText: {
+    fontSize: 9,
+    fontWeight: '700',
+    color: '#FFD60A',
+    letterSpacing: 0.8,
   },
   proBadgeText: {
     fontSize: 10,

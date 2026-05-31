@@ -50,6 +50,7 @@ export type Settings = {
   default_folder_id: string | null
   save_count: number
   review_prompted: boolean
+  last_backup_at: number | null
 }
 
 export type RootStackParamList = {
@@ -60,6 +61,7 @@ export type RootStackParamList = {
   Trim: { imageUri: string }
   Search: { folderId?: string }
   Tutorial: undefined
+  Backup: undefined
 }
 
 export type DrawerParamList = {
