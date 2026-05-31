@@ -48,6 +48,8 @@ export type Settings = {
   tutorial_completed: boolean
   last_selected_folder_id: string | null
   default_folder_id: string | null
+  save_count: number
+  review_prompted: boolean
 }
 
 export type RootStackParamList = {

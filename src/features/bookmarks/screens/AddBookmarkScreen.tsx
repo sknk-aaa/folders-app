@@ -232,7 +232,10 @@ export function AddBookmarkScreen() {
     }
 
     showToast('ブックマークを追加しました')
-    setTimeout(() => navigation.goBack(), 500)
+    setTimeout(() => {
+      navigation.goBack()
+      void useSettingsStore.getState().recordSaveForReview()
+    }, 500)
   }
 
   // -------- URL Input Step --------

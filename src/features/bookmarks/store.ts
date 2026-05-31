@@ -4,6 +4,7 @@ import { createId } from '../../shared/utils/id'
 import { drainQueue } from '../../shared/storage/sharedStorage'
 import { downloadAndCropOgp } from '../../shared/utils/thumbnail'
 import { useFoldersStore } from '../folders/store'
+import { useSettingsStore } from '../settings/store'
 import type { Bookmark } from '../../shared/types'
 
 function getLockedFolderIds(): Set<string> {
@@ -172,6 +173,10 @@ export const useBookmarksStore = create<BookmarksStore>((setState, getState) => 
           })
           .catch(() => {})
       }
+    }
+
+    if (addedCount > 0) {
+      void useSettingsStore.getState().recordSaveForReview()
     }
     return addedCount
   },
