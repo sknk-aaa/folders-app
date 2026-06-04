@@ -25,15 +25,17 @@ type Props = {
   hint?: string
 }
 
-// Gold is reserved exclusively as the "Pro" accent — distinct from the app's blue accent.
+// Gold is reserved exclusively as the subtle "Pro" accent — distinct from the app's blue accent.
 const GOLD = '#C8960A'
 const GOLD_BRIGHT = '#FFD60A'
 
-type Feature = { image: ImageSourcePropType; title: string; body: string }
+type Feature = { image: ImageSourcePropType; ratio: number; narrow?: boolean; title: string; body: string }
 
 const FEATURES: Feature[] = [
   {
     image: require('../../../../assets/pro-feature_dark.png'),
+    ratio: 828 / 1792,
+    narrow: true,
     title: tr({ en: 'Dark Mode', ja: 'ダークモード' }),
     body: tr({
       en: 'An easy-on-the-eyes dark theme — your own quiet study at night.',
@@ -42,6 +44,7 @@ const FEATURES: Feature[] = [
   },
   {
     image: require('../../../../assets/pro-feature_note.png'),
+    ratio: 1122 / 1402,
     title: tr({ en: 'Notes', ja: 'メモ' }),
     body: tr({
       en: 'Jot why you saved it — right when you share, or anytime after.',
@@ -50,6 +53,7 @@ const FEATURES: Feature[] = [
   },
   {
     image: require('../../../../assets/pro-feature_cover.png'),
+    ratio: 1448 / 1086,
     title: tr({ en: 'Folder Covers', ja: 'フォルダのカバー' }),
     body: tr({
       en: 'Dress up each folder with a cover image of your own.',
@@ -140,6 +144,48 @@ export function ProUpgradeModal({ visible, onClose, hint }: Props) {
   const lifetimePrice = lifetimePkg?.product.priceString ?? '¥1,500'
   const monthlyPrice = monthlyPkg?.product.priceString ?? '¥400'
 
+  const plans = (keySuffix: string) => (
+    <View style={styles.plans}>
+      <TouchableOpacity
+        key={`life-${keySuffix}`}
+        style={[styles.planCard, isLoading && styles.disabled]}
+        onPress={() => void buy(lifetimePkg)}
+        disabled={isLoading}
+        activeOpacity={0.85}
+      >
+        <View style={styles.planLeft}>
+          <View style={styles.planNameRow}>
+            <Text style={styles.planName}>{tr({ en: 'Lifetime', ja: '買い切り' })}</Text>
+            <View style={styles.recommendChip}>
+              <Text style={styles.recommendText}>{tr({ en: 'Popular', ja: 'おすすめ' })}</Text>
+            </View>
+          </View>
+          <Text style={styles.planDesc}>{tr({ en: 'One-time, yours forever', ja: '一度きり・ずっと使える' })}</Text>
+        </View>
+        <Text style={styles.planPrice}>{lifetimePrice}</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        key={`month-${keySuffix}`}
+        style={[styles.planCard, isLoading && styles.disabled]}
+        onPress={() => void buy(monthlyPkg)}
+        disabled={isLoading}
+        activeOpacity={0.85}
+      >
+        <View style={styles.planLeft}>
+          <Text style={styles.planName}>{tr({ en: 'Monthly', ja: '月額' })}</Text>
+          <Text style={styles.planDesc}>{tr({ en: 'Cancel anytime', ja: 'いつでも解約できます' })}</Text>
+        </View>
+        <Text style={styles.planPrice}>
+          {monthlyPrice}
+          {tr({ en: '/mo', ja: '／月' })}
+        </Text>
+      </TouchableOpacity>
+
+      {isLoading ? <ActivityIndicator color={c.textSecondary} style={styles.plansSpinner} /> : null}
+    </View>
+  )
+
   return (
     <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
       <View style={styles.container}>
@@ -161,25 +207,12 @@ export function ProUpgradeModal({ visible, onClose, hint }: Props) {
           <View style={styles.badge}>
             <Text style={styles.badgeText}>PRO</Text>
           </View>
-          <Text style={styles.headline}>{tr({ en: 'Unlock all of Bookrest.', ja: 'Bookrest を、ぜんぶ解放。' })}</Text>
+          <Text style={styles.headline}>{tr({ en: 'Unlock all of Bookrest.', ja: 'サムネブクマを、ぜんぶ解放。' })}</Text>
           <Text style={styles.subhead}>
             {tr({ en: 'No limits, plus Pro-only features.', ja: '無料の上限なし＋Pro限定の機能。' })}
           </Text>
 
-          {/* Feature showcase */}
-          <View style={styles.showcase}>
-            {FEATURES.map((f) => (
-              <View key={f.title} style={styles.featureCard}>
-                <View style={styles.featureImageWrap}>
-                  <Image source={f.image} style={styles.featureImage} resizeMode="contain" />
-                </View>
-                <Text style={styles.featureTitle}>{f.title}</Text>
-                <Text style={styles.featureBody}>{f.body}</Text>
-              </View>
-            ))}
-          </View>
-
-          {/* Compact comparison */}
+          {/* Comparison */}
           <View style={styles.table}>
             <View style={[styles.row, styles.headRow]}>
               <Text style={[styles.cellLabel, styles.headText]}>{tr({ en: 'Feature', ja: '機能' })}</Text>
@@ -195,6 +228,7 @@ export function ProUpgradeModal({ visible, onClose, hint }: Props) {
             ))}
           </View>
 
+          {/* Price (after table) or owned state */}
           {isPro ? (
             <View style={styles.ownedBox}>
               <Ionicons name="checkmark-circle" size={20} color={GOLD} style={{ marginBottom: 6 }} />
@@ -203,66 +237,39 @@ export function ProUpgradeModal({ visible, onClose, hint }: Props) {
               </Text>
             </View>
           ) : (
+            plans('top')
+          )}
+
+          {/* Feature showcase */}
+          <View style={styles.showcase}>
+            {FEATURES.map((f) => (
+              <View key={f.title} style={styles.featureCard}>
+                <Image
+                  source={f.image}
+                  style={[styles.featureImage, { aspectRatio: f.ratio, width: f.narrow ? '64%' : '100%' }]}
+                  resizeMode="cover"
+                />
+                <Text style={styles.featureTitle}>{f.title}</Text>
+                <Text style={styles.featureBody}>{f.body}</Text>
+              </View>
+            ))}
+          </View>
+
+          {/* Price (bottom) */}
+          {!isPro ? (
             <>
-              {/* Lifetime — hero plan */}
-              <TouchableOpacity
-                style={[styles.planHero, isLoading && styles.disabled]}
-                onPress={() => void buy(lifetimePkg)}
-                disabled={isLoading}
-                activeOpacity={0.88}
-              >
-                <View style={styles.planHeroPill}>
-                  <Text style={styles.planHeroPillText}>{tr({ en: 'BEST VALUE', ja: 'おすすめ' })}</Text>
-                </View>
-                {isLoading ? (
-                  <ActivityIndicator color={c.background} />
-                ) : (
-                  <View style={styles.planRow}>
-                    <View style={styles.planLeft}>
-                      <Text style={styles.planNameHero}>{tr({ en: 'Lifetime', ja: '買い切り' })}</Text>
-                      <Text style={styles.planDescHero}>{tr({ en: 'One-time, yours forever', ja: '一度きり・ずっと使える' })}</Text>
-                    </View>
-                    <Text style={styles.planPriceHero}>{lifetimePrice}</Text>
-                  </View>
-                )}
-              </TouchableOpacity>
-
-              <Text style={styles.anchorNote}>
-                {tr({
-                  en: 'Less than 4 months of the monthly plan — and it’s yours forever.',
-                  ja: '月額の約4ヶ月分で、ずっと使えます。',
-                })}
-              </Text>
-
-              {/* Monthly — secondary */}
-              <TouchableOpacity
-                style={[styles.planSecondary, isLoading && styles.disabled]}
-                onPress={() => void buy(monthlyPkg)}
-                disabled={isLoading}
-                activeOpacity={0.88}
-              >
-                <View style={styles.planLeft}>
-                  <Text style={styles.planName}>{tr({ en: 'Monthly', ja: '月額' })}</Text>
-                  <Text style={styles.planDesc}>{tr({ en: 'Cancel anytime', ja: 'いつでも解約できます' })}</Text>
-                </View>
-                <Text style={styles.planPrice}>
-                  {monthlyPrice}
-                  {tr({ en: '/mo', ja: '／月' })}
-                </Text>
-              </TouchableOpacity>
-
+              {plans('bottom')}
               <Text style={styles.trust}>
                 {tr({
                   en: 'No ads · Data stays on your device · Cancel anytime · Billed via App Store',
                   ja: '広告なし・データは端末内・解約自由・App Store決済',
                 })}
               </Text>
-
               <TouchableOpacity onPress={() => void handleRestore()} disabled={isLoading} style={styles.restoreBtn}>
                 <Text style={styles.restoreText}>{tr({ en: 'Restore Purchase', ja: '購入を復元' })}</Text>
               </TouchableOpacity>
             </>
-          )}
+          ) : null}
         </ScrollView>
 
         <Toast message={toastMsg} visible={toastVisible} onHide={() => setToastVisible(false)} />
@@ -323,34 +330,18 @@ const makeStyles = (c: Palette) =>
       borderRadius: 6,
       paddingHorizontal: 11,
       paddingVertical: 4,
-      marginBottom: 16,
+      marginBottom: 14,
     },
     badgeText: { fontSize: 11, fontWeight: '800', color: GOLD_BRIGHT, letterSpacing: 2.5 },
     headline: {
-      fontSize: 28,
+      fontSize: 27,
       fontWeight: '800',
       color: c.text,
       textAlign: 'center',
       letterSpacing: -0.3,
-      lineHeight: 34,
+      lineHeight: 33,
     },
-    subhead: { fontSize: 14, color: c.textSecondary, marginTop: 8, marginBottom: 28, textAlign: 'center' },
-
-    showcase: { width: '100%', gap: 26, marginBottom: 30 },
-    featureCard: { width: '100%' },
-    featureImageWrap: {
-      width: '100%',
-      height: 236,
-      borderRadius: 16,
-      overflow: 'hidden',
-      backgroundColor: c.placeholderBg,
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: c.cardBorder,
-      marginBottom: 12,
-    },
-    featureImage: { width: '100%', height: '100%' },
-    featureTitle: { fontSize: 18, fontWeight: '700', color: c.text, letterSpacing: -0.2 },
-    featureBody: { fontSize: 14, color: c.textSecondary, marginTop: 4, lineHeight: 20 },
+    subhead: { fontSize: 14, color: c.textSecondary, marginTop: 8, marginBottom: 24, textAlign: 'center' },
 
     table: {
       width: '100%',
@@ -358,7 +349,7 @@ const makeStyles = (c: Palette) =>
       borderColor: c.cardBorder,
       borderRadius: 14,
       overflow: 'hidden',
-      marginBottom: 28,
+      marginBottom: 18,
     },
     row: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, paddingHorizontal: 14 },
     rowBorder: { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: c.cardBorder },
@@ -369,65 +360,53 @@ const makeStyles = (c: Palette) =>
     cellVal: { flex: 1, fontSize: 14, color: c.textSecondary, textAlign: 'center' },
     cellValPro: { color: c.text, fontWeight: '600' },
 
-    planHero: {
-      width: '100%',
-      backgroundColor: c.text,
-      borderRadius: 16,
-      paddingVertical: 18,
-      paddingHorizontal: 18,
-      marginTop: 6,
-      minHeight: 66,
-      justifyContent: 'center',
-      borderWidth: 1.5,
-      borderColor: GOLD,
-    },
-    planHeroPill: {
-      position: 'absolute',
-      top: -11,
-      left: 18,
-      backgroundColor: GOLD_BRIGHT,
-      borderRadius: 8,
-      paddingHorizontal: 9,
-      paddingVertical: 3,
-    },
-    planHeroPillText: { fontSize: 10, fontWeight: '800', color: '#1C1C1E', letterSpacing: 1 },
-    planRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-    planLeft: { gap: 2, flexShrink: 1 },
-    planNameHero: { fontSize: 17, fontWeight: '700', color: c.background },
-    planDescHero: { fontSize: 12.5, color: c.background, opacity: 0.7 },
-    planPriceHero: { fontSize: 22, fontWeight: '800', color: c.background, letterSpacing: -0.5 },
-
-    anchorNote: {
-      fontSize: 12.5,
-      color: GOLD,
-      fontWeight: '600',
-      textAlign: 'center',
-      marginTop: 10,
-      marginBottom: 14,
-    },
-
-    planSecondary: {
+    // Balanced plan cards (used both after the table and at the bottom)
+    plans: { width: '100%', gap: 10, marginBottom: 4 },
+    planCard: {
       width: '100%',
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
       borderWidth: 1.5,
       borderColor: c.cardBorder,
-      borderRadius: 16,
-      paddingVertical: 16,
+      borderRadius: 14,
+      paddingVertical: 15,
       paddingHorizontal: 18,
     },
+    planLeft: { gap: 3, flexShrink: 1 },
+    planNameRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
     planName: { fontSize: 16, fontWeight: '700', color: c.text },
-    planDesc: { fontSize: 12.5, color: c.textSecondary, marginTop: 2 },
-    planPrice: { fontSize: 17, fontWeight: '700', color: c.text },
+    planDesc: { fontSize: 12.5, color: c.textSecondary },
+    planPrice: { fontSize: 18, fontWeight: '700', color: c.text },
+    recommendChip: {
+      backgroundColor: c.placeholderBg,
+      borderRadius: 6,
+      paddingHorizontal: 7,
+      paddingVertical: 2,
+    },
+    recommendText: { fontSize: 10, fontWeight: '700', color: c.textSecondary, letterSpacing: 0.5 },
+    plansSpinner: { marginTop: 4 },
     disabled: { opacity: 0.5 },
+
+    // Feature showcase
+    showcase: { width: '100%', gap: 30, marginTop: 30, marginBottom: 30, alignItems: 'center' },
+    featureCard: { width: '100%', alignItems: 'center' },
+    featureImage: {
+      borderRadius: 16,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: c.cardBorder,
+      backgroundColor: c.placeholderBg,
+      marginBottom: 12,
+    },
+    featureTitle: { fontSize: 18, fontWeight: '700', color: c.text, letterSpacing: -0.2, textAlign: 'center' },
+    featureBody: { fontSize: 14, color: c.textSecondary, marginTop: 4, lineHeight: 20, textAlign: 'center' },
 
     trust: {
       fontSize: 11.5,
       color: c.textTertiary,
       textAlign: 'center',
       lineHeight: 17,
-      marginTop: 18,
+      marginTop: 16,
     },
     restoreBtn: { paddingVertical: 12, marginTop: 4 },
     restoreText: { fontSize: 13.5, color: c.textSecondary, textAlign: 'center' },
@@ -438,7 +417,6 @@ const makeStyles = (c: Palette) =>
       borderRadius: 14,
       padding: 18,
       alignItems: 'center',
-      marginTop: 6,
     },
     ownedText: { fontSize: 14, color: c.text, fontWeight: '600', textAlign: 'center' },
   })
