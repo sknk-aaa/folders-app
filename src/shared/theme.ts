@@ -56,9 +56,6 @@ export const darkColors: Palette = {
   iconBg: '#2C2C2E',
 }
 
-// 後方互換: 未変換ファイルが参照するデフォルト（ライト固定）。全変換後に削除可。
-export const colors = lightColors
-
 export function useTheme(): Palette {
   const mode = useSettingsStore((s) => s.settings.theme_mode)
   const system = useColorScheme()

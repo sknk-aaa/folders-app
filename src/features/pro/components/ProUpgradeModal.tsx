@@ -12,7 +12,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Purchases from 'react-native-purchases'
 import { useProStore } from '../store'
 import { Toast } from '../../../shared/components/Toast'
-import { colors, spacing, radius } from '../../../shared/theme'
+import { useThemedStyles, spacing, radius, type Palette } from '../../../shared/theme'
 
 type Props = {
   visible: boolean
@@ -32,6 +32,7 @@ export function ProUpgradeModal({ visible, onClose, hint }: Props) {
   const [priceString, setPriceString] = useState<string | null>(null)
   const [toastMsg, setToastMsg] = useState('')
   const [toastVisible, setToastVisible] = useState(false)
+  const { c, styles } = useThemedStyles(makeStyles)
 
   const showToast = (msg: string) => {
     setToastMsg(msg)
@@ -119,7 +120,7 @@ export function ProUpgradeModal({ visible, onClose, hint }: Props) {
           activeOpacity={0.82}
         >
           {isLoading ? (
-            <ActivityIndicator color={colors.background} />
+            <ActivityIndicator color={c.background} />
           ) : isPro ? (
             <Text style={styles.purchaseBtnText}>購入済み</Text>
           ) : (
@@ -147,10 +148,10 @@ export function ProUpgradeModal({ visible, onClose, hint }: Props) {
   )
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (c: Palette) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: c.background,
     paddingHorizontal: spacing.xl,
     paddingTop: 12,
     alignItems: 'center',
@@ -159,7 +160,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 4,
     borderRadius: 2,
-    backgroundColor: colors.textTertiary,
+    backgroundColor: c.textTertiary,
     marginBottom: 32,
   },
   badge: {
@@ -178,13 +179,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: '700',
-    color: colors.text,
+    color: c.text,
     marginBottom: 8,
     textAlign: 'center',
   },
   subtitle: {
     fontSize: 14,
-    color: colors.textSecondary,
+    color: c.textSecondary,
     marginBottom: 36,
     textAlign: 'center',
   },
@@ -202,46 +203,46 @@ const styles = StyleSheet.create({
     width: 26,
     height: 26,
     borderRadius: 13,
-    backgroundColor: colors.text,
+    backgroundColor: c.text,
     alignItems: 'center',
     justifyContent: 'center',
   },
   checkCircleSoon: {
-    backgroundColor: colors.placeholderBg,
+    backgroundColor: c.placeholderBg,
   },
   checkMark: {
     fontSize: 13,
-    color: colors.background,
+    color: c.background,
     fontWeight: '700',
   },
   checkMarkSoon: {
-    color: colors.textSecondary,
+    color: c.textSecondary,
   },
   featureLabel: {
     flex: 1,
     fontSize: 16,
-    color: colors.text,
+    color: c.text,
     fontWeight: '500',
   },
   featureLabelSoon: {
-    color: colors.textSecondary,
+    color: c.textSecondary,
   },
   soonBadge: {
-    backgroundColor: colors.placeholderBg,
+    backgroundColor: c.placeholderBg,
     borderRadius: radius.sm,
     paddingHorizontal: 8,
     paddingVertical: 3,
   },
   soonBadgeText: {
     fontSize: 11,
-    color: colors.textSecondary,
+    color: c.textSecondary,
     fontWeight: '500',
   },
   purchaseBtn: {
     width: '100%',
     padding: 18,
     borderRadius: radius.md,
-    backgroundColor: colors.text,
+    backgroundColor: c.text,
     alignItems: 'center',
     marginBottom: 12,
   },
@@ -251,11 +252,11 @@ const styles = StyleSheet.create({
   purchaseBtnText: {
     fontSize: 17,
     fontWeight: '600',
-    color: colors.background,
+    color: c.background,
   },
   legalNote: {
     fontSize: 11,
-    color: colors.textSecondary,
+    color: c.textSecondary,
     textAlign: 'center',
     marginBottom: 20,
     lineHeight: 16,
@@ -266,17 +267,17 @@ const styles = StyleSheet.create({
   },
   restoreText: {
     fontSize: 14,
-    color: colors.textSecondary,
+    color: c.textSecondary,
   },
   closeBtn: {
     paddingVertical: 10,
   },
   closeText: {
     fontSize: 16,
-    color: colors.textSecondary,
+    color: c.textSecondary,
   },
   hintBanner: {
-    backgroundColor: colors.placeholderBg,
+    backgroundColor: c.placeholderBg,
     borderRadius: radius.sm,
     paddingHorizontal: 16,
     paddingVertical: 10,
@@ -285,7 +286,7 @@ const styles = StyleSheet.create({
   },
   hintText: {
     fontSize: 13,
-    color: colors.textSecondary,
+    color: c.textSecondary,
     textAlign: 'center',
   },
 })

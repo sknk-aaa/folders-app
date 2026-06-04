@@ -4,7 +4,7 @@ import { Image } from 'expo-image'
 import { CustomActionSheet } from '../../../shared/components/CustomActionSheet'
 import { MoreButton } from '../../../shared/components/MoreButton'
 import { PlaceholderImage } from '../../../shared/components/PlaceholderImage'
-import { colors, spacing, radius } from '../../../shared/theme'
+import { useThemedStyles, spacing, radius, type Palette } from '../../../shared/theme'
 import { openInBrowser } from '../../../shared/utils/url'
 import { useBookmarksStore } from '../store'
 import { useSettingsStore } from '../../settings/store'
@@ -23,6 +23,7 @@ type Props = {
 export function BookmarkListItem({ bookmark, allFolders, onDelete, onMove }: Props) {
   const { update } = useBookmarksStore()
   const { settings } = useSettingsStore()
+  const { styles } = useThemedStyles(makeStyles)
   const [editVisible, setEditVisible] = useState(false)
   const [sheetVisible, setSheetVisible] = useState(false)
   const [moveSheetVisible, setMoveSheetVisible] = useState(false)
@@ -87,14 +88,14 @@ export function BookmarkListItem({ bookmark, allFolders, onDelete, onMove }: Pro
   )
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (c: Palette) => StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: spacing.sm,
     paddingRight: 12,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.cardBorder,
+    borderBottomColor: c.cardBorder,
     gap: spacing.md,
   },
   thumb: {
@@ -109,12 +110,12 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 14,
-    color: colors.text,
+    color: c.text,
     lineHeight: 20,
   },
   domain: {
     fontSize: 12,
-    color: colors.textSecondary,
+    color: c.textSecondary,
     marginTop: 2,
   },
 })

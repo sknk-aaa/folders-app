@@ -15,7 +15,7 @@ import { useNavigation, useRoute } from '@react-navigation/native'
 import type { NativeStackNavigationProp, NativeStackScreenProps } from '@react-navigation/native-stack'
 import * as ImageManipulator from 'expo-image-manipulator'
 import * as FileSystem from 'expo-file-system/legacy'
-import { colors, spacing, radius } from '../../../shared/theme'
+import { spacing, radius } from '../../../shared/theme'
 import type { RootStackParamList } from '../../../shared/types'
 
 type Nav = NativeStackNavigationProp<RootStackParamList>

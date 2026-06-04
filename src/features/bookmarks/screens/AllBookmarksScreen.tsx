@@ -9,7 +9,7 @@ import { Header } from '../../../shared/components/Header'
 import { InlineSearchBar } from '../../../shared/components/InlineSearchBar'
 import { BookmarkCollectionList } from '../components/BookmarkCollectionList'
 import { FolderEditModal } from '../../folders/components/FolderEditModal'
-import { colors } from '../../../shared/theme'
+import { useThemedStyles, type Palette } from '../../../shared/theme'
 import type { RootStackParamList, ViewMode } from '../../../shared/types'
 
 
@@ -20,6 +20,7 @@ export function AllBookmarksScreen() {
   const bookmarks = useBookmarksStore((s) => s.bookmarks)
   const { remove, move, publicBookmarks } = useBookmarksStore()
   const { folders } = useFoldersStore()
+  const { styles } = useThemedStyles(makeStyles)
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
   const [columns, setColumns] = useState(2)
   const [searchVisible, setSearchVisible] = useState(false)
@@ -111,6 +112,6 @@ export function AllBookmarksScreen() {
   )
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background },
+const makeStyles = (c: Palette) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: c.background },
 })

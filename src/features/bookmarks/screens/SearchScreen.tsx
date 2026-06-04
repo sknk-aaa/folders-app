@@ -14,7 +14,7 @@ import type { NativeStackNavigationProp, NativeStackScreenProps } from '@react-n
 import { useBookmarksStore } from '../store'
 import { useFoldersStore } from '../../folders/store'
 import { BookmarkCard } from '../components/BookmarkCard'
-import { colors, spacing } from '../../../shared/theme'
+import { useThemedStyles, spacing, type Palette } from '../../../shared/theme'
 import type { RootStackParamList } from '../../../shared/types'
 
 const { width: SCREEN_W } = Dimensions.get('window')
@@ -34,6 +34,7 @@ export function SearchScreen() {
   const bookmarks = useBookmarksStore((s) => s.bookmarks)
   const { remove, move, publicBookmarks } = useBookmarksStore()
   const { folders } = useFoldersStore()
+  const { c, styles } = useThemedStyles(makeStyles)
   const [query, setQuery] = useState('')
 
   const results = useMemo(() => {
@@ -56,7 +57,7 @@ export function SearchScreen() {
           value={query}
           onChangeText={setQuery}
           placeholder="検索..."
-          placeholderTextColor={colors.textTertiary}
+          placeholderTextColor={c.textTertiary}
           autoFocus
           returnKeyType="search"
           clearButtonMode="while-editing"
@@ -92,8 +93,8 @@ export function SearchScreen() {
   )
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background },
+const makeStyles = (c: Palette) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: c.background },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -101,30 +102,30 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
     gap: spacing.sm,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.separator,
+    borderBottomColor: c.separator,
   },
   input: {
     flex: 1,
     height: 38,
-    backgroundColor: colors.placeholderBg,
+    backgroundColor: c.placeholderBg,
     borderRadius: 10,
     paddingHorizontal: 12,
     fontSize: 15,
-    color: colors.text,
+    color: c.text,
   },
   cancelBtn: {
     paddingVertical: 8,
   },
   cancelText: {
     fontSize: 15,
-    color: colors.accent,
+    color: c.accent,
   },
   listContent: {
     padding: PADDING,
   },
   emptyText: {
     fontSize: 14,
-    color: colors.textSecondary,
+    color: c.textSecondary,
     textAlign: 'center',
     marginTop: 48,
   },

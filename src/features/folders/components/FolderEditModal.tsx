@@ -22,7 +22,7 @@ import {
   deleteFolderThumbnail,
 } from '../../../shared/utils/folderThumbnail'
 import type { Bookmark, Folder, FolderIconId } from '../../../shared/types'
-import { colors, spacing, radius } from '../../../shared/theme'
+import { useThemedStyles, darkColors, spacing, radius, type Palette } from '../../../shared/theme'
 
 type PinFlow = 'idle' | 'set' | 'changeVerify' | 'changeSet' | 'removeVerify'
 
@@ -46,6 +46,7 @@ export function FolderEditModal({
   manageOnly = false,
 }: Props) {
   const insets = useSafeAreaInsets()
+  const { c, styles } = useThemedStyles(makeStyles)
   const [name, setName] = useState(folder?.name ?? '')
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [pinFlow, setPinFlow] = useState<PinFlow>('idle')
@@ -143,7 +144,7 @@ export function FolderEditModal({
               value={name}
               onChangeText={setName}
               placeholder="フォルダ名"
-              placeholderTextColor={colors.textTertiary}
+              placeholderTextColor={c.textTertiary}
               returnKeyType="done"
               onSubmitEditing={handleSave}
             />
@@ -346,6 +347,7 @@ function BookmarkRow({
   selected: boolean
   onToggle: () => void
 }) {
+  const { styles } = useThemedStyles(makeStyles)
   return (
     <TouchableOpacity activeOpacity={0.7} onPress={onToggle} style={styles.bookmarkRow}>
       {bookmark.thumbnailPath ? (
@@ -367,10 +369,12 @@ function BookmarkRow({
   )
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (c: Palette) => {
+  const dark = c === darkColors
+  return StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: c.background,
     paddingHorizontal: spacing.xl,
     paddingTop: 12,
   },
@@ -378,23 +382,23 @@ const styles = StyleSheet.create({
     width: 36,
     height: 4,
     borderRadius: 2,
-    backgroundColor: colors.textTertiary,
+    backgroundColor: c.textTertiary,
     alignSelf: 'center',
     marginBottom: 20,
   },
   title: {
     fontSize: 20,
     fontWeight: '700',
-    color: colors.text,
+    color: c.text,
     marginBottom: 24,
   },
   input: {
     borderWidth: 1,
-    borderColor: colors.separator,
+    borderColor: c.separator,
     borderRadius: radius.sm,
     padding: 14,
     fontSize: 16,
-    color: colors.text,
+    color: c.text,
     marginBottom: 24,
   },
   bookmarkSection: {
@@ -411,24 +415,24 @@ const styles = StyleSheet.create({
   bookmarkSectionTitle: {
     fontSize: 15,
     fontWeight: '600',
-    color: colors.text,
+    color: c.text,
   },
   selectionBadge: {
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: radius.sm,
-    backgroundColor: '#FFEBEA',
+    backgroundColor: dark ? 'rgba(255,69,58,0.18)' : '#FFEBEA',
   },
   selectionBadgeText: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#FF3B30',
+    color: c.destructive,
   },
   deleteBtn: {
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: radius.sm,
-    backgroundColor: '#FF3B30',
+    backgroundColor: c.destructive,
   },
   deleteBtnText: {
     fontSize: 13,
@@ -436,12 +440,12 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   deleteCommitBtn: {
-    backgroundColor: '#FF3B30',
+    backgroundColor: c.destructive,
   },
   bookmarkList: {
     flex: 1,
     borderWidth: 1,
-    borderColor: colors.separator,
+    borderColor: c.separator,
     borderRadius: radius.sm,
   },
   bookmarkRow: {
@@ -455,34 +459,34 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 6,
-    backgroundColor: colors.placeholderBg,
+    backgroundColor: c.placeholderBg,
   },
   bookmarkName: {
     flex: 1,
     fontSize: 14,
-    color: colors.text,
+    color: c.text,
   },
   checkbox: {
     width: 22,
     height: 22,
     borderRadius: 11,
     borderWidth: 1.5,
-    borderColor: colors.separator,
+    borderColor: c.separator,
     alignItems: 'center',
     justifyContent: 'center',
   },
   checkboxSelected: {
-    backgroundColor: colors.text,
-    borderColor: colors.text,
+    backgroundColor: c.text,
+    borderColor: c.text,
   },
   checkmark: {
     fontSize: 12,
-    color: colors.background,
+    color: c.background,
     fontWeight: '700',
   },
   separator: {
     height: StyleSheet.hairlineWidth,
-    backgroundColor: colors.separator,
+    backgroundColor: c.separator,
     marginLeft: 62,
   },
   buttons: {
@@ -495,18 +499,18 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     borderRadius: radius.md,
-    backgroundColor: colors.placeholderBg,
+    backgroundColor: c.placeholderBg,
     alignItems: 'center',
   },
   cancelText: {
     fontSize: 16,
-    color: colors.text,
+    color: c.text,
   },
   saveBtn: {
     flex: 1,
     padding: 16,
     borderRadius: radius.md,
-    backgroundColor: colors.text,
+    backgroundColor: c.text,
     alignItems: 'center',
   },
   saveBtnDisabled: {
@@ -515,13 +519,13 @@ const styles = StyleSheet.create({
   saveText: {
     fontSize: 16,
     fontWeight: '600',
-    color: colors.background,
+    color: c.background,
   },
   lockSection: {
     marginBottom: 16,
     paddingBottom: 12,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.separator,
+    borderBottomColor: c.separator,
   },
   lockRow: {
     flexDirection: 'row',
@@ -532,14 +536,14 @@ const styles = StyleSheet.create({
   },
   lockCaption: {
     fontSize: 12,
-    color: colors.textSecondary,
+    color: c.textSecondary,
     paddingHorizontal: 4,
     lineHeight: 17,
   },
   lockRowLabel: {
     fontSize: 15,
     fontWeight: '500',
-    color: colors.text,
+    color: c.text,
   },
   lockActions: {
     flexDirection: 'row',
@@ -549,23 +553,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 7,
     borderRadius: 14,
-    backgroundColor: colors.placeholderBg,
+    backgroundColor: c.placeholderBg,
   },
   lockBtnText: {
     fontSize: 13,
     fontWeight: '600',
-    color: colors.text,
+    color: c.text,
   },
   lockBtnDestructive: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#FF3B30',
+    color: c.destructive,
   },
   thumbSection: {
     marginBottom: 16,
     paddingBottom: 12,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.separator,
+    borderBottomColor: c.separator,
   },
   thumbRow: {
     flexDirection: 'row',
@@ -582,7 +586,7 @@ const styles = StyleSheet.create({
   thumbLabel: {
     fontSize: 15,
     fontWeight: '500',
-    color: colors.text,
+    color: c.text,
   },
   proBadge: {
     backgroundColor: '#1C1C1E',
@@ -596,4 +600,5 @@ const styles = StyleSheet.create({
     color: '#FFD60A',
     letterSpacing: 1,
   },
-})
+  })
+}

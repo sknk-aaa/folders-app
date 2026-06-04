@@ -9,7 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native'
-import { colors, spacing, radius } from '../../../shared/theme'
+import { useThemedStyles, spacing, radius, type Palette } from '../../../shared/theme'
 import type { Bookmark } from '../../../shared/types'
 
 type Props = {
@@ -21,6 +21,7 @@ type Props = {
 export function BookmarkEditModal({ bookmark, onClose, onSave }: Props) {
   const [name, setName] = useState(bookmark?.name ?? '')
   const [url, setUrl] = useState(bookmark?.url ?? '')
+  const { c, styles } = useThemedStyles(makeStyles)
 
   useEffect(() => {
     setName(bookmark?.name ?? '')
@@ -63,7 +64,7 @@ export function BookmarkEditModal({ bookmark, onClose, onSave }: Props) {
               value={name}
               onChangeText={setName}
               placeholder="サイト名"
-              placeholderTextColor={colors.textTertiary}
+              placeholderTextColor={c.textTertiary}
               returnKeyType="next"
             />
           </View>
@@ -75,7 +76,7 @@ export function BookmarkEditModal({ bookmark, onClose, onSave }: Props) {
               value={url}
               onChangeText={setUrl}
               placeholder="https://..."
-              placeholderTextColor={colors.textTertiary}
+              placeholderTextColor={c.textTertiary}
               autoCapitalize="none"
               autoCorrect={false}
               keyboardType="url"
@@ -89,14 +90,14 @@ export function BookmarkEditModal({ bookmark, onClose, onSave }: Props) {
   )
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (c: Palette) => StyleSheet.create({
   overlay: {
     flex: 1,
     justifyContent: 'flex-end',
     backgroundColor: 'rgba(0,0,0,0.4)',
   },
   sheet: {
-    backgroundColor: colors.background,
+    backgroundColor: c.surfaceElevated,
     borderTopLeftRadius: radius.lg,
     borderTopRightRadius: radius.lg,
     paddingBottom: 40,
@@ -108,26 +109,26 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingVertical: 14,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.separator,
+    borderBottomColor: c.separator,
   },
-  title: { fontSize: 16, fontWeight: '600', color: colors.text },
-  cancelText: { fontSize: 15, color: colors.textSecondary },
-  saveText: { fontSize: 15, fontWeight: '700', color: colors.text },
+  title: { fontSize: 16, fontWeight: '600', color: c.text },
+  cancelText: { fontSize: 15, color: c.textSecondary },
+  saveText: { fontSize: 15, fontWeight: '700', color: c.text },
   field: { paddingHorizontal: spacing.lg, marginTop: spacing.xl },
   label: {
     fontSize: 12,
     fontWeight: '600',
-    color: colors.textSecondary,
+    color: c.textSecondary,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
     marginBottom: 8,
   },
   input: {
     borderWidth: 1,
-    borderColor: colors.separator,
+    borderColor: c.separator,
     borderRadius: radius.sm,
     padding: 12,
     fontSize: 15,
-    color: colors.text,
+    color: c.text,
   },
 })

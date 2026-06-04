@@ -4,7 +4,7 @@ import { Image } from 'expo-image'
 import { CustomActionSheet } from '../../../shared/components/CustomActionSheet'
 import { MoreButton } from '../../../shared/components/MoreButton'
 import { PlaceholderImage } from '../../../shared/components/PlaceholderImage'
-import { colors, spacing, radius, getFaviconColor, getFaviconLetter, getDomain } from '../../../shared/theme'
+import { useThemedStyles, spacing, radius, getFaviconColor, getFaviconLetter, getDomain, type Palette } from '../../../shared/theme'
 import { openInBrowser } from '../../../shared/utils/url'
 import { useBookmarksStore } from '../store'
 import { useSettingsStore } from '../../settings/store'
@@ -26,6 +26,7 @@ type Props = {
 export function BookmarkCard({ bookmark, allFolders, onDelete, onMove, drag, isActive, compact }: Props) {
   const { update } = useBookmarksStore()
   const { settings } = useSettingsStore()
+  const { styles } = useThemedStyles(makeStyles)
   const [editVisible, setEditVisible] = useState(false)
   const [sheetVisible, setSheetVisible] = useState(false)
   const [moveSheetVisible, setMoveSheetVisible] = useState(false)
@@ -132,9 +133,9 @@ function showMoveSheet(folders: Folder[], onMove: (id: string) => void) {
   ])
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (c: Palette) => StyleSheet.create({
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: c.surface,
     borderRadius: 16,
     overflow: 'hidden',
     borderWidth: 0,
@@ -159,13 +160,13 @@ const styles = StyleSheet.create({
     paddingTop: spacing.sm,
     paddingBottom: spacing.sm,
     gap: spacing.xs,
-    backgroundColor: '#fff',
+    backgroundColor: c.surface,
     borderBottomLeftRadius: 16,
     borderBottomRightRadius: 16,
     borderLeftWidth: StyleSheet.hairlineWidth,
     borderRightWidth: StyleSheet.hairlineWidth,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.cardBorder,
+    borderColor: c.cardBorder,
   },
   metaCompact: {
     alignItems: 'center',
@@ -183,12 +184,12 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 12,
     fontWeight: '500',
-    color: colors.text,
+    color: c.text,
     lineHeight: 16,
   },
   domain: {
     fontSize: 11,
-    color: colors.textSecondary,
+    color: c.textSecondary,
     marginTop: 1,
   },
 })

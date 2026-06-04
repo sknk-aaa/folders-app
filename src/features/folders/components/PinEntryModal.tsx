@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { View, Text, TouchableOpacity, Modal, StyleSheet, Pressable } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { colors, spacing, radius } from '../../../shared/theme'
+import { useThemedStyles, spacing, radius, type Palette } from '../../../shared/theme'
 
 type Props =
   | { mode: 'unlock'; correctPin: string; onSuccess: () => void; onCancel: () => void }
@@ -14,6 +14,7 @@ export function PinEntryModal(props: Props) {
   const [step, setStep] = useState<'enter' | 'confirm'>('enter')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  const { styles } = useThemedStyles(makeStyles)
 
   const handleDigit = (d: string) => {
     setError('')
@@ -130,14 +131,14 @@ export function PinEntryModal(props: Props) {
   )
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (c: Palette) => StyleSheet.create({
   backdrop: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.45)',
     justifyContent: 'flex-end',
   },
   panel: {
-    backgroundColor: colors.background,
+    backgroundColor: c.surfaceElevated,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     paddingTop: 28,
@@ -147,7 +148,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: '600',
-    color: colors.text,
+    color: c.text,
     marginBottom: 28,
   },
   dots: {
@@ -160,11 +161,11 @@ const styles = StyleSheet.create({
     height: 14,
     borderRadius: 7,
     borderWidth: 1.5,
-    borderColor: colors.textSecondary,
+    borderColor: c.textSecondary,
   },
   dotFilled: {
-    backgroundColor: colors.text,
-    borderColor: colors.text,
+    backgroundColor: c.text,
+    borderColor: c.text,
   },
   dotSuccess: {
     backgroundColor: '#34C759',
@@ -172,7 +173,7 @@ const styles = StyleSheet.create({
   },
   error: {
     fontSize: 13,
-    color: '#FF3B30',
+    color: c.destructive,
     marginBottom: 8,
     height: 18,
   },
@@ -191,7 +192,7 @@ const styles = StyleSheet.create({
     width: 68,
     height: 68,
     borderRadius: 34,
-    backgroundColor: colors.placeholderBg,
+    backgroundColor: c.placeholderBg,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -202,13 +203,13 @@ const styles = StyleSheet.create({
   keyText: {
     fontSize: 22,
     fontWeight: '500',
-    color: colors.text,
+    color: c.text,
   },
   cancelBtn: {
     paddingVertical: 12,
   },
   cancelText: {
     fontSize: 16,
-    color: colors.textSecondary,
+    color: c.textSecondary,
   },
 })

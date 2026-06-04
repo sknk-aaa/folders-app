@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { Dimensions, FlatList, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { ViewModeToggle } from '../../../shared/components/ViewModeToggle'
-import { colors, spacing } from '../../../shared/theme'
+import { useThemedStyles, spacing, type Palette } from '../../../shared/theme'
 import type { Bookmark, Folder, ViewMode } from '../../../shared/types'
 import { BookmarkCard } from './BookmarkCard'
 import { BookmarkListItem } from './BookmarkListItem'
@@ -40,6 +40,7 @@ export function BookmarkCollectionList({
   onReorder,
   columns: columnsProp = 2,
 }: Props) {
+  const { styles } = useThemedStyles(makeStyles)
   const columns = viewMode === 'grid' ? columnsProp : 1
   const cardW = (SCREEN_W - PADDING * 2 - GAP * (columnsProp - 1)) / columnsProp
   const isDraggable = Boolean(onReorder)
@@ -166,7 +167,7 @@ function renderBookmark({
   return card
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (c: Palette) => StyleSheet.create({
   toolbar: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -178,7 +179,7 @@ const styles = StyleSheet.create({
   toolbarTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: colors.text,
+    color: c.text,
     flexShrink: 1,
   },
   columnWrapper: {
@@ -191,7 +192,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 14,
-    color: colors.textSecondary,
+    color: c.textSecondary,
     textAlign: 'center',
     marginTop: 48,
   },

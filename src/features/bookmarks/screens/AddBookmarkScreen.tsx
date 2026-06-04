@@ -30,7 +30,7 @@ import { ProUpgradeModal } from '../../pro/components/ProUpgradeModal'
 import { PlaceholderImage } from '../../../shared/components/PlaceholderImage'
 import { Toast } from '../../../shared/components/Toast'
 import { fetchOgp } from '../../../shared/utils/url'
-import { colors, spacing, radius } from '../../../shared/theme'
+import { useThemedStyles, spacing, radius, type Palette } from '../../../shared/theme'
 import type { RootStackParamList } from '../../../shared/types'
 
 type Nav = NativeStackNavigationProp<RootStackParamList>
@@ -69,6 +69,7 @@ export function AddBookmarkScreen() {
   const [proModalVisible, setProModalVisible] = useState(false)
   const [proModalHint, setProModalHint] = useState<string | undefined>()
   const [savedPendingNav, setSavedPendingNav] = useState(false)
+  const { c, styles } = useThemedStyles(makeStyles)
 
   const webviewRef = useRef<WebView>(null)
   const webviewWrapRef = useRef<View>(null)
@@ -267,7 +268,7 @@ export function AddBookmarkScreen() {
                 value={urlInput}
                 onChangeText={setUrlInput}
                 placeholder="https://..."
-                placeholderTextColor={colors.textTertiary}
+                placeholderTextColor={c.textTertiary}
                 autoCapitalize="none"
                 autoCorrect={false}
                 keyboardType="url"
@@ -282,7 +283,7 @@ export function AddBookmarkScreen() {
                 value={name}
                 onChangeText={setName}
                 placeholder="サイト名"
-                placeholderTextColor={colors.textTertiary}
+                placeholderTextColor={c.textTertiary}
                 returnKeyType="done"
                 onSubmitEditing={handleUrlSubmit}
               />
@@ -317,7 +318,7 @@ export function AddBookmarkScreen() {
   if (step === 'loading') {
     return (
       <View style={[styles.container, styles.centered, { paddingTop: insets.top }]}>
-        <ActivityIndicator size="large" color={colors.text} />
+        <ActivityIndicator size="large" color={c.text} />
         <Text style={styles.loadingText}>読み込み中...</Text>
       </View>
     )
@@ -405,7 +406,7 @@ export function AddBookmarkScreen() {
               value={name}
               onChangeText={setName}
               placeholder="サイト名"
-              placeholderTextColor={colors.textTertiary}
+              placeholderTextColor={c.textTertiary}
               returnKeyType="next"
             />
           </View>
@@ -417,7 +418,7 @@ export function AddBookmarkScreen() {
               value={url}
               onChangeText={setUrl}
               placeholder="https://..."
-              placeholderTextColor={colors.textTertiary}
+              placeholderTextColor={c.textTertiary}
               autoCapitalize="none"
               autoCorrect={false}
               keyboardType="url"
@@ -446,6 +447,7 @@ function FolderPicker({
   folderId: string
   onSelect: (folderId: string) => void
 }) {
+  const { styles } = useThemedStyles(makeStyles)
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.folderScroll}>
       {folders.map((f) => (
@@ -463,8 +465,8 @@ function FolderPicker({
   )
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background },
+const makeStyles = (c: Palette) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: c.background },
   centered: { alignItems: 'center', justifyContent: 'center' },
   modalHeader: {
     flexDirection: 'row',
@@ -473,28 +475,28 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingVertical: 12,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.separator,
+    borderBottomColor: c.separator,
   },
-  modalTitle: { fontSize: 16, fontWeight: '600', color: colors.text },
-  cancelText: { fontSize: 15, color: colors.textSecondary },
-  captureText: { fontSize: 15, fontWeight: '600', color: colors.text },
-  saveText: { fontSize: 15, fontWeight: '700', color: colors.text },
+  modalTitle: { fontSize: 16, fontWeight: '600', color: c.text },
+  cancelText: { fontSize: 15, color: c.textSecondary },
+  captureText: { fontSize: 15, fontWeight: '600', color: c.text },
+  saveText: { fontSize: 15, fontWeight: '700', color: c.text },
   section: { paddingHorizontal: spacing.lg, marginTop: spacing.xl },
   label: {
     fontSize: 12,
     fontWeight: '600',
-    color: colors.textSecondary,
+    color: c.textSecondary,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
     marginBottom: 8,
   },
   input: {
     borderWidth: 1,
-    borderColor: colors.separator,
+    borderColor: c.separator,
     borderRadius: radius.sm,
     padding: 12,
     fontSize: 15,
-    color: colors.text,
+    color: c.text,
   },
   formScroll: {
     flex: 1,
@@ -505,25 +507,25 @@ const styles = StyleSheet.create({
   bottomActions: {
     paddingHorizontal: spacing.lg,
     paddingTop: 12,
-    backgroundColor: colors.background,
+    backgroundColor: c.background,
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: colors.separator,
+    borderTopColor: c.separator,
   },
   primaryBtn: {
-    backgroundColor: colors.text,
+    backgroundColor: c.text,
     padding: 16,
     borderRadius: radius.md,
     alignItems: 'center',
   },
   primaryBtnDisabled: { opacity: 0.3 },
-  primaryBtnText: { fontSize: 16, fontWeight: '600', color: colors.background },
-  loadingText: { fontSize: 15, color: colors.textSecondary, marginTop: spacing.md },
+  primaryBtnText: { fontSize: 16, fontWeight: '600', color: c.background },
+  loadingText: { fontSize: 15, color: c.textSecondary, marginTop: spacing.md },
   webviewHint: {
     fontSize: 13,
-    color: colors.textSecondary,
+    color: c.textSecondary,
     textAlign: 'center',
     paddingVertical: 8,
-    backgroundColor: colors.placeholderBg,
+    backgroundColor: c.placeholderBg,
   },
   webviewWrap: {
     flex: 1,
@@ -557,11 +559,11 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: radius.sm,
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.separator,
+    borderColor: c.separator,
   },
   retakeText: {
     fontSize: 13,
-    color: colors.text,
+    color: c.text,
   },
   folderScroll: { marginTop: 0 },
   folderChip: {
@@ -569,11 +571,11 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: colors.separator,
+    borderColor: c.separator,
     marginRight: 8,
-    backgroundColor: colors.placeholderBg,
+    backgroundColor: c.placeholderBg,
   },
-  folderChipSelected: { backgroundColor: colors.text, borderColor: colors.text },
-  folderChipText: { fontSize: 14, color: colors.text },
-  folderChipTextSelected: { color: colors.background },
+  folderChipSelected: { backgroundColor: c.text, borderColor: c.text },
+  folderChipText: { fontSize: 14, color: c.text },
+  folderChipTextSelected: { color: c.background },
 })

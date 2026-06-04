@@ -14,7 +14,7 @@ import { FolderEditModal } from '../components/FolderEditModal'
 import { Header } from '../../../shared/components/Header'
 import { InlineSearchBar } from '../../../shared/components/InlineSearchBar'
 import { FOLDER_PLACEHOLDER } from '../../../shared/mockVisuals'
-import { colors, spacing, radius } from '../../../shared/theme'
+import { useThemedStyles, spacing, radius, type Palette } from '../../../shared/theme'
 import type {
   RootStackParamList,
   Folder,
@@ -43,6 +43,7 @@ export function FolderDetailScreen() {
   const [columns, setColumns] = useState(2)
   const [isSearching, setIsSearching] = useState(false)
   const [query, setQuery] = useState('')
+  const { styles } = useThemedStyles(makeStyles)
 
   const filteredBookmarks = useMemo(() => {
     if (!isSearching || !query.trim()) return bookmarks
@@ -146,6 +147,7 @@ function FolderHeaderSummary({
   thumbnail: string | undefined
   bookmarkCount: number
 }) {
+  const { styles } = useThemedStyles(makeStyles)
   return (
     <View style={styles.folderSummaryWrap} pointerEvents="none">
       <View style={styles.folderSummary}>
@@ -167,8 +169,8 @@ function FolderHeaderSummary({
   )
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background },
+const makeStyles = (c: Palette) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: c.background },
   collectionWrap: {
     flex: 1,
     position: 'relative',
@@ -194,7 +196,7 @@ const styles = StyleSheet.create({
     height: 58,
     borderRadius: radius.md,
     overflow: 'hidden',
-    backgroundColor: colors.placeholderBg,
+    backgroundColor: c.placeholderBg,
   },
   titleBlock: {
     flex: 1,
@@ -204,11 +206,11 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 16,
     fontWeight: '500',
-    color: colors.text,
+    color: c.text,
   },
   headerSub: {
     fontSize: 13,
-    color: colors.textSecondary,
+    color: c.textSecondary,
     marginTop: 5,
   },
 })

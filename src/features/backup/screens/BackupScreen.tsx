@@ -14,7 +14,7 @@ import { Ionicons } from '@expo/vector-icons'
 import { useSettingsStore } from '../../settings/store'
 import { useBackupStore } from '../store'
 import { ProUpgradeModal } from '../../pro/components/ProUpgradeModal'
-import { colors, spacing, radius } from '../../../shared/theme'
+import { useThemedStyles, spacing, radius, type Palette } from '../../../shared/theme'
 
 function formatDate(ts: number | null): string {
   if (!ts) return 'まだバックアップしていません'
@@ -28,6 +28,7 @@ export function BackupScreen() {
   const insets = useSafeAreaInsets()
   const { settings } = useSettingsStore()
   const { state, backup, restore } = useBackupStore()
+  const { c, styles } = useThemedStyles(makeStyles)
   const [proModalVisible, setProModalVisible] = useState(false)
 
   const isPremium = settings.is_premium
@@ -79,7 +80,7 @@ export function BackupScreen() {
       <ScrollView contentContainerStyle={styles.content}>
         {!isPremium ? (
           <View style={styles.lockCard}>
-            <Ionicons name="cloud-outline" size={40} color={colors.textSecondary} />
+            <Ionicons name="cloud-outline" size={40} color={c.textSecondary} />
             <Text style={styles.lockTitle}>Proで使える機能です</Text>
             <Text style={styles.lockDesc}>
               ブックマークとサムネイルをiCloudに保存し、機種変更やアプリの入れ直しでも元に戻せます。
@@ -92,7 +93,7 @@ export function BackupScreen() {
           <>
             <View style={styles.infoCard}>
               <View style={styles.infoRow}>
-                <Ionicons name="time-outline" size={18} color={colors.textSecondary} />
+                <Ionicons name="time-outline" size={18} color={c.textSecondary} />
                 <Text style={styles.infoLabel}>最終バックアップ</Text>
                 <Text style={styles.infoValue}>{formatDate(settings.last_backup_at)}</Text>
               </View>
@@ -104,7 +105,7 @@ export function BackupScreen() {
               disabled={busy}
             >
               {state === 'backing-up' ? (
-                <ActivityIndicator color={colors.background} />
+                <ActivityIndicator color={c.background} />
               ) : (
                 <Text style={styles.primaryBtnText}>今すぐバックアップ</Text>
               )}
@@ -116,7 +117,7 @@ export function BackupScreen() {
               disabled={busy}
             >
               {state === 'restoring' ? (
-                <ActivityIndicator color={colors.destructive} />
+                <ActivityIndicator color={c.destructive} />
               ) : (
                 <Text style={styles.secondaryBtnText}>バックアップから復元</Text>
               )}
@@ -134,8 +135,8 @@ export function BackupScreen() {
   )
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background },
+const makeStyles = (c: Palette) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: c.background },
   modalHeader: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -143,61 +144,61 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingVertical: 12,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.separator,
+    borderBottomColor: c.separator,
   },
-  modalTitle: { fontSize: 16, fontWeight: '600', color: colors.text },
-  cancelText: { fontSize: 15, color: colors.textSecondary },
+  modalTitle: { fontSize: 16, fontWeight: '600', color: c.text },
+  cancelText: { fontSize: 15, color: c.textSecondary },
   disabled: { opacity: 0.4 },
   content: { padding: spacing.lg, gap: spacing.md },
   infoCard: {
-    backgroundColor: '#fff',
+    backgroundColor: c.surface,
     borderRadius: radius.lg,
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.cardBorder,
+    borderColor: c.cardBorder,
     padding: spacing.lg,
   },
   infoRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  infoLabel: { fontSize: 14, color: colors.textSecondary, flex: 1 },
-  infoValue: { fontSize: 13, color: colors.text, fontWeight: '500' },
+  infoLabel: { fontSize: 14, color: c.textSecondary, flex: 1 },
+  infoValue: { fontSize: 13, color: c.text, fontWeight: '500' },
   primaryBtn: {
-    backgroundColor: colors.text,
+    backgroundColor: c.text,
     padding: 16,
     borderRadius: radius.md,
     alignItems: 'center',
     justifyContent: 'center',
     minHeight: 54,
   },
-  primaryBtnText: { fontSize: 16, fontWeight: '600', color: colors.background },
+  primaryBtnText: { fontSize: 16, fontWeight: '600', color: c.background },
   secondaryBtn: {
     borderWidth: 1,
-    borderColor: colors.destructive,
+    borderColor: c.destructive,
     padding: 16,
     borderRadius: radius.md,
     alignItems: 'center',
     justifyContent: 'center',
     minHeight: 54,
   },
-  secondaryBtnText: { fontSize: 16, fontWeight: '600', color: colors.destructive },
+  secondaryBtnText: { fontSize: 16, fontWeight: '600', color: c.destructive },
   note: {
     fontSize: 12,
-    color: colors.textSecondary,
+    color: c.textSecondary,
     lineHeight: 18,
     marginTop: spacing.sm,
     paddingHorizontal: 4,
   },
   lockCard: {
-    backgroundColor: '#fff',
+    backgroundColor: c.surface,
     borderRadius: radius.lg,
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.cardBorder,
+    borderColor: c.cardBorder,
     padding: spacing.xl,
     alignItems: 'center',
     gap: 12,
   },
-  lockTitle: { fontSize: 18, fontWeight: '700', color: colors.text },
+  lockTitle: { fontSize: 18, fontWeight: '700', color: c.text },
   lockDesc: {
     fontSize: 14,
-    color: colors.textSecondary,
+    color: c.textSecondary,
     textAlign: 'center',
     lineHeight: 21,
     marginBottom: 8,
