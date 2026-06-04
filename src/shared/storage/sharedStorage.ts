@@ -37,6 +37,14 @@ export function getFolders(): SharedFolder[] {
   }
 }
 
+export function setPremium(isPremium: boolean): void {
+  storage.set('is_premium', isPremium)
+}
+
+export function getPremium(): boolean {
+  return storage.getBoolean('is_premium') ?? false
+}
+
 export function queueBookmark(b: QueuedBookmark): void {
   const raw = storage.getString('queue') ?? '[]'
   let list: QueuedBookmark[] = []

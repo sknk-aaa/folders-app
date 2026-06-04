@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import Purchases, { LOG_LEVEL } from 'react-native-purchases'
 import { useSettingsStore } from '../settings/store'
+import { setPremium } from '../../shared/storage/sharedStorage'
 
 const REVENUECAT_API_KEY = 'appl_uesZfCuFvseRYpwJqpMMcFrDRfc'
 const ENTITLEMENT_ID = 'Bookrest Pro'
@@ -18,6 +19,8 @@ type ProStore = {
 
 function syncToPremium(isPro: boolean) {
   useSettingsStore.getState().set('is_premium', isPro)
+  // Share Extension(別プロセス)がProか判定できるようApp Groupにも書く
+  setPremium(isPro)
 }
 
 export const useProStore = create<ProStore>((setState) => ({

@@ -9,7 +9,7 @@ import {
 } from 'react-native'
 import { Text, TextInput, View } from 'expo-share-extension'
 import { close, type InitialProps } from 'expo-share-extension'
-import { getFolders, queueBookmark } from './src/shared/storage/sharedStorage'
+import { getFolders, getPremium, queueBookmark } from './src/shared/storage/sharedStorage'
 
 type Preprocessing = {
   url?: string
@@ -64,6 +64,8 @@ export default function ShareExtension({ url, text, preprocessingResults }: Prop
     ogImage ?? candidates[0] ?? null,
   )
   const [showPicker, setShowPicker] = useState(false)
+  const isPremium = getPremium()
+  const [memo, setMemo] = useState('')
 
   const handleSave = () => {
     if (!actualUrl || !folderId) {
@@ -75,6 +77,7 @@ export default function ShareExtension({ url, text, preprocessingResults }: Prop
       folderId,
       ogImageUrl: selectedImage,
       createdAt: Date.now(),
+      memo: isPremium ? memo.trim() || null : null,
     })
     close()
   }
@@ -196,6 +199,23 @@ export default function ShareExtension({ url, text, preprocessingResults }: Prop
                 returnKeyType="done"
               />
             </View>
+
+            {isPremium ? (
+              <View style={styles.field}>
+                <Text style={styles.label} allowFontScaling={false}>
+                  メモ
+                </Text>
+                <TextInput
+                  style={[styles.input, styles.memoInput]}
+                  value={memo}
+                  onChangeText={setMemo}
+                  placeholder="メモ（任意）"
+                  placeholderTextColor="#C7C7CC"
+                  allowFontScaling={false}
+                  multiline
+                />
+              </View>
+            ) : null}
 
             <View style={styles.field}>
               <Text style={styles.label} allowFontScaling={false}>
@@ -357,6 +377,11 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#000000',
     backgroundColor: '#FFFFFF',
+  },
+  memoInput: {
+    height: 72,
+    paddingTop: 10,
+    textAlignVertical: 'top',
   },
   chipRow: {
     gap: 8,
