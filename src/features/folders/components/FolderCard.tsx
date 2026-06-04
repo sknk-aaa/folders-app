@@ -5,7 +5,7 @@ import { CustomActionSheet } from '../../../shared/components/CustomActionSheet'
 import { PinEntryModal } from './PinEntryModal'
 import { useUnlockStore } from '../unlockStore'
 import type { Folder, Bookmark } from '../../../shared/types'
-import { colors, spacing, radius } from '../../../shared/theme'
+import { useThemedStyles, spacing, radius, type Palette } from '../../../shared/theme'
 import { FOLDER_PLACEHOLDER } from '../../../shared/mockVisuals'
 
 type Props = {
@@ -31,6 +31,7 @@ export function FolderCard({
   onMorePressIn,
   onMorePressOut,
 }: Props) {
+  const { styles } = useThemedStyles(makeStyles)
   const realThumbnails = bookmarks
     .filter((b) => b.thumbnailPath)
     .map((b) => b.thumbnailPath as string)
@@ -130,6 +131,7 @@ export function FolderCard({
 }
 
 function LockedThumbnail() {
+  const { styles } = useThemedStyles(makeStyles)
   return (
     <View style={[StyleSheet.absoluteFill, styles.lockedThumb]}>
       <Text style={styles.lockedThumbIcon}>🔒</Text>
@@ -144,6 +146,7 @@ function FolderMosaic({
   count: number
   realThumbnails: string[]
 }) {
+  const { styles } = useThemedStyles(makeStyles)
   // 0件: ローカルプレースホルダー画像
   if (count === 0) {
     return (
@@ -196,118 +199,122 @@ function FolderMosaic({
   )
 }
 
-const styles = StyleSheet.create({
-  card: {
-    aspectRatio: 1.15,
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    overflow: 'hidden',
-    borderWidth: 0,
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 2,
-  },
-  cardActive: {
-    opacity: 0.96,
-    zIndex: 20,
-    elevation: 20,
-    shadowColor: '#000',
-    shadowOpacity: 0.22,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 8 },
-  },
-  mosaic: {
-    flex: 1,
-    backgroundColor: colors.placeholderBg,
-    position: 'relative',
-  },
-  lockedThumb: {
-    backgroundColor: colors.placeholderBg,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  lockedThumbIcon: {
-    fontSize: 28,
-    color: colors.textSecondary,
-    opacity: 0.7,
-  },
-  threeMosaic: {
-    flex: 1,
-    flexDirection: 'row',
-  },
-  mosaicMain: {
-    flex: 1.55,
-    height: '100%',
-  },
-  mosaicSide: {
-    flex: 0.95,
-    height: '100%',
-    borderLeftWidth: 1,
-    borderLeftColor: 'rgba(255,255,255,0.9)',
-  },
-  mosaicSub1: {
-    flex: 1.4,
-  },
-  mosaicSub2: {
-    flex: 1,
-  },
-  mosaicDivider: {
-    height: 1,
-    backgroundColor: 'rgba(255,255,255,0.9)',
-  },
-  pipFrame: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    width: '42%',
-    height: '55%',
-    borderTopLeftRadius: radius.sm,
-    overflow: 'hidden',
-    borderTopWidth: 1,
-    borderLeftWidth: 1,
-    borderColor: 'rgba(255,255,255,0.9)',
-  },
-  meta: {
-    height: 50,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    borderBottomLeftRadius: 16,
-    borderBottomRightRadius: 16,
-    borderLeftWidth: StyleSheet.hairlineWidth,
-    borderRightWidth: StyleSheet.hairlineWidth,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.cardBorder,
-  },
-  metaText: {
-    flex: 1,
-    minWidth: 0,
-  },
-  name: {
-    fontSize: 14,
-    fontWeight: '400',
-    color: colors.text,
-    marginTop: 2,
-  },
-  count: {
-    fontSize: 11,
-    color: colors.textSecondary,
-    marginTop: 2,
-  },
-  moreBtn: {
-    alignSelf: 'center',
-    paddingHorizontal: 4,
-    paddingVertical: 8,
-    marginRight: -2,
-  },
-  moreDots: {
-    fontSize: 22,
-    color: '#3C3C3E',
-    lineHeight: 22,
-    letterSpacing: -2,
-  },
-})
+const makeStyles = (c: Palette) => {
+  // モザイク画像間の仕切りはカード色に馴染ませる
+  const seam = c.surface
+  return StyleSheet.create({
+    card: {
+      aspectRatio: 1.15,
+      backgroundColor: c.surface,
+      borderRadius: 16,
+      overflow: 'hidden',
+      borderWidth: 0,
+      shadowColor: '#000',
+      shadowOpacity: 0.08,
+      shadowRadius: 8,
+      shadowOffset: { width: 0, height: 3 },
+      elevation: 2,
+    },
+    cardActive: {
+      opacity: 0.96,
+      zIndex: 20,
+      elevation: 20,
+      shadowColor: '#000',
+      shadowOpacity: 0.22,
+      shadowRadius: 16,
+      shadowOffset: { width: 0, height: 8 },
+    },
+    mosaic: {
+      flex: 1,
+      backgroundColor: c.placeholderBg,
+      position: 'relative',
+    },
+    lockedThumb: {
+      backgroundColor: c.placeholderBg,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    lockedThumbIcon: {
+      fontSize: 28,
+      color: c.textSecondary,
+      opacity: 0.7,
+    },
+    threeMosaic: {
+      flex: 1,
+      flexDirection: 'row',
+    },
+    mosaicMain: {
+      flex: 1.55,
+      height: '100%',
+    },
+    mosaicSide: {
+      flex: 0.95,
+      height: '100%',
+      borderLeftWidth: 1,
+      borderLeftColor: seam,
+    },
+    mosaicSub1: {
+      flex: 1.4,
+    },
+    mosaicSub2: {
+      flex: 1,
+    },
+    mosaicDivider: {
+      height: 1,
+      backgroundColor: seam,
+    },
+    pipFrame: {
+      position: 'absolute',
+      bottom: 0,
+      right: 0,
+      width: '42%',
+      height: '55%',
+      borderTopLeftRadius: radius.sm,
+      overflow: 'hidden',
+      borderTopWidth: 1,
+      borderLeftWidth: 1,
+      borderColor: seam,
+    },
+    meta: {
+      height: 50,
+      paddingHorizontal: spacing.md,
+      paddingVertical: spacing.sm,
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: c.surface,
+      borderBottomLeftRadius: 16,
+      borderBottomRightRadius: 16,
+      borderLeftWidth: StyleSheet.hairlineWidth,
+      borderRightWidth: StyleSheet.hairlineWidth,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderColor: c.cardBorder,
+    },
+    metaText: {
+      flex: 1,
+      minWidth: 0,
+    },
+    name: {
+      fontSize: 14,
+      fontWeight: '400',
+      color: c.text,
+      marginTop: 2,
+    },
+    count: {
+      fontSize: 11,
+      color: c.textSecondary,
+      marginTop: 2,
+    },
+    moreBtn: {
+      alignSelf: 'center',
+      paddingHorizontal: 4,
+      paddingVertical: 8,
+      marginRight: -2,
+    },
+    moreDots: {
+      fontSize: 22,
+      color: c.textSecondary,
+      lineHeight: 22,
+      letterSpacing: -2,
+    },
+  })
+}

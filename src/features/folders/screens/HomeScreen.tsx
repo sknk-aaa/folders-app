@@ -25,7 +25,7 @@ import { PinEntryModal } from '../components/PinEntryModal'
 import { FolderEditModal } from '../components/FolderEditModal'
 import { SortableFolderGrid } from '../components/SortableFolderGrid'
 import { PlaceholderImage } from '../../../shared/components/PlaceholderImage'
-import { colors, spacing, radius, getDomain } from '../../../shared/theme'
+import { useThemedStyles, spacing, radius, getDomain, type Palette } from '../../../shared/theme'
 import { MOCK_BOOKMARKS } from '../../../shared/mockVisuals'
 import { openInBrowser } from '../../../shared/utils/url'
 import type { RootStackParamList, Folder, FolderIconId, ViewMode } from '../../../shared/types'
@@ -43,6 +43,7 @@ export function HomeScreen() {
   const navigation = useNavigation<Nav>()
   const { folders, add, update, remove, reorder } = useFoldersStore()
   const { byFolder, recent } = useBookmarksStore()
+  const { styles } = useThemedStyles(makeStyles)
   const recentBookmarks = recent(10)
   const recentItems =
     recentBookmarks.length >= 5
@@ -216,6 +217,7 @@ export function HomeScreen() {
 }
 
 function FolderEmptyHint() {
+  const { styles } = useThemedStyles(makeStyles)
   return (
     <View style={styles.folderEmptyHint}>
       <Text style={styles.folderEmptyIcon}>📁</Text>
@@ -231,6 +233,7 @@ function RecentItem({
   item: { thumbnailPath: string | null; name: string; url: string }
 }) {
   const { settings } = useSettingsStore()
+  const { styles } = useThemedStyles(makeStyles)
   const ITEM_W = 72
   const IMAGE_H = 86
   const handlePress = () => {
@@ -279,6 +282,7 @@ function FolderListRow({
   onEdit: () => void
   onDelete: () => void
 }) {
+  const { styles } = useThemedStyles(makeStyles)
   const isUnlocked = useUnlockStore((s) => Boolean(s.unlockedIds[folder.id]))
   const isLocked = Boolean(folder.pinCode) && !isUnlocked
 
@@ -358,8 +362,8 @@ function FolderListRow({
   )
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background },
+const makeStyles = (c: Palette) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: c.background },
   listContent: {
     paddingBottom: 34,
   },
@@ -382,12 +386,12 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: colors.text,
+    color: c.text,
   },
   sectionAction: {
     fontSize: 13,
     fontWeight: '600',
-    color: colors.text,
+    color: c.text,
   },
   gridWrapper: {
     paddingHorizontal: GRID_PADDING,
@@ -400,9 +404,9 @@ const styles = StyleSheet.create({
     padding: spacing.sm,
     paddingRight: 16,
     borderRadius: 16,
-    backgroundColor: colors.background,
+    backgroundColor: c.surface,
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.cardBorder,
+    borderColor: c.cardBorder,
   },
   folderRowActive: {
     opacity: 0.96,
@@ -417,7 +421,7 @@ const styles = StyleSheet.create({
     width: 58,
     height: 58,
     borderRadius: radius.md,
-    backgroundColor: colors.placeholderBg,
+    backgroundColor: c.placeholderBg,
   },
   folderRowLocked: {
     alignItems: 'center',
@@ -425,7 +429,7 @@ const styles = StyleSheet.create({
   },
   folderRowLockedIcon: {
     fontSize: 22,
-    color: colors.textSecondary,
+    color: c.textSecondary,
     opacity: 0.7,
   },
   folderRowText: {
@@ -435,11 +439,11 @@ const styles = StyleSheet.create({
   folderRowName: {
     fontSize: 15,
     fontWeight: '500',
-    color: colors.text,
+    color: c.text,
   },
   folderRowCount: {
     fontSize: 13,
-    color: colors.textSecondary,
+    color: c.textSecondary,
     marginTop: 4,
   },
   recentList: {
@@ -449,7 +453,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
     minHeight: 150,
     borderRadius: 16,
-    backgroundColor: '#fff',
+    backgroundColor: c.surface,
     overflow: 'hidden',
     borderWidth: 0,
     shadowColor: '#000',
@@ -461,7 +465,7 @@ const styles = StyleSheet.create({
   recentImage: {
     width: '100%',
     height: 86,
-    backgroundColor: colors.placeholderBg,
+    backgroundColor: c.placeholderBg,
   },
   recentMeta: {
     minHeight: 64,
@@ -472,17 +476,17 @@ const styles = StyleSheet.create({
   recentName: {
     fontSize: 11,
     fontWeight: '600',
-    color: colors.text,
+    color: c.text,
     lineHeight: 15,
   },
   recentDomain: {
     fontSize: 10,
-    color: colors.textSecondary,
+    color: c.textSecondary,
     marginTop: 4,
   },
   emptyText: {
     fontSize: 14,
-    color: colors.textSecondary,
+    color: c.textSecondary,
     paddingHorizontal: GRID_PADDING,
   },
   folderEmptyHint: {
@@ -497,12 +501,12 @@ const styles = StyleSheet.create({
   folderEmptyTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: colors.text,
+    color: c.text,
     marginBottom: 8,
   },
   folderEmptyDesc: {
     fontSize: 13,
-    color: colors.textSecondary,
+    color: c.textSecondary,
     textAlign: 'center',
   },
 })
