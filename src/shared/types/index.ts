@@ -49,7 +49,7 @@ export type Settings = {
   last_selected_folder_id: string | null
   default_folder_id: string | null
   save_count: number
-  review_prompted: boolean
+  launch_count: number
   last_backup_at: number | null
 }
 

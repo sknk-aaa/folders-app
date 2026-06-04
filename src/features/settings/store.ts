@@ -3,8 +3,11 @@ import * as StoreReview from 'expo-store-review'
 import { getDb } from '../../shared/db/client'
 import type { Settings, GridColumns } from '../../shared/types'
 
-// 3回保存して価値を感じた段階で1回だけレビュー依頼を出す
-const REVIEW_AFTER_SAVES = 3
+// レビュー依頼を出すタイミング。各カウンターがマイルストーン値を
+// ちょうど通過した時に1回だけ発火する（カウンターは1ずつしか増えないので各値1回）。
+// iOS側で年≤3回に間引かれるため、複数仕込んでも出しすぎにはならない。
+const SAVE_REVIEW_MILESTONES = [3, 10]
+const LAUNCH_REVIEW_MILESTONE = 5
 
 const DEFAULTS: Settings = {
   default_browser: 'safari',
@@ -16,8 +19,13 @@ const DEFAULTS: Settings = {
   last_selected_folder_id: null,
   default_folder_id: null,
   save_count: 0,
-  review_prompted: false,
+  launch_count: 0,
   last_backup_at: null,
+}
+
+async function requestReviewIfAvailable(): Promise<void> {
+  if (!(await StoreReview.isAvailableAsync())) return
+  await StoreReview.requestReview()
 }
 
 type SettingsStore = {
@@ -25,6 +33,7 @@ type SettingsStore = {
   load: () => void
   set: <K extends keyof Settings>(key: K, value: Settings[K]) => void
   recordSaveForReview: () => Promise<void>
+  recordLaunchForReview: () => Promise<void>
 }
 
 function parse(key: keyof Settings, raw: string): Settings[keyof Settings] {
@@ -32,11 +41,11 @@ function parse(key: keyof Settings, raw: string): Settings[keyof Settings] {
     case 'capture_thumbnail':
     case 'is_premium':
     case 'tutorial_completed':
-    case 'review_prompted':
       return raw === 'true'
     case 'grid_columns':
       return (parseInt(raw, 10) || 2) as GridColumns
     case 'save_count':
+    case 'launch_count':
       return parseInt(raw, 10) || 0
     case 'last_backup_at':
       return raw ? parseInt(raw, 10) || null : null
@@ -72,12 +81,19 @@ export const useSettingsStore = create<SettingsStore>((setState, getState) => ({
 
   recordSaveForReview: async () => {
     const { settings, set } = getState()
-    if (settings.review_prompted) return
     const next = settings.save_count + 1
     set('save_count', next)
-    if (next < REVIEW_AFTER_SAVES) return
-    if (!(await StoreReview.isAvailableAsync())) return
-    set('review_prompted', true)
-    await StoreReview.requestReview()
+    if (SAVE_REVIEW_MILESTONES.includes(next)) {
+      await requestReviewIfAvailable()
+    }
+  },
+
+  recordLaunchForReview: async () => {
+    const { settings, set } = getState()
+    const next = settings.launch_count + 1
+    set('launch_count', next)
+    if (next === LAUNCH_REVIEW_MILESTONE) {
+      await requestReviewIfAvailable()
+    }
   },
 }))

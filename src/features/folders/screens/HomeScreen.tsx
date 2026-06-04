@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import {
   Alert,
   View,
@@ -57,6 +57,14 @@ export function HomeScreen() {
   const [addSheetVisible, setAddSheetVisible] = useState(false)
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
   const [isGridDragging, setIsGridDragging] = useState(false)
+
+  // コールド起動5回目のレビュー依頼。ホームが表示されて少し経ってから出す。
+  useEffect(() => {
+    const t = setTimeout(() => {
+      void useSettingsStore.getState().recordLaunchForReview()
+    }, 1500)
+    return () => clearTimeout(t)
+  }, [])
 
   const openFolderAdd = () => {
     setEditTarget(undefined)
