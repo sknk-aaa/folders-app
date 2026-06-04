@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
-import { View, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet } from 'react-native'
+import { Image } from 'expo-image'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import type {
@@ -12,12 +13,17 @@ import { BookmarkCollectionList } from '../../bookmarks/components/BookmarkColle
 import { FolderEditModal } from '../components/FolderEditModal'
 import { Header } from '../../../shared/components/Header'
 import { InlineSearchBar } from '../../../shared/components/InlineSearchBar'
-import { useThemedStyles, type Palette } from '../../../shared/theme'
+import { ViewModeToggle } from '../../../shared/components/ViewModeToggle'
+import { FOLDER_PLACEHOLDER } from '../../../shared/mockVisuals'
+import { useThemedStyles, spacing, radius, type Palette } from '../../../shared/theme'
 import type {
   RootStackParamList,
+  Folder,
   FolderIconId,
   ViewMode,
 } from '../../../shared/types'
+
+const PADDING = spacing.lg
 
 type Nav = NativeStackNavigationProp<RootStackParamList>
 type Route = NativeStackScreenProps<RootStackParamList, 'FolderDetail'>['route']
@@ -71,6 +77,12 @@ export function FolderDetailScreen() {
     setEditModalVisible(false)
   }
 
+  const mosaicThumbnails = bookmarks
+    .filter((b) => b.thumbnailPath)
+    .slice(0, 1)
+    .map((b) => b.thumbnailPath as string)
+  const headerThumbnail = folder.customThumbnailPath ?? mosaicThumbnails[0]
+
   return (
     <View style={styles.container}>
       <Header
@@ -89,6 +101,21 @@ export function FolderDetailScreen() {
         hideBorder
       />
 
+      {!isSearching && (
+        <View style={styles.folderBand}>
+          <FolderHeaderSummary
+            folder={folder}
+            thumbnail={headerThumbnail}
+            bookmarkCount={bookmarks.length}
+          />
+          <ViewModeToggle
+            value={viewMode}
+            onGridPress={() => setViewMode('grid')}
+            onListPress={() => setViewMode('list')}
+          />
+        </View>
+      )}
+
       <View style={styles.collectionWrap}>
         <GestureDetector gesture={pinchGesture}>
           <View collapsable={false} style={{ flex: 1 }}>
@@ -103,7 +130,7 @@ export function FolderDetailScreen() {
               onReorder={(nextBookmarks) => reorder(folderId, nextBookmarks)}
               emptyText="このフォルダにはまだブックマークがありません"
               columns={columns}
-              title={isSearching ? undefined : `${bookmarks.length}件のブックマーク`}
+              hideToolbar={!isSearching}
             />
           </View>
         </GestureDetector>
@@ -122,9 +149,75 @@ export function FolderDetailScreen() {
 }
 
 
+function FolderHeaderSummary({
+  folder,
+  thumbnail,
+  bookmarkCount,
+}: {
+  folder: Folder
+  thumbnail: string | undefined
+  bookmarkCount: number
+}) {
+  const { styles } = useThemedStyles(makeStyles)
+  return (
+    <View style={styles.folderSummary}>
+      <Image
+        source={thumbnail ? { uri: thumbnail } : FOLDER_PLACEHOLDER}
+        style={styles.folderThumb}
+        contentFit="cover"
+      />
+      <View style={styles.titleBlock}>
+        <Text style={styles.headerTitle} numberOfLines={1}>
+          {folder.name}
+        </Text>
+        <Text style={styles.headerSub} numberOfLines={1}>
+          {bookmarkCount}件のブックマーク
+        </Text>
+      </View>
+    </View>
+  )
+}
+
 const makeStyles = (c: Palette) => StyleSheet.create({
   container: { flex: 1, backgroundColor: c.background },
   collectionWrap: {
     flex: 1,
+  },
+  folderBand: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    backgroundColor: c.headerBg,
+    paddingHorizontal: PADDING,
+    paddingTop: 4,
+    paddingBottom: 14,
+  },
+  folderSummary: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+    minWidth: 0,
+  },
+  folderThumb: {
+    width: 60,
+    height: 52,
+    borderRadius: radius.md,
+    overflow: 'hidden',
+    backgroundColor: c.placeholderBg,
+  },
+  titleBlock: {
+    flex: 1,
+    minWidth: 0,
+    marginLeft: spacing.sm,
+  },
+  headerTitle: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: c.text,
+  },
+  headerSub: {
+    fontSize: 13,
+    color: c.textSecondary,
+    marginTop: 5,
   },
 })
