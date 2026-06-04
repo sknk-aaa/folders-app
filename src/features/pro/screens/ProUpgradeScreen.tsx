@@ -48,7 +48,7 @@ const FEATURES: Feature[] = [
   {
     image: require('../../../../assets/pro-feature_note.png'),
     ratio: 1122 / 1402,
-    h: 290,
+    h: 322,
     title: tr({ en: 'Notes', ja: 'メモ' }),
     body: tr({
       en: 'Jot why you saved it — right when you share, or anytime after.',
@@ -58,7 +58,7 @@ const FEATURES: Feature[] = [
   {
     image: require('../../../../assets/pro-feature_cover.png'),
     ratio: 1448 / 1086,
-    h: 250,
+    h: 264,
     title: tr({ en: 'Folder Covers', ja: 'フォルダのカバー' }),
     body: tr({
       en: 'Dress up each folder with a cover image of your own.',
@@ -468,6 +468,7 @@ const makeStyles = (c: Palette) =>
     showcase: { width: '100%', gap: 30, marginTop: 30, marginBottom: 30, alignItems: 'center' },
     featureCard: { width: '100%', alignItems: 'center' },
     featureImage: {
+      maxWidth: '100%',
       borderRadius: 16,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: c.cardBorder,
