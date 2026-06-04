@@ -1,7 +1,9 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   Alert,
+  Animated,
   Dimensions,
+  Easing,
   FlatList,
   Image,
   ImageSourcePropType,
@@ -36,13 +38,15 @@ const PHONE_ASPECT = 0.46
 
 const SINGLE_PHONE_HEIGHT = Math.min(H * 0.48, 390)
 const SINGLE_PHONE_WIDTH = SINGLE_PHONE_HEIGHT * PHONE_ASPECT
+// Videos are shown larger than the still phone screenshots
+const VIDEO_HEIGHT = Math.min(H * 0.6, 520)
 
 type Nav = NativeStackNavigationProp<RootStackParamList>
 
 type PageVisual =
   | { kind: 'welcome'; image: ImageSourcePropType }
   | { kind: 'single'; image: ImageSourcePropType; aspectRatio?: number }
-  | { kind: 'video'; source: number; aspectRatio?: number }
+  | { kind: 'video'; source: number; aspectRatio?: number; durationMs?: number }
   | { kind: 'duo'; first: ImageSourcePropType; second: ImageSourcePropType; firstAspect?: number; secondAspect?: number }
   | { kind: 'icon'; image: ImageSourcePropType; label?: string; singleHalo?: boolean }
   | { kind: 'steps' }
@@ -78,6 +82,7 @@ const PAGES: Page[] = [
     visual: {
       kind: 'video',
       source: require('../../../assets/onboarding/movie_01.mp4'),
+      durationMs: 20500,
     },
     number: '02',
     title: tr({ en: 'Save with One Tap from Share', ja: '共有から1タップで保存' }),
@@ -91,6 +96,7 @@ const PAGES: Page[] = [
     visual: {
       kind: 'video',
       source: require('../../../assets/onboarding/movie_02.mp4'),
+      durationMs: 10250,
     },
     number: '03',
     title: tr({ en: 'Three Ways to Browse', ja: '3つの表示モード' }),
@@ -277,13 +283,20 @@ function Visual({ visual }: { visual: PageVisual }) {
   if (visual.kind === 'video') {
     const ratio = visual.aspectRatio ?? PHONE_ASPECT
     const maxWidth = W - 40
-    let width = SINGLE_PHONE_HEIGHT * ratio
-    let height = SINGLE_PHONE_HEIGHT
+    let width = VIDEO_HEIGHT * ratio
+    let height = VIDEO_HEIGHT
     if (width > maxWidth) {
       width = maxWidth
       height = width / ratio
     }
-    return <VideoFrame source={visual.source} width={width} height={height} />
+    return (
+      <VideoFrame
+        source={visual.source}
+        width={width}
+        height={height}
+        durationMs={visual.durationMs ?? 12000}
+      />
+    )
   }
   if (visual.kind === 'duo') {
     const fa = visual.firstAspect ?? PHONE_ASPECT
@@ -361,15 +374,34 @@ function VideoFrame({
   source,
   width,
   height,
+  durationMs,
 }: {
   source: number
   width: number
   height: number
+  durationMs: number
 }) {
   const player = useVideoPlayer(source, (p) => {
     p.loop = true
     p.muted = true
     p.play()
+  })
+  const progress = useRef(new Animated.Value(0)).current
+  useEffect(() => {
+    const anim = Animated.loop(
+      Animated.timing(progress, {
+        toValue: 1,
+        duration: durationMs,
+        easing: Easing.linear,
+        useNativeDriver: false,
+      }),
+    )
+    anim.start()
+    return () => anim.stop()
+  }, [durationMs, progress])
+  const fillWidth = progress.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0%', '100%'],
   })
   return (
     <View style={[styles.phoneFrame, { width, height }]}>
@@ -381,6 +413,13 @@ function VideoFrame({
         allowsFullscreen={false}
         allowsPictureInPicture={false}
       />
+      <View style={styles.videoPlayingBadge} pointerEvents="none">
+        <View style={styles.videoPlayingDot} />
+        <Text style={styles.videoPlayingLabel}>{tr({ en: 'Playing', ja: '再生中' })}</Text>
+      </View>
+      <View style={styles.videoProgressTrack} pointerEvents="none">
+        <Animated.View style={[styles.videoProgressFill, { width: fillWidth }]} />
+      </View>
     </View>
   )
 }
@@ -504,6 +543,42 @@ const styles = StyleSheet.create({
   phoneImage: {
     width: '100%',
     height: '100%',
+  },
+  videoPlayingBadge: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+    borderRadius: 11,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+  },
+  videoPlayingDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#FF453A',
+  },
+  videoPlayingLabel: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    letterSpacing: 0.5,
+  },
+  videoProgressTrack: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: 4,
+    backgroundColor: 'rgba(255,255,255,0.28)',
+  },
+  videoProgressFill: {
+    height: '100%',
+    backgroundColor: '#FFFFFF',
   },
   duoRow: {
     flexDirection: 'row',
