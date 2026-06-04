@@ -56,7 +56,8 @@
           "iCloudContainerEnvironment": "Production",
           "iCloudContainerIdentifier": "iCloud.com.sknk.foldersapp"
         }
-      ]
+      ],
+      "expo-video"
     ],
     "extra": {
       "eas": {

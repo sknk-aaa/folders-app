@@ -11,6 +11,7 @@ import {
   View,
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useVideoPlayer, VideoView } from 'expo-video'
 import { useNavigation } from '@react-navigation/native'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useSettingsStore } from '../settings/store'
@@ -40,6 +41,7 @@ type Nav = NativeStackNavigationProp<RootStackParamList>
 type PageVisual =
   | { kind: 'welcome'; image: ImageSourcePropType }
   | { kind: 'single'; image: ImageSourcePropType; aspectRatio?: number }
+  | { kind: 'video'; source: number; aspectRatio?: number }
   | { kind: 'duo'; first: ImageSourcePropType; second: ImageSourcePropType; firstAspect?: number; secondAspect?: number }
   | { kind: 'icon'; image: ImageSourcePropType; label?: string; singleHalo?: boolean }
   | { kind: 'steps' }
@@ -54,7 +56,7 @@ type Page = {
   showDivider?: boolean
 }
 
-const TOTAL = '03'
+const TOTAL = '04'
 
 const PAGES: Page[] = [
   {
@@ -68,6 +70,16 @@ const PAGES: Page[] = [
     description: 'Turn pages that catch your eye into a personal gallery, complete with images. Browse them back at a glance.',
   },
   {
+    key: 'view-modes',
+    visual: {
+      kind: 'video',
+      source: require('../../../assets/onboarding/movie_02.mp4'),
+    },
+    number: '02',
+    title: 'Three Ways to Browse',
+    description: 'Switch between grid, list, and photo views to see your bookmarks just the way you like.',
+  },
+  {
     key: '4',
     visual: {
       kind: 'duo',
@@ -76,7 +88,7 @@ const PAGES: Page[] = [
       firstAspect: 1284 / 1819,
       secondAspect: 828 / 1792,
     },
-    number: '02',
+    number: '03',
     title: 'Save with One Tap from Share',
     description: 'Tap "Bookrest" in the share menu. Just pick a thumbnail, name, and folder, then save.',
   },
@@ -87,7 +99,7 @@ const PAGES: Page[] = [
       image: require('../../../assets/icon.png'),
       label: 'Bookrest',
     },
-    number: '03',
+    number: '04',
     title: "Let's Get Started",
     description: "Let's start building your very own bookmark collection.",
   },
@@ -249,6 +261,17 @@ function Visual({ visual }: { visual: PageVisual }) {
     }
     return <PhoneFrame image={visual.image} width={width} height={height} />
   }
+  if (visual.kind === 'video') {
+    const ratio = visual.aspectRatio ?? PHONE_ASPECT
+    const maxWidth = W - 40
+    let width = SINGLE_PHONE_HEIGHT * ratio
+    let height = SINGLE_PHONE_HEIGHT
+    if (width > maxWidth) {
+      width = maxWidth
+      height = width / ratio
+    }
+    return <VideoFrame source={visual.source} width={width} height={height} />
+  }
   if (visual.kind === 'duo') {
     const fa = visual.firstAspect ?? PHONE_ASPECT
     const sa = visual.secondAspect ?? PHONE_ASPECT
@@ -317,6 +340,34 @@ function PhoneFrame({
   return (
     <View style={[styles.phoneFrame, { width, height }]}>
       <Image source={image} style={styles.phoneImage} resizeMode="cover" />
+    </View>
+  )
+}
+
+function VideoFrame({
+  source,
+  width,
+  height,
+}: {
+  source: number
+  width: number
+  height: number
+}) {
+  const player = useVideoPlayer(source, (p) => {
+    p.loop = true
+    p.muted = true
+    p.play()
+  })
+  return (
+    <View style={[styles.phoneFrame, { width, height }]}>
+      <VideoView
+        player={player}
+        style={styles.phoneImage}
+        contentFit="cover"
+        nativeControls={false}
+        allowsFullscreen={false}
+        allowsPictureInPicture={false}
+      />
     </View>
   )
 }
