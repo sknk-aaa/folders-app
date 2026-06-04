@@ -1,8 +1,8 @@
 import { createMMKV } from 'react-native-mmkv'
 
-// iOS: Info.plistにAppGroup="group.com.sknk.foldersapp"を設定済みのとき、
-// path未指定でAppGroupディレクトリが使われる。
-// mode: 'multi-process' でメインアプリとShare Extensionで安全に共有可能。
+// iOS: When AppGroup="group.com.sknk.foldersapp" is set in Info.plist,
+// the AppGroup directory is used when path is unspecified.
+// mode: 'multi-process' allows safe sharing between the main app and the Share Extension.
 const storage = createMMKV({
   id: 'bookrest-shared',
   mode: 'multi-process',

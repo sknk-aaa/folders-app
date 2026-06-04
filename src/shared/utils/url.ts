@@ -43,7 +43,7 @@ export async function fetchOgp(url: string): Promise<OgpResult> {
 }
 
 function extractMetaProperty(html: string, property: string): string | null {
-  // property="..." content="..." または content="..." property="..." の両順序に対応
+  // Handles both orders: property="..." content="..." and content="..." property="..."
   const pattern1 = new RegExp(
     `<meta[^>]+property=["']${property}["'][^>]+content=["']([^"']+)["']`,
     'i',

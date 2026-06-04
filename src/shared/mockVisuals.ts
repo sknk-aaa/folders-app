@@ -5,7 +5,7 @@ export const MOCK_FOLDERS: Array<{
   iconId: FolderIconId
   isDefault: 0 | 1
 }> = [
-  { name: '未分類', iconId: 'default', isDefault: 1 },
+  { name: 'Uncategorized', iconId: 'default', isDefault: 1 },
 ]
 
 export type MockBookmark = {
@@ -15,9 +15,9 @@ export type MockBookmark = {
   thumbnailPath: string
 }
 
-// 初回起動時は空。フォルダだけ用意してユーザーが自分で追加する。
+// Empty on first launch. Only folders are prepared; the user adds bookmarks themselves.
 export const MOCK_BOOKMARKS: MockBookmark[] = []
 
-// 空フォルダのフォールバック画像（local asset）
-// FolderCard / FolderDetailScreen から require で参照
+// Fallback image for empty folders (local asset).
+// Referenced via require from FolderCard / FolderDetailScreen.
 export const FOLDER_PLACEHOLDER = require('../../assets/folder-placeholder.png')

@@ -89,7 +89,7 @@ export default function ShareExtension({ url, text, preprocessingResults }: Prop
     return (
       <View style={[styles.preview, styles.previewPlaceholder]}>
         <Text style={styles.previewPlaceholderText} allowFontScaling={false}>
-          取得可能な画像がありません
+          No image available
         </Text>
       </View>
     )
@@ -124,7 +124,7 @@ export default function ShareExtension({ url, text, preprocessingResults }: Prop
     <View style={styles.container}>
       <View style={styles.handle} />
       <Text style={styles.title} allowFontScaling={false}>
-        ブックマークを追加
+        Add Bookmark
       </Text>
 
       <KeyboardAvoidingView
@@ -140,7 +140,7 @@ export default function ShareExtension({ url, text, preprocessingResults }: Prop
         >
           {!initialUrl ? (
             <Text style={styles.noUrl} allowFontScaling={false}>
-              URLを自動取得できませんでした。URLを入力してください。
+              Could not detect a URL automatically. Please enter a URL.
             </Text>
           ) : null}
           <>
@@ -154,7 +154,7 @@ export default function ShareExtension({ url, text, preprocessingResults }: Prop
                     style={styles.toggleBtn}
                   >
                     <Text style={styles.toggleText} allowFontScaling={false}>
-                      {showPicker ? '閉じる' : '別の画像にする ▽'}
+                      {showPicker ? 'Close' : 'Choose another image ▽'}
                     </Text>
                   </TouchableOpacity>
                 )}
@@ -187,13 +187,13 @@ export default function ShareExtension({ url, text, preprocessingResults }: Prop
 
             <View style={styles.field}>
               <Text style={styles.label} allowFontScaling={false}>
-                サイト名
+                Site name
               </Text>
               <TextInput
                 style={styles.input}
                 value={name}
                 onChangeText={setName}
-                placeholder="サイト名"
+                placeholder="Site name"
                 placeholderTextColor="#C7C7CC"
                 allowFontScaling={false}
                 returnKeyType="done"
@@ -203,13 +203,13 @@ export default function ShareExtension({ url, text, preprocessingResults }: Prop
             {isPremium ? (
               <View style={styles.field}>
                 <Text style={styles.label} allowFontScaling={false}>
-                  メモ
+                  Note
                 </Text>
                 <TextInput
                   style={[styles.input, styles.memoInput]}
                   value={memo}
                   onChangeText={setMemo}
-                  placeholder="メモ（任意）"
+                  placeholder="Note (optional)"
                   placeholderTextColor="#C7C7CC"
                   allowFontScaling={false}
                   multiline
@@ -219,11 +219,11 @@ export default function ShareExtension({ url, text, preprocessingResults }: Prop
 
             <View style={styles.field}>
               <Text style={styles.label} allowFontScaling={false}>
-                保存先
+                Folder
               </Text>
               {folders.length === 0 ? (
                 <Text style={styles.noFolder} allowFontScaling={false}>
-                  フォルダがありません。先にアプリを起動してください。
+                  No folders yet. Please open the app first.
                 </Text>
               ) : (
                 <ScrollView
@@ -257,7 +257,7 @@ export default function ShareExtension({ url, text, preprocessingResults }: Prop
         <View style={styles.buttons}>
           <TouchableOpacity style={styles.cancelBtn} onPress={close}>
             <Text style={styles.cancelText} allowFontScaling={false}>
-              キャンセル
+              Cancel
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -266,7 +266,7 @@ export default function ShareExtension({ url, text, preprocessingResults }: Prop
             disabled={!actualUrl || !folderId}
           >
             <Text style={styles.saveText} allowFontScaling={false}>
-              保存
+              Save
             </Text>
           </TouchableOpacity>
         </View>

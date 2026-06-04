@@ -51,23 +51,23 @@ export function BookmarkEditModal({ bookmark, onClose, onSave }: Props) {
         <View style={styles.sheet}>
           <View style={styles.header}>
             <TouchableOpacity onPress={onClose}>
-              <Text style={styles.cancelText}>キャンセル</Text>
+              <Text style={styles.cancelText}>Cancel</Text>
             </TouchableOpacity>
-            <Text style={styles.title}>ブックマークを編集</Text>
+            <Text style={styles.title}>Edit Bookmark</Text>
             <TouchableOpacity onPress={handleSave} disabled={!name.trim() || !url.trim()}>
               <Text style={[styles.saveText, (!name.trim() || !url.trim()) && { opacity: 0.3 }]}>
-                保存
+                Save
               </Text>
             </TouchableOpacity>
           </View>
 
           <View style={styles.field}>
-            <Text style={styles.label}>サイト名</Text>
+            <Text style={styles.label}>Site name</Text>
             <TextInput
               style={styles.input}
               value={name}
               onChangeText={setName}
-              placeholder="サイト名"
+              placeholder="Site name"
               placeholderTextColor={c.textTertiary}
               returnKeyType="next"
             />
@@ -91,12 +91,12 @@ export function BookmarkEditModal({ bookmark, onClose, onSave }: Props) {
 
           {settings.is_premium && (
             <View style={styles.field}>
-              <Text style={styles.label}>メモ</Text>
+              <Text style={styles.label}>Note</Text>
               <TextInput
                 style={[styles.input, styles.memoInput]}
                 value={memo}
                 onChangeText={setMemo}
-                placeholder="メモ（任意）"
+                placeholder="Note (optional)"
                 placeholderTextColor={c.textTertiary}
                 multiline
               />

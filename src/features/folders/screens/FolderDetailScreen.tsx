@@ -87,7 +87,7 @@ export function FolderDetailScreen() {
   return (
     <View style={styles.container}>
       <Header
-        title={isSearching ? undefined : 'ブックマーク'}
+        title={isSearching ? undefined : 'Bookmarks'}
         showBack
         onBack={isSearching ? handleSearchClose : () => navigation.goBack()}
         showSearch={!isSearching}
@@ -130,7 +130,7 @@ export function FolderDetailScreen() {
               onDelete={(bookmark) => remove(bookmark.id)}
               onMove={(bookmark, targetFolderId) => move(bookmark.id, targetFolderId)}
               onReorder={(nextBookmarks) => reorder(folderId, nextBookmarks)}
-              emptyText="このフォルダにはまだブックマークがありません"
+              emptyText="No bookmarks in this folder yet"
               columns={columns}
               hideToolbar={!isSearching}
             />
@@ -173,7 +173,7 @@ function FolderHeaderSummary({
           {folder.name}
         </Text>
         <Text style={styles.headerSub} numberOfLines={1}>
-          {bookmarkCount}件のブックマーク
+          {bookmarkCount} bookmarks
         </Text>
       </View>
     </View>

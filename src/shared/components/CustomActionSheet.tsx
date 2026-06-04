@@ -52,7 +52,7 @@ export function CustomActionSheet({ visible, title, options, onCancel }: Props) 
 
           <View style={styles.cancelSeparator} />
           <TouchableOpacity activeOpacity={0.6} style={styles.cancelBtn} onPress={onCancel}>
-            <Text style={styles.cancelText}>キャンセル</Text>
+            <Text style={styles.cancelText}>Cancel</Text>
           </TouchableOpacity>
         </Pressable>
       </Pressable>

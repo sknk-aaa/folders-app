@@ -11,8 +11,8 @@ export function getDb(): SQLite.SQLiteDatabase {
   return _db
 }
 
-// 復元時にDBファイルを差し替えるため、開いている接続を閉じる。
-// 次回 getDb() で再オープンされる。
+// Closes the open connection so the DB file can be swapped during restore.
+// It will be reopened on the next getDb() call.
 export function closeDb(): void {
   if (_db) {
     _db.closeSync()

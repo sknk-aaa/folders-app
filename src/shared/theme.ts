@@ -60,14 +60,14 @@ export function useTheme(): Palette {
   const mode = useSettingsStore((s) => s.settings.theme_mode)
   const isPremium = useSettingsStore((s) => s.settings.is_premium)
   const system = useColorScheme()
-  // テーマ(ダークモード)はPro限定。無料はライト固定。
+  // Theme (Dark Mode) is Pro-only. Free users are locked to Light.
   if (!isPremium) return lightColors
   const isDark = mode === 'dark' || (mode === 'auto' && system === 'dark')
   return isDark ? darkColors : lightColors
 }
 
-// makeStyles(c) を現在のテーマでメモ化し、生の palette も併せて返す。
-// 使い方: const { c, styles } = useThemedStyles(makeStyles)
+// Memoizes makeStyles(c) for the current theme and also returns the raw palette.
+// Usage: const { c, styles } = useThemedStyles(makeStyles)
 export function useThemedStyles<T>(factory: (c: Palette) => T): { c: Palette; styles: T } {
   const c = useTheme()
   const styles = useMemo(() => factory(c), [c])

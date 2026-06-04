@@ -17,7 +17,7 @@ export function ViewModeToggle({ value, onGridPress, onPhotoPress, onListPress }
         onPress={onGridPress}
         style={[styles.button, value === 'grid' && styles.buttonActive]}
         accessibilityRole="button"
-        accessibilityLabel="グリッド表示"
+        accessibilityLabel="Grid view"
       >
         <View style={styles.gridIcon}>
           {[0, 1, 2, 3].map((i) => (
@@ -30,7 +30,7 @@ export function ViewModeToggle({ value, onGridPress, onPhotoPress, onListPress }
           onPress={onPhotoPress}
           style={[styles.button, value === 'photo' && styles.buttonActive]}
           accessibilityRole="button"
-          accessibilityLabel="画像表示"
+          accessibilityLabel="Photo view"
         >
           <View style={styles.photoIcon}>
             {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
@@ -43,7 +43,7 @@ export function ViewModeToggle({ value, onGridPress, onPhotoPress, onListPress }
         onPress={onListPress}
         style={[styles.button, value === 'list' && styles.buttonActive]}
         accessibilityRole="button"
-        accessibilityLabel="リスト表示"
+        accessibilityLabel="List view"
       >
         <View style={styles.listIcon}>
           {[0, 1, 2].map((i) => (

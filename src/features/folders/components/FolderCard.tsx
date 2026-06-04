@@ -54,11 +54,11 @@ export function FolderCard({
 
   const handleDeleteConfirm = () => {
     Alert.alert(
-      'フォルダを削除',
-      `「${folder.name}」とその中のブックマークをすべて削除しますか？`,
+      'Delete Folder',
+      `Delete "${folder.name}" and all bookmarks inside it?`,
       [
-        { text: 'キャンセル', style: 'cancel' },
-        { text: '削除', style: 'destructive', onPress: onDelete },
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Delete', style: 'destructive', onPress: onDelete },
       ],
     )
   }
@@ -90,7 +90,7 @@ export function FolderCard({
           <Text style={styles.name} numberOfLines={1}>
             {folder.name}
           </Text>
-          <Text style={styles.count}>{bookmarks.length}件</Text>
+          <Text style={styles.count}>{bookmarks.length}</Text>
         </View>
         <TouchableOpacity
           onPress={handleMore}
@@ -108,8 +108,8 @@ export function FolderCard({
       visible={sheetVisible}
       title={folder.name}
       options={[
-        { label: '編集', onPress: onEdit },
-        { label: '削除', destructive: true, onPress: handleDeleteConfirm },
+        { label: 'Edit', onPress: onEdit },
+        { label: 'Delete', destructive: true, onPress: handleDeleteConfirm },
       ]}
       onCancel={() => setSheetVisible(false)}
     />
@@ -147,14 +147,14 @@ function FolderMosaic({
   realThumbnails: string[]
 }) {
   const { styles } = useThemedStyles(makeStyles)
-  // 0件: ローカルプレースホルダー画像
+  // 0 items: local placeholder image
   if (count === 0) {
     return (
       <Image source={FOLDER_PLACEHOLDER} style={StyleSheet.absoluteFill} contentFit="cover" />
     )
   }
 
-  // 1件: 全面1枚
+  // 1 item: single full-bleed image
   if (count === 1) {
     return (
       <Image
@@ -165,7 +165,7 @@ function FolderMosaic({
     )
   }
 
-  // 2件: 全面 + 右下にPIP
+  // 2 items: full-bleed + PIP at bottom right
   if (count === 2) {
     return (
       <>
@@ -185,7 +185,7 @@ function FolderMosaic({
     )
   }
 
-  // 3件以上: 左大1 + 右に小2
+  // 3 or more items: 1 large on the left + 2 small on the right
   const [main, sub1, sub2] = realThumbnails.slice(0, 3)
   return (
     <View style={styles.threeMosaic}>
@@ -200,7 +200,7 @@ function FolderMosaic({
 }
 
 const makeStyles = (c: Palette) => {
-  // モザイク画像間の仕切りはカード色に馴染ませる
+  // Blend the seams between mosaic images with the card color
   const seam = c.surface
   return StyleSheet.create({
     card: {

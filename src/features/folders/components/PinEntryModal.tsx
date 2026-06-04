@@ -30,7 +30,7 @@ export function PinEntryModal(props: Props) {
             props.onSuccess()
           }, 500)
         } else {
-          setError('PINが違います')
+          setError('Incorrect PIN')
           setInput('')
         }
       }
@@ -56,7 +56,7 @@ export function PinEntryModal(props: Props) {
               props.onSet(pin)
             }, 500)
           } else {
-            setError('PINが一致しません')
+            setError('PINs do not match')
             setConfirmInput('')
             setInput('')
             setStep('enter')
@@ -86,12 +86,12 @@ export function PinEntryModal(props: Props) {
   const currentLength = success ? 4 : (props.mode === 'unlock' || step === 'enter' ? input.length : confirmInput.length)
 
   const title = success
-    ? (props.mode === 'unlock' ? 'ロックを解除しました' : 'PINを設定しました')
+    ? (props.mode === 'unlock' ? 'Unlocked' : 'PIN set')
     : props.mode === 'unlock'
-      ? 'PINを入力'
+      ? 'Enter PIN'
       : step === 'enter'
-        ? '新しいPINを入力'
-        : 'PINを再入力して確認'
+        ? 'Enter a new PIN'
+        : 'Re-enter PIN to confirm'
 
   return (
     <Modal visible animationType="fade" transparent onRequestClose={handleCancel}>
@@ -123,7 +123,7 @@ export function PinEntryModal(props: Props) {
           </View>
 
           <TouchableOpacity onPress={handleCancel} style={styles.cancelBtn}>
-            <Text style={styles.cancelText}>キャンセル</Text>
+            <Text style={styles.cancelText}>Cancel</Text>
           </TouchableOpacity>
         </Pressable>
       </Pressable>

@@ -30,7 +30,7 @@ type Props = {
   headerAccessory?: ReactNode
   onReorder?: (bookmarks: Bookmark[]) => void
   columns?: number
-  /** ツールバー(タイトル＋表示切替)を非表示にする。フォルダ詳細は独自のヘッダー帯を使う */
+  /** Hide the toolbar (title + view toggle). Folder detail uses its own header band */
   hideToolbar?: boolean
 }
 

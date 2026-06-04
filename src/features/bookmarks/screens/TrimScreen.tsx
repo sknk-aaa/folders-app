@@ -144,11 +144,11 @@ export function TrimScreen() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.cancelText}>キャンセル</Text>
+          <Text style={styles.cancelText}>Cancel</Text>
         </TouchableOpacity>
-        <Text style={styles.title}>トリミング</Text>
+        <Text style={styles.title}>Crop</Text>
         <TouchableOpacity onPress={handleCrop} disabled={saving}>
-          <Text style={[styles.doneText, saving && { opacity: 0.4 }]}>完了</Text>
+          <Text style={[styles.doneText, saving && { opacity: 0.4 }]}>Done</Text>
         </TouchableOpacity>
       </View>
 
@@ -203,7 +203,7 @@ export function TrimScreen() {
 
       {/* Footer hint */}
       <View style={[styles.footer, { paddingBottom: insets.bottom + 8 }]}>
-        <Text style={styles.hintText}>ドラッグして範囲を選択</Text>
+        <Text style={styles.hintText}>Drag to select an area</Text>
       </View>
     </View>
   )

@@ -35,9 +35,9 @@ export function BookmarkListItem({ bookmark, allFolders, onDelete, onMove }: Pro
   }
 
   const handleDeleteConfirm = () => {
-    Alert.alert('削除', `「${bookmark.name}」を削除しますか？`, [
-      { text: 'キャンセル', style: 'cancel' },
-      { text: '削除', style: 'destructive', onPress: onDelete },
+    Alert.alert('Delete', `Delete "${bookmark.name}"?`, [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Delete', style: 'destructive', onPress: onDelete },
     ])
   }
 
@@ -73,18 +73,18 @@ export function BookmarkListItem({ bookmark, allFolders, onDelete, onMove }: Pro
         visible={sheetVisible}
         title={bookmark.name}
         options={[
-          { label: '編集', onPress: () => setEditVisible(true) },
+          { label: 'Edit', onPress: () => setEditVisible(true) },
           ...(allFolders.length > 1
-            ? [{ label: '移動', onPress: () => setMoveSheetVisible(true) }]
+            ? [{ label: 'Move', onPress: () => setMoveSheetVisible(true) }]
             : []),
-          { label: '削除', destructive: true, onPress: handleDeleteConfirm },
+          { label: 'Delete', destructive: true, onPress: handleDeleteConfirm },
         ]}
         onCancel={() => setSheetVisible(false)}
       />
 
       <CustomActionSheet
         visible={moveSheetVisible}
-        title="移動先フォルダ"
+        title="Move to folder"
         options={allFolders.map((f) => ({ label: f.name, onPress: () => onMove(f.id) }))}
         onCancel={() => setMoveSheetVisible(false)}
       />

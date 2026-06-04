@@ -8,7 +8,7 @@ type Props = {
   placeholder?: string
 }
 
-export function InlineSearchBar({ query, onChangeText, onCancel, placeholder = '検索' }: Props) {
+export function InlineSearchBar({ query, onChangeText, onCancel, placeholder = 'Search' }: Props) {
   const { c, styles } = useThemedStyles(makeStyles)
   return (
     <View style={styles.container}>
@@ -23,7 +23,7 @@ export function InlineSearchBar({ query, onChangeText, onCancel, placeholder = '
         clearButtonMode="while-editing"
       />
       <TouchableOpacity onPress={onCancel} style={styles.cancel}>
-        <Text style={styles.cancelText}>キャンセル</Text>
+        <Text style={styles.cancelText}>Cancel</Text>
       </TouchableOpacity>
     </View>
   )

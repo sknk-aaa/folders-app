@@ -24,12 +24,12 @@ type Props = {
 type Row = { label: string; free: string | boolean; pro: string | boolean }
 
 const COMPARE: Row[] = [
-  { label: 'ブックマーク保存', free: '100件', pro: '無制限' },
-  { label: 'フォルダ', free: '5個', pro: '無制限' },
-  { label: 'メモを追加', free: false, pro: true },
-  { label: 'ダークモード', free: false, pro: true },
-  { label: 'フォルダカバー変更', free: false, pro: true },
-  { label: 'iCloudバックアップ', free: false, pro: true },
+  { label: 'Bookmarks', free: '100', pro: 'Unlimited' },
+  { label: 'Folders', free: '5', pro: 'Unlimited' },
+  { label: 'Add notes', free: false, pro: true },
+  { label: 'Dark Mode', free: false, pro: true },
+  { label: 'Custom covers', free: false, pro: true },
+  { label: 'iCloud backup', free: false, pro: true },
 ]
 
 export function ProUpgradeModal({ visible, onClose, hint }: Props) {
@@ -60,28 +60,28 @@ export function ProUpgradeModal({ visible, onClose, hint }: Props) {
   const buy = async (pkg: PurchasesPackage | null) => {
     if (isPro) return
     if (!pkg) {
-      Alert.alert('準備中', 'ただいま購入の準備中です。少し待ってからお試しください。')
+      Alert.alert('Just a moment', 'Purchases are being set up. Please wait a moment and try again.')
       return
     }
     const result = await purchase(pkg)
     if (result.success) {
       onClose()
     } else if (result.error) {
-      Alert.alert('購入エラー', result.error)
+      Alert.alert('Purchase Error', result.error)
     }
   }
 
   const handleRestore = async () => {
     const result = await restore()
     if (!result.success) {
-      Alert.alert('復元失敗', '購入情報を取得できませんでした。')
+      Alert.alert('Restore Failed', 'Could not retrieve your purchase information.')
       return
     }
     if (result.found) {
-      showToast('購入を復元しました')
+      showToast('Purchase restored')
       setTimeout(onClose, 1200)
     } else {
-      Alert.alert('購入が見つかりません', 'このApple IDではProの購入履歴が見つかりませんでした。')
+      Alert.alert('No Purchase Found', 'No Pro purchase history was found for this Apple ID.')
     }
   }
 
@@ -105,14 +105,14 @@ export function ProUpgradeModal({ visible, onClose, hint }: Props) {
           <View style={styles.badge}>
             <Text style={styles.badgeText}>PRO</Text>
           </View>
-          <Text style={styles.title}>サムネブクマ Pro</Text>
-          <Text style={styles.subtitle}>無料版との違い</Text>
+          <Text style={styles.title}>Thumbmark Pro</Text>
+          <Text style={styles.subtitle}>How it compares to the free version</Text>
 
-          {/* 比較表 */}
+          {/* Comparison table */}
           <View style={styles.table}>
             <View style={[styles.row, styles.headRow]}>
-              <Text style={[styles.cellLabel, styles.headText]}>機能</Text>
-              <Text style={[styles.cellVal, styles.headText]}>無料</Text>
+              <Text style={[styles.cellLabel, styles.headText]}>Feature</Text>
+              <Text style={[styles.cellVal, styles.headText]}>Free</Text>
               <Text style={[styles.cellVal, styles.headText, styles.headPro]}>Pro</Text>
             </View>
             {COMPARE.map((r, i) => (
@@ -126,7 +126,7 @@ export function ProUpgradeModal({ visible, onClose, hint }: Props) {
 
           {isPro ? (
             <View style={styles.ownedBox}>
-              <Text style={styles.ownedText}>ご利用ありがとうございます（購入済み）</Text>
+              <Text style={styles.ownedText}>Thanks for your support (already purchased)</Text>
             </View>
           ) : (
             <>
@@ -141,8 +141,8 @@ export function ProUpgradeModal({ visible, onClose, hint }: Props) {
                 ) : (
                   <>
                     <View style={styles.planLeft}>
-                      <Text style={styles.planNamePrimary}>買い切り</Text>
-                      <Text style={styles.planDescPrimary}>一度きり・ずっと使える</Text>
+                      <Text style={styles.planNamePrimary}>Lifetime</Text>
+                      <Text style={styles.planDescPrimary}>One-time payment, yours forever</Text>
                     </View>
                     <Text style={styles.planPricePrimary}>{lifetimePrice}</Text>
                   </>
@@ -156,24 +156,24 @@ export function ProUpgradeModal({ visible, onClose, hint }: Props) {
                 activeOpacity={0.85}
               >
                 <View style={styles.planLeft}>
-                  <Text style={styles.planName}>月額</Text>
-                  <Text style={styles.planDesc}>いつでも解約できます</Text>
+                  <Text style={styles.planName}>Monthly</Text>
+                  <Text style={styles.planDesc}>Cancel anytime</Text>
                 </View>
-                <Text style={styles.planPrice}>{monthlyPrice}／月</Text>
+                <Text style={styles.planPrice}>{monthlyPrice}/mo</Text>
               </TouchableOpacity>
 
               <Text style={styles.legalNote}>
-                お支払いはApp Store経由。買い切りは一度きり、月額はいつでも解約できます。
+                Payment is processed through the App Store. Lifetime is a one-time purchase; the monthly plan can be canceled anytime.
               </Text>
 
               <TouchableOpacity onPress={() => void handleRestore()} disabled={isLoading} style={styles.linkBtn}>
-                <Text style={styles.linkText}>購入を復元</Text>
+                <Text style={styles.linkText}>Restore Purchase</Text>
               </TouchableOpacity>
             </>
           )}
 
           <TouchableOpacity onPress={onClose} style={styles.linkBtn}>
-            <Text style={styles.linkText}>閉じる</Text>
+            <Text style={styles.linkText}>Close</Text>
           </TouchableOpacity>
         </ScrollView>
 

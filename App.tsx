@@ -23,7 +23,7 @@ function ThemedStatusBar() {
 
 function handleIncomingUrl(url: string) {
   const parsed = Linking.parse(url)
-  // foldersapp://add?url=... のとき、'add' は parser によって hostname または path に入る
+  // For foldersapp://add?url=..., 'add' is placed in hostname or path depending on the parser
   const isAddRoute = parsed.path === 'add' || parsed.hostname === 'add'
   if (isAddRoute && parsed.queryParams?.url) {
     const targetUrl = decodeURIComponent(parsed.queryParams.url as string)
@@ -62,7 +62,7 @@ export default function App() {
         await useFoldersStore.getState().load()
         await useBookmarksStore.getState().load()
         void useProStore.getState().load()
-        // Share Extensionから保存されたブクマをDBに反映
+        // Reflect bookmarks saved from the Share Extension into the DB
         void useBookmarksStore.getState().drainShareQueue()
       } catch (error) {
         console.error('Failed to initialize app', error)
@@ -75,7 +75,7 @@ export default function App() {
     }
     void init()
 
-    // アプリが閉じた状態で URL スキームから起動された場合
+    // When the app is launched from a URL scheme while closed
     Linking.getInitialURL()
       .then((url) => {
         if (url) {
@@ -87,13 +87,13 @@ export default function App() {
         console.error('Failed to get initial URL', error)
       })
 
-    // アプリがバックグラウンドにいるときに URL スキームが来た場合
+    // When a URL scheme arrives while the app is in the background
     const sub = Linking.addEventListener('url', ({ url }) => {
       pendingUrl.current = url
       processPendingUrl()
     })
 
-    // フォアグラウンドに復帰したとき Share Extension のキューを処理
+    // Process the Share Extension queue when returning to the foreground
     const appStateSub = AppState.addEventListener('change', (nextState) => {
       if (nextState === 'active') {
         void useBookmarksStore.getState().drainShareQueue()
@@ -133,10 +133,10 @@ export default function App() {
         }}
       >
         <Text style={{ fontSize: 16, fontWeight: '600', color: '#111', marginBottom: 8 }}>
-          アプリの初期化に失敗しました
+          Failed to initialize the app
         </Text>
         <Text style={{ fontSize: 13, color: '#666', textAlign: 'center' }}>
-          アプリを再起動してください。問題が続く場合はログを確認してください。
+          Please restart the app. If the problem persists, check the logs.
         </Text>
       </View>
     )

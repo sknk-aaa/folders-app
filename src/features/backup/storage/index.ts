@@ -2,7 +2,7 @@ import type { BackupStorage } from './types'
 import { localBackupStorage } from './localStorage'
 import { icloudBackupStorage } from './icloudStorage'
 
-// 'icloud' が本番。'local' はロジック再検証用（Metroで切り替えられる）。
+// 'icloud' is production. 'local' is for re-verifying logic (switchable in Metro).
 const ACTIVE_BACKEND: 'icloud' | 'local' = 'icloud'
 
 export function getBackupStorage(): BackupStorage {

@@ -2,7 +2,7 @@ import * as FileSystem from 'expo-file-system/legacy'
 import { CloudStorage } from 'react-native-cloud-storage'
 import type { BackupStorage } from './types'
 
-// AppDataスコープ（デフォルト）= ユーザーから見えない隠し領域に保存する。
+// AppData scope (default) = stored in a hidden area not visible to the user.
 const ROOT = '/smb-backup'
 const B64 = FileSystem.EncodingType.Base64
 
@@ -36,7 +36,7 @@ export const icloudBackupStorage: BackupStorage = {
   async init() {
     const available = await CloudStorage.isCloudAvailable()
     if (!available) {
-      throw new Error('iCloudにサインインしてください')
+      throw new Error('Please sign in to iCloud')
     }
     await ensureDir(ROOT)
   },
@@ -45,7 +45,7 @@ export const icloudBackupStorage: BackupStorage = {
     try {
       await CloudStorage.rmdir(ROOT, { recursive: true })
     } catch {
-      // 既に存在しない場合は無視
+      // Ignore if it does not already exist
     }
     await ensureDir(ROOT)
   },
@@ -62,7 +62,7 @@ export const icloudBackupStorage: BackupStorage = {
     try {
       await CloudStorage.downloadFile(full)
     } catch {
-      // 既にローカルにある等。readFileで再試行する
+      // Already present locally, etc. Retry with readFile
     }
     const b64 = await CloudStorage.readFile(full)
     await ensureLocalParent(destUri)

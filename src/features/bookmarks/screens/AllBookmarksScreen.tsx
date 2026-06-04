@@ -66,7 +66,7 @@ export function AllBookmarksScreen() {
   return (
     <View style={styles.container}>
       <Header
-        title={searchVisible ? undefined : 'ブックマーク'}
+        title={searchVisible ? undefined : 'Bookmarks'}
         showBack
         onBack={searchVisible ? closeSearch : handleBack}
         showSearch={!searchVisible}
@@ -79,7 +79,7 @@ export function AllBookmarksScreen() {
               query={query}
               onChangeText={setQuery}
               onCancel={closeSearch}
-              placeholder="ブックマークを検索"
+              placeholder="Search bookmarks"
             />
           ) : undefined
         }
@@ -96,8 +96,8 @@ export function AllBookmarksScreen() {
             onListPress={() => setViewMode('list')}
             onDelete={(bookmark) => remove(bookmark.id)}
             onMove={(bookmark, folderId) => move(bookmark.id, folderId)}
-            title="すべてのブックマーク"
-            emptyText={query.trim() ? '検索結果がありません' : 'ブックマークがまだありません'}
+            title="All Bookmarks"
+            emptyText={query.trim() ? 'No results found' : 'No bookmarks yet'}
             columns={columns}
           />
         </View>

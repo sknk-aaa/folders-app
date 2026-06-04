@@ -4,8 +4,8 @@ import * as ImageManipulator from 'expo-image-manipulator'
 const THUMB_ASPECT = 1 / 0.72
 
 /**
- * OGP画像URLをダウンロードして1.4:1にセンタークロップし、thumbnailsディレクトリに保存する。
- * 成功時は保存先のローカルURIを返す。失敗時はnull。
+ * Downloads an OGP image URL, center-crops it to 1.4:1, and saves it to the thumbnails directory.
+ * Returns the saved local URI on success, or null on failure.
  */
 export async function downloadAndCropOgp(imageUrl: string): Promise<string | null> {
   try {

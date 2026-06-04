@@ -15,9 +15,9 @@ import { useBookmarksStore } from '../../features/bookmarks/store'
 const APP_ICON = require('../../../assets/icon.png')
 
 const THEME_OPTIONS: { mode: ThemeMode; label: string }[] = [
-  { mode: 'light', label: 'ライト' },
-  { mode: 'dark', label: 'ダーク' },
-  { mode: 'auto', label: '自動' },
+  { mode: 'light', label: 'Light' },
+  { mode: 'dark', label: 'Dark' },
+  { mode: 'auto', label: 'Auto' },
 ]
 
 export function DrawerContent() {
@@ -30,17 +30,17 @@ export function DrawerContent() {
   const { bookmarks } = useBookmarksStore()
 
   const defaultFolderName =
-    folders.find((f) => f.id === settings.default_folder_id)?.name ?? '未設定'
+    folders.find((f) => f.id === settings.default_folder_id)?.name ?? 'Not set'
 
   const close = () => navigation.dispatch(DrawerActions.closeDrawer())
 
   const handleDefaultFolderChange = () => {
-    Alert.alert('デフォルトの保存先', 'ブクマ追加時の初期フォルダを選択', [
+    Alert.alert('Default folder', 'Choose the folder selected by default when adding a bookmark', [
       ...folders.map((f) => ({
         text: f.name,
         onPress: () => set('default_folder_id', f.id),
       })),
-      { text: 'キャンセル', style: 'cancel' as const },
+      { text: 'Cancel', style: 'cancel' as const },
     ])
   }
 
@@ -79,11 +79,11 @@ export function DrawerContent() {
   }
 
   const handleBrowserChange = () => {
-    Alert.alert('デフォルトブラウザ', '使用するブラウザを選択してください', [
+    Alert.alert('Default browser', 'Choose the browser to use', [
       { text: 'Safari', onPress: () => set('default_browser', 'safari') },
       { text: 'Chrome', onPress: () => set('default_browser', 'chrome') },
       { text: 'Edge', onPress: () => set('default_browser', 'edge') },
-      { text: 'キャンセル', style: 'cancel' },
+      { text: 'Cancel', style: 'cancel' },
     ])
   }
 
@@ -103,32 +103,32 @@ export function DrawerContent() {
         <View style={styles.header}>
           <Image source={APP_ICON} style={styles.icon} />
           <View style={styles.headerText}>
-            <Text style={styles.appName}>サムネブックマーク</Text>
-            <Text style={styles.appTagline}>{settings.is_premium ? 'Pro' : 'お気に入りをひとまとめに'}</Text>
+            <Text style={styles.appName}>Thumbmark</Text>
+            <Text style={styles.appTagline}>{settings.is_premium ? 'Pro' : 'All your favorites in one place'}</Text>
           </View>
         </View>
 
-        {/* サポート */}
-        <SectionTitle>サポート</SectionTitle>
+        {/* Support */}
+        <SectionTitle>Support</SectionTitle>
         <View style={styles.card}>
-          <DrawerLinkItem icon="compass-outline" label="使い方" onPress={openTutorial} />
-          <DrawerLinkItem icon="help-circle-outline" label="よくある質問" onPress={handleFaq} />
-          <DrawerLinkItem icon="chatbubble-ellipses-outline" label="不具合・要望を報告" onPress={handleReportBug} />
-          <DrawerLinkItem icon="star-outline" label="レビューして応援する" onPress={() => { void handleReview() }} isLast />
+          <DrawerLinkItem icon="compass-outline" label="How to use" onPress={openTutorial} />
+          <DrawerLinkItem icon="help-circle-outline" label="FAQ" onPress={handleFaq} />
+          <DrawerLinkItem icon="chatbubble-ellipses-outline" label="Report a bug or request" onPress={handleReportBug} />
+          <DrawerLinkItem icon="star-outline" label="Review and support us" onPress={() => { void handleReview() }} isLast />
         </View>
 
         {/* Pro */}
         {!settings.is_premium && (
           <>
-            <SectionTitle>プレミアム</SectionTitle>
+            <SectionTitle>Premium</SectionTitle>
             <View style={styles.card}>
               <TouchableOpacity style={styles.proRow} onPress={handlePro} activeOpacity={0.7}>
                 <View style={styles.proBadge}>
                   <Text style={styles.proBadgeText}>PRO</Text>
                 </View>
                 <View style={styles.proTextBlock}>
-                  <Text style={styles.proTitle}>サムネブクマ Pro</Text>
-                  <Text style={styles.proSub}>無制限保存・フォルダカバー変更</Text>
+                  <Text style={styles.proTitle}>Thumbmark Pro</Text>
+                  <Text style={styles.proSub}>Unlimited saves and custom folder covers</Text>
                 </View>
                 <Text style={styles.chevron}>›</Text>
               </TouchableOpacity>
@@ -136,13 +136,13 @@ export function DrawerContent() {
           </>
         )}
 
-        {/* 設定 */}
-        <SectionTitle>設定</SectionTitle>
+        {/* Settings */}
+        <SectionTitle>Settings</SectionTitle>
         <View style={styles.card}>
           <TouchableOpacity style={styles.rowColumn} onPress={handleDefaultFolderChange}>
             <View style={styles.rowLeft}>
               <Ionicons name="folder-outline" size={20} color={c.textSecondary} style={styles.itemIcon} />
-              <Text style={styles.label}>デフォルトの保存先</Text>
+              <Text style={styles.label}>Default folder</Text>
             </View>
             <View style={styles.rowColumnRight}>
               <Text style={styles.value} numberOfLines={1}>{defaultFolderName}</Text>
@@ -153,7 +153,7 @@ export function DrawerContent() {
           <TouchableOpacity style={styles.row} onPress={handleBrowserChange}>
             <View style={styles.rowLeft}>
               <Ionicons name="globe-outline" size={20} color={c.textSecondary} style={styles.itemIcon} />
-              <Text style={styles.label}>デフォルトブラウザ</Text>
+              <Text style={styles.label}>Default browser</Text>
             </View>
             <View style={styles.rowRight}>
               <Text style={styles.value}>{browserLabel[settings.default_browser]}</Text>
@@ -164,7 +164,7 @@ export function DrawerContent() {
           <TouchableOpacity style={styles.row} onPress={handleBackup}>
             <View style={styles.rowLeft}>
               <Ionicons name="cloud-outline" size={20} color={c.textSecondary} style={styles.itemIcon} />
-              <Text style={styles.label}>iCloudバックアップ</Text>
+              <Text style={styles.label}>iCloud Backup</Text>
             </View>
             <View style={styles.rowRight}>
               {!settings.is_premium && (
@@ -177,8 +177,8 @@ export function DrawerContent() {
           </TouchableOpacity>
         </View>
 
-        {/* 積ん読リマインダー通知 */}
-        <SectionTitle>積ん読リマインダー</SectionTitle>
+        {/* Reading reminder notification */}
+        <SectionTitle>Reading reminder</SectionTitle>
         <TouchableOpacity
           style={styles.row}
           onPress={async () => {
@@ -186,7 +186,7 @@ export function DrawerContent() {
             if (next) {
               const granted = await requestNotificationPermission()
               if (!granted) {
-                Alert.alert('通知が許可されていません', '設定アプリから通知を許可してください。')
+                Alert.alert('Notifications are not allowed', 'Please enable notifications from the Settings app.')
                 return
               }
               const unread = bookmarks.filter((b) => !b.viewedAt).length
@@ -198,14 +198,14 @@ export function DrawerContent() {
           }}
         >
           <Ionicons name="notifications-outline" size={20} color={c.textSecondary} style={styles.itemIcon} />
-          <Text style={styles.label}>週1で積ん読をお知らせ</Text>
+          <Text style={styles.label}>Weekly reading reminder</Text>
           <View style={[styles.toggle, settings.notification_enabled && styles.toggleOn]}>
             <View style={[styles.toggleThumb, settings.notification_enabled && styles.toggleThumbOn]} />
           </View>
         </TouchableOpacity>
 
-        {/* テーマ（Pro限定） */}
-        <SectionTitle>{settings.is_premium ? 'テーマ' : 'テーマ（PRO）'}</SectionTitle>
+        {/* Theme (Pro-only) */}
+        <SectionTitle>{settings.is_premium ? 'Theme' : 'Theme (PRO)'}</SectionTitle>
         <View style={styles.themeSeg}>
           {THEME_OPTIONS.map(({ mode, label }) => {
             const activeMode = settings.is_premium ? settings.theme_mode : 'light'

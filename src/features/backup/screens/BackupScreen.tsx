@@ -17,7 +17,7 @@ import { ProUpgradeModal } from '../../pro/components/ProUpgradeModal'
 import { useThemedStyles, spacing, radius, type Palette } from '../../../shared/theme'
 
 function formatDate(ts: number | null): string {
-  if (!ts) return 'まだバックアップしていません'
+  if (!ts) return 'Not backed up yet'
   const d = new Date(ts)
   const p = (n: number) => String(n).padStart(2, '0')
   return `${d.getFullYear()}/${p(d.getMonth() + 1)}/${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`
@@ -37,29 +37,29 @@ export function BackupScreen() {
   const handleBackup = async () => {
     const r = await backup()
     if (r.ok) {
-      Alert.alert('バックアップ完了', `${r.manifest?.bookmarkCount ?? 0}件のブックマークを保存しました`)
+      Alert.alert('Backup Done', `Saved ${r.manifest?.bookmarkCount ?? 0} bookmarks`)
     } else {
-      Alert.alert('バックアップに失敗', r.error ?? '時間をおいて再度お試しください')
+      Alert.alert('Backup Failed', r.error ?? 'Please try again later')
     }
   }
 
   const handleRestore = () => {
     Alert.alert(
-      '復元の確認',
-      '現在のブックマークはすべて上書きされます。よろしいですか？',
+      'Confirm Restore',
+      'All current bookmarks will be overwritten. Are you sure?',
       [
-        { text: 'キャンセル', style: 'cancel' },
+        { text: 'Cancel', style: 'cancel' },
         {
-          text: '復元する',
+          text: 'Restore',
           style: 'destructive',
           onPress: async () => {
             const r = await restore()
             if (r.ok) {
-              Alert.alert('復元完了', `${r.manifest?.bookmarkCount ?? 0}件のブックマークを復元しました`, [
+              Alert.alert('Restore Done', `Restored ${r.manifest?.bookmarkCount ?? 0} bookmarks`, [
                 { text: 'OK', onPress: () => navigation.goBack() },
               ])
             } else {
-              Alert.alert('復元に失敗', r.error ?? '時間をおいて再度お試しください')
+              Alert.alert('Restore Failed', r.error ?? 'Please try again later')
             }
           },
         },
@@ -71,9 +71,9 @@ export function BackupScreen() {
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.modalHeader}>
         <TouchableOpacity onPress={() => navigation.goBack()} disabled={busy}>
-          <Text style={[styles.cancelText, busy && styles.disabled]}>閉じる</Text>
+          <Text style={[styles.cancelText, busy && styles.disabled]}>Close</Text>
         </TouchableOpacity>
-        <Text style={styles.modalTitle}>iCloudバックアップ</Text>
+        <Text style={styles.modalTitle}>iCloud Backup</Text>
         <View style={{ width: 48 }} />
       </View>
 
@@ -81,12 +81,12 @@ export function BackupScreen() {
         {!isPremium ? (
           <View style={styles.lockCard}>
             <Ionicons name="cloud-outline" size={40} color={c.textSecondary} />
-            <Text style={styles.lockTitle}>Proで使える機能です</Text>
+            <Text style={styles.lockTitle}>This is a Pro feature</Text>
             <Text style={styles.lockDesc}>
-              ブックマークとサムネイルをiCloudに保存し、機種変更やアプリの入れ直しでも元に戻せます。
+              Save your bookmarks and thumbnails to iCloud, so you can restore them even after switching devices or reinstalling the app.
             </Text>
             <TouchableOpacity style={styles.primaryBtn} onPress={() => setProModalVisible(true)}>
-              <Text style={styles.primaryBtnText}>Proにアップグレード</Text>
+              <Text style={styles.primaryBtnText}>Upgrade to Pro</Text>
             </TouchableOpacity>
           </View>
         ) : (
@@ -94,7 +94,7 @@ export function BackupScreen() {
             <View style={styles.infoCard}>
               <View style={styles.infoRow}>
                 <Ionicons name="time-outline" size={18} color={c.textSecondary} />
-                <Text style={styles.infoLabel}>最終バックアップ</Text>
+                <Text style={styles.infoLabel}>Last Backup</Text>
                 <Text style={styles.infoValue}>{formatDate(settings.last_backup_at)}</Text>
               </View>
             </View>
@@ -107,7 +107,7 @@ export function BackupScreen() {
               {state === 'backing-up' ? (
                 <ActivityIndicator color={c.background} />
               ) : (
-                <Text style={styles.primaryBtnText}>今すぐバックアップ</Text>
+                <Text style={styles.primaryBtnText}>Back Up Now</Text>
               )}
             </TouchableOpacity>
 
@@ -119,12 +119,12 @@ export function BackupScreen() {
               {state === 'restoring' ? (
                 <ActivityIndicator color={c.destructive} />
               ) : (
-                <Text style={styles.secondaryBtnText}>バックアップから復元</Text>
+                <Text style={styles.secondaryBtnText}>Restore from Backup</Text>
               )}
             </TouchableOpacity>
 
             <Text style={styles.note}>
-              復元すると現在のデータは上書きされます。バックアップはこの端末のiCloudにのみ保存され、他人からは見えません。
+              Restoring overwrites your current data. The backup is saved only to this device's iCloud and is not visible to others.
             </Text>
           </>
         )}

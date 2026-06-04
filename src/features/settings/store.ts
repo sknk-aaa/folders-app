@@ -3,9 +3,9 @@ import * as StoreReview from 'expo-store-review'
 import { getDb } from '../../shared/db/client'
 import type { Settings, GridColumns } from '../../shared/types'
 
-// レビュー依頼を出すタイミング。各カウンターがマイルストーン値を
-// ちょうど通過した時に1回だけ発火する（カウンターは1ずつしか増えないので各値1回）。
-// iOS側で年≤3回に間引かれるため、複数仕込んでも出しすぎにはならない。
+// When to prompt for a review. Each counter fires exactly once, right when it
+// passes a milestone value (counters only increment by 1, so each value triggers once).
+// iOS throttles this to at most 3 times per year, so setting up several won't over-prompt.
 const SAVE_REVIEW_MILESTONES = [3, 10]
 const LAUNCH_REVIEW_MILESTONE = 5
 

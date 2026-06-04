@@ -5,7 +5,7 @@ import { setPremium } from '../../shared/storage/sharedStorage'
 
 const REVENUECAT_API_KEY = 'appl_uesZfCuFvseRYpwJqpMMcFrDRfc'
 const ENTITLEMENT_ID = 'Bookrest Pro'
-// 開発中のUIテスト用。本番リリース前に必ず false に戻すこと
+// For UI testing during development. Always set back to false before a production release.
 const DEV_FORCE_PRO = __DEV__ && false
 
 type ProStore = {
@@ -19,7 +19,7 @@ type ProStore = {
 
 function syncToPremium(isPro: boolean) {
   useSettingsStore.getState().set('is_premium', isPro)
-  // Share Extension(別プロセス)がProか判定できるようApp Groupにも書く
+  // Also write to the App Group so the Share Extension (a separate process) can tell whether the user is Pro
   setPremium(isPro)
 }
 
@@ -39,7 +39,7 @@ export const useProStore = create<ProStore>((setState) => ({
       setState({ isPro })
       syncToPremium(isPro)
     } catch {
-      // RevenueCatに接続できない場合はsettingsの既存値を使用
+      // If RevenueCat can't be reached, fall back to the existing value in settings
     }
   },
 
@@ -54,7 +54,7 @@ export const useProStore = create<ProStore>((setState) => ({
     } catch (e: unknown) {
       setState({ isLoading: false })
       if ((e as { userCancelled?: boolean }).userCancelled) return { success: false }
-      return { success: false, error: '購入に失敗しました。時間をおいて再試行してください。' }
+      return { success: false, error: 'Purchase failed. Please wait a moment and try again.' }
     }
   },
 

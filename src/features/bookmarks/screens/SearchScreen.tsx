@@ -56,14 +56,14 @@ export function SearchScreen() {
           style={styles.input}
           value={query}
           onChangeText={setQuery}
-          placeholder="検索..."
+          placeholder="Search..."
           placeholderTextColor={c.textTertiary}
           autoFocus
           returnKeyType="search"
           clearButtonMode="while-editing"
         />
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.cancelBtn}>
-          <Text style={styles.cancelText}>キャンセル</Text>
+          <Text style={styles.cancelText}>Cancel</Text>
         </TouchableOpacity>
       </View>
 
@@ -85,7 +85,7 @@ export function SearchScreen() {
         )}
         ListEmptyComponent={
           <Text style={styles.emptyText}>
-            {query ? '検索結果がありません' : 'キーワードを入力してください'}
+            {query ? 'No results found' : 'Enter a keyword'}
           </Text>
         }
       />

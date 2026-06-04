@@ -11,7 +11,7 @@ import { useSettingsStore } from '../../settings/store'
 import { BookmarkEditModal } from './BookmarkEditModal'
 import type { Bookmark, Folder } from '../../../shared/types'
 
-const IMAGE_ASPECT = 1 / 0.72 // 約1.389:1 (W:H) - 列数によらず固定
+const IMAGE_ASPECT = 1 / 0.72 // About 1.389:1 (W:H) - fixed regardless of column count
 
 type Props = {
   bookmark: Bookmark
@@ -38,9 +38,9 @@ export function BookmarkCard({ bookmark, allFolders, onDelete, onMove, drag, isA
   }
 
   const handleDeleteConfirm = () => {
-    Alert.alert('削除', `「${bookmark.name}」を削除しますか？`, [
-      { text: 'キャンセル', style: 'cancel' },
-      { text: '削除', style: 'destructive', onPress: onDelete },
+    Alert.alert('Delete', `Delete "${bookmark.name}"?`, [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Delete', style: 'destructive', onPress: onDelete },
     ])
   }
 
@@ -88,18 +88,18 @@ export function BookmarkCard({ bookmark, allFolders, onDelete, onMove, drag, isA
         visible={sheetVisible}
         title={bookmark.name}
         options={[
-          { label: '編集', onPress: () => setEditVisible(true) },
+          { label: 'Edit', onPress: () => setEditVisible(true) },
           ...(allFolders.length > 1
-            ? [{ label: '移動', onPress: () => setMoveSheetVisible(true) }]
+            ? [{ label: 'Move', onPress: () => setMoveSheetVisible(true) }]
             : []),
-          { label: '削除', destructive: true, onPress: handleDeleteConfirm },
+          { label: 'Delete', destructive: true, onPress: handleDeleteConfirm },
         ]}
         onCancel={() => setSheetVisible(false)}
       />
 
       <CustomActionSheet
         visible={moveSheetVisible}
-        title="移動先フォルダ"
+        title="Move to folder"
         options={allFolders.map((f) => ({ label: f.name, onPress: () => onMove(f.id) }))}
         onCancel={() => setMoveSheetVisible(false)}
       />
@@ -128,9 +128,9 @@ function FaviconCircle({ url, size = 22 }: { url: string; size?: number }) {
 }
 
 function showMoveSheet(folders: Folder[], onMove: (id: string) => void) {
-  Alert.alert('移動先フォルダ', undefined, [
+  Alert.alert('Move to folder', undefined, [
     ...folders.map((f) => ({ text: f.name, onPress: () => onMove(f.id) })),
-    { text: 'キャンセル', style: 'cancel' as const },
+    { text: 'Cancel', style: 'cancel' as const },
   ])
 }
 

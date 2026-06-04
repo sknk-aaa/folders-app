@@ -64,8 +64,8 @@ const PAGES: Page[] = [
       image: require('../../../assets/onboarding/welcome.png'),
     },
     number: '01',
-    title: '気になるページを、\nすっきり保存。',
-    description: 'ブラウザから1タップで、\n画像つきブックマークに。',
+    title: 'Save Sites as Thumbnails',
+    description: 'Turn pages that catch your eye into a personal gallery, complete with images. Browse them back at a glance.',
   },
   {
     key: '4',
@@ -77,19 +77,19 @@ const PAGES: Page[] = [
       secondAspect: 828 / 1792,
     },
     number: '02',
-    title: '共有から1タップで保存',
-    description: '共有メニューから「サムネブクマ」をタップ。\nサムネ・名前・フォルダを選んで\n保存するだけ。',
+    title: 'Save with One Tap from Share',
+    description: 'Tap "Thumbmark" in the share menu. Just pick a thumbnail, name, and folder, then save.',
   },
   {
     key: '5',
     visual: {
       kind: 'icon',
       image: require('../../../assets/icon.png'),
-      label: 'サムネブクマ',
+      label: 'Thumbmark',
     },
     number: '03',
-    title: 'さあ、始めよう',
-    description: 'あなただけのブックマーク集を\n作っていきましょう。',
+    title: "Let's Get Started",
+    description: "Let's start building your very own bookmark collection.",
   },
 ]
 
@@ -114,18 +114,18 @@ export function TutorialScreen() {
       setCurrentIndex(next)
       listRef.current?.scrollToIndex({ index: next, animated: true })
     } else {
-      // 最終ページ: 積ん読リマインダーの通知許可を促してから完了
+      // Last page: prompt for notification permission for unread reminders, then finish
       Alert.alert(
-        '積ん読をお知らせします',
-        '登録したブックマークをまだ見ていないとき、週1回お知らせします。',
+        'Get reminded of unread bookmarks',
+        "When you haven't viewed your saved bookmarks yet, we'll remind you once a week.",
         [
           {
-            text: 'スキップ',
+            text: 'Skip',
             style: 'cancel',
             onPress: finish,
           },
           {
-            text: '許可する',
+            text: 'Allow',
             onPress: async () => {
               const granted = await requestNotificationPermission()
               if (granted) {
@@ -153,7 +153,7 @@ export function TutorialScreen() {
           </Text>
         </View>
         <TouchableOpacity onPress={finish} hitSlop={12} style={styles.skipBtn}>
-          <Text style={styles.skipText}>スキップ</Text>
+          <Text style={styles.skipText}>Skip</Text>
         </TouchableOpacity>
       </View>
 
@@ -191,7 +191,7 @@ export function TutorialScreen() {
           onPress={goNext}
           style={styles.nextBtn}
         >
-          <Text style={styles.nextText}>{isLast ? '始める' : '次へ'}</Text>
+          <Text style={styles.nextText}>{isLast ? 'Get Started' : 'Next'}</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -292,7 +292,7 @@ function Visual({ visual }: { visual: PageVisual }) {
           </View>
         ))}
       </View>
-      <Text style={styles.stepsCaption}>3つの簡単なステップ</Text>
+      <Text style={styles.stepsCaption}>Three easy steps</Text>
     </View>
   )
 }

@@ -61,7 +61,7 @@ export function HomeScreen() {
   const [isGridDragging, setIsGridDragging] = useState(false)
   const [proModalVisible, setProModalVisible] = useState(false)
 
-  // コールド起動5回目のレビュー依頼。ホームが表示されて少し経ってから出す。
+  // Request a review on the 5th cold launch. Show it shortly after Home appears.
   useEffect(() => {
     const t = setTimeout(() => {
       void useSettingsStore.getState().recordLaunchForReview()
@@ -118,7 +118,7 @@ export function HomeScreen() {
 
   const listHeader = (
     <View style={styles.sectionHeader}>
-      <Text style={styles.sectionTitle}>フォルダ</Text>
+      <Text style={styles.sectionTitle}>Folders</Text>
       <ViewModeToggle
         value={viewMode}
         onGridPress={() => setViewMode('grid')}
@@ -130,14 +130,14 @@ export function HomeScreen() {
   const listFooter = (
     <View>
       <View style={styles.recentHeader}>
-        <Text style={styles.sectionTitle}>最近追加したブックマーク</Text>
+        <Text style={styles.sectionTitle}>Recently Added Bookmarks</Text>
         <TouchableOpacity onPress={() => navigation.navigate('AllBookmarks')}>
-          <Text style={styles.sectionAction}>すべて見る 〉</Text>
+          <Text style={styles.sectionAction}>See All ›</Text>
         </TouchableOpacity>
       </View>
 
       {recentItems.length === 0 ? (
-        <Text style={styles.emptyText}>まだブックマークがありません</Text>
+        <Text style={styles.emptyText}>No bookmarks yet</Text>
       ) : (
         <FlatList
           data={recentItems}
@@ -156,7 +156,7 @@ export function HomeScreen() {
   return (
     <View style={styles.container}>
       <Header
-        title="ブックマーク"
+        title="Bookmarks"
         showSearch
         onSearch={() => navigation.navigate('Search', {})}
         showAdd
@@ -214,8 +214,8 @@ export function HomeScreen() {
       <CustomActionSheet
         visible={addSheetVisible}
         options={[
-          { label: 'フォルダを追加', onPress: openFolderAdd },
-          { label: 'ブックマークを追加', onPress: () => navigation.navigate('AddBookmark', {}) },
+          { label: 'Add Folder', onPress: openFolderAdd },
+          { label: 'Add Bookmark', onPress: () => navigation.navigate('AddBookmark', {}) },
         ]}
         onCancel={() => setAddSheetVisible(false)}
       />
@@ -230,8 +230,8 @@ function FolderEmptyHint() {
   return (
     <View style={styles.folderEmptyHint}>
       <Text style={styles.folderEmptyIcon}>📁</Text>
-      <Text style={styles.folderEmptyTitle}>フォルダがありません</Text>
-      <Text style={styles.folderEmptyDesc}>右上の + からフォルダを追加できます</Text>
+      <Text style={styles.folderEmptyTitle}>No folders yet</Text>
+      <Text style={styles.folderEmptyDesc}>Tap + in the top right to add a folder</Text>
     </View>
   )
 }
@@ -308,11 +308,11 @@ function FolderListRow({
 
   const handleDeleteConfirm = () => {
     Alert.alert(
-      'フォルダを削除',
-      `「${folder.name}」とその中のブックマークをすべて削除しますか？`,
+      'Delete Folder',
+      `Delete "${folder.name}" and all bookmarks inside it?`,
       [
-        { text: 'キャンセル', style: 'cancel' },
-        { text: '削除', style: 'destructive', onPress: onDelete },
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Delete', style: 'destructive', onPress: onDelete },
       ],
     )
   }
@@ -340,7 +340,7 @@ function FolderListRow({
           <Text style={styles.folderRowName} numberOfLines={1}>
             {folder.name}
           </Text>
-          <Text style={styles.folderRowCount}>{count}件</Text>
+          <Text style={styles.folderRowCount}>{count}</Text>
         </View>
         <MoreButton onPress={() => setSheetVisible(true)} />
       </Pressable>
@@ -349,8 +349,8 @@ function FolderListRow({
         visible={sheetVisible}
         title={folder.name}
         options={[
-          { label: '編集', onPress: onEdit },
-          { label: '削除', destructive: true, onPress: handleDeleteConfirm },
+          { label: 'Edit', onPress: onEdit },
+          { label: 'Delete', destructive: true, onPress: handleDeleteConfirm },
         ]}
         onCancel={() => setSheetVisible(false)}
       />

@@ -15,26 +15,26 @@ export const useBackupStore = create<BackupStore>((set, get) => ({
   state: 'idle',
 
   backup: async () => {
-    if (get().state !== 'idle') return { ok: false, error: '処理中です' }
+    if (get().state !== 'idle') return { ok: false, error: 'Processing in progress' }
     set({ state: 'backing-up' })
     try {
       const manifest = await runBackup(getBackupStorage())
       return { ok: true, manifest }
     } catch (e) {
-      return { ok: false, error: e instanceof Error ? e.message : 'バックアップに失敗しました' }
+      return { ok: false, error: e instanceof Error ? e.message : 'Backup failed' }
     } finally {
       set({ state: 'idle' })
     }
   },
 
   restore: async () => {
-    if (get().state !== 'idle') return { ok: false, error: '処理中です' }
+    if (get().state !== 'idle') return { ok: false, error: 'Processing in progress' }
     set({ state: 'restoring' })
     try {
       const manifest = await runRestore(getBackupStorage())
       return { ok: true, manifest }
     } catch (e) {
-      return { ok: false, error: e instanceof Error ? e.message : '復元に失敗しました' }
+      return { ok: false, error: e instanceof Error ? e.message : 'Restore failed' }
     } finally {
       set({ state: 'idle' })
     }

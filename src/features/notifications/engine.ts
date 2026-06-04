@@ -2,8 +2,8 @@ import { Platform } from 'react-native'
 
 const REMINDER_NOTIFICATION_ID = 'tsundoku-weekly'
 
-// expo-notificationsはネイティブモジュール。EASビルドでのみ動作し、
-// Metroのdev buildでは未インストールのため動的インポートで安全にロード。
+// expo-notifications is a native module. It only works in EAS builds and is
+// not installed in Metro dev builds, so load it safely via dynamic import.
 async function getNotifications() {
   try {
     return await import('expo-notifications')
@@ -29,7 +29,7 @@ export async function scheduleWeeklyReminder(unreadCount: number): Promise<void>
 
   if (Platform.OS === 'android') {
     await N.setNotificationChannelAsync('tsundoku-reminder', {
-      name: '積ん読リマインダー',
+      name: 'Reading reminder',
       importance: N.AndroidImportance.DEFAULT,
     })
   }
@@ -37,8 +37,8 @@ export async function scheduleWeeklyReminder(unreadCount: number): Promise<void>
   await N.scheduleNotificationAsync({
     identifier: REMINDER_NOTIFICATION_ID,
     content: {
-      title: 'サムネブクマ',
-      body: `${unreadCount}件の積ん読があります。まだ見ていないページをチェックしませんか？`,
+      title: 'Thumbmark',
+      body: `You have ${unreadCount} unread bookmarks. Want to check out the pages you haven't seen yet?`,
     },
     trigger: {
       type: N.SchedulableTriggerInputTypes.TIME_INTERVAL,

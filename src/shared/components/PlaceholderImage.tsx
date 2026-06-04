@@ -19,7 +19,7 @@ export function PlaceholderImage({ width, height, style }: Props) {
       ]}
     >
       <Text style={styles.icon}>🖼</Text>
-      <Text style={styles.text}>画像がありません</Text>
+      <Text style={styles.text}>No image</Text>
     </View>
   )
 }

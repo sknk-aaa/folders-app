@@ -105,10 +105,10 @@ function insertMockFoldersAndBookmarks(now: number) {
     )
   })
 
-  // フォルダ名 → id の lookup
+  // Lookup of folder name -> id
   const folderIdByName = Object.fromEntries(defaultFolders.map((f) => [f.name, f.id]))
 
-  // フォルダごとに sort_order を 0 から振り直す
+  // Reassign sort_order starting from 0 per folder
   const sortOrderByFolder = new Map<string, number>()
 
   MOCK_BOOKMARKS.forEach((bookmark, i) => {
@@ -143,7 +143,7 @@ function migrateLegacyDefaultData(): void {
 
   if (seedVersion === CURRENT_MOCK_SEED_VERSION) return
 
-  // v1〜v6 → v7 への移行（未編集のモックデータなら再シード）
+  // Migration from v1-v6 to v7 (re-seed if the mock data is unedited)
   if (
     seedVersion === '1' ||
     seedVersion === '2' ||
@@ -152,7 +152,7 @@ function migrateLegacyDefaultData(): void {
     seedVersion === '5' ||
     seedVersion === '6'
   ) {
-    // 手付かずのモックデータかチェック（フォルダ名一致 + ブックマークが全部 picsum or images.unsplash）
+    // Check whether the mock data is untouched (folder names match + all bookmarks are picsum or images.unsplash)
     const folders = db.getAllSync<{ name: string }>(
       'SELECT name FROM folders ORDER BY sort_order ASC',
     )
@@ -185,7 +185,7 @@ function migrateLegacyDefaultData(): void {
     return
   }
 
-  // pre-v1 レガシーデータ（5フォルダ・1ブクマ以下）からの初回マイグレーション
+  // Initial migration from pre-v1 legacy data (5 folders, 1 or fewer bookmarks)
   const folders = db.getAllSync<{ name: string }>(
     'SELECT name FROM folders ORDER BY sort_order ASC',
   )

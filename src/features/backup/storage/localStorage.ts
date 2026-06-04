@@ -1,8 +1,8 @@
 import * as FileSystem from 'expo-file-system/legacy'
 import type { BackupStorage } from './types'
 
-// フェーズ1検証用の「偽クラウド」。ローカルの別ディレクトリへ書き出す。
-// フェーズ2でこの実装を iCloud 実装に差し替える（engine 側は無変更）。
+// "Fake cloud" for phase 1 verification. Writes to a separate local directory.
+// In phase 2 this implementation is swapped for the iCloud implementation (engine side unchanged).
 const ROOT = `${FileSystem.documentDirectory}__local_backup__/`
 
 function abs(relPath: string): string {
@@ -15,7 +15,7 @@ async function ensureParentDir(uri: string): Promise<void> {
 }
 
 export const localBackupStorage: BackupStorage = {
-  label: 'ローカル（検証用）',
+  label: 'Local (for verification)',
 
   async init() {
     await FileSystem.makeDirectoryAsync(ROOT, { intermediates: true })

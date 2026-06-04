@@ -16,7 +16,7 @@ const REL_DB = 'folders.db'
 const REL_THUMBS = 'thumbnails'
 const REL_MANIFEST = 'manifest.json'
 
-// SQLite の WAL/SHM サイドファイル
+// SQLite WAL/SHM side files
 const DB_SIDE_FILES = [`${DB_PATH}-wal`, `${DB_PATH}-shm`]
 
 function basename(p: string): string {
@@ -38,12 +38,12 @@ function reloadStores(): void {
   useBookmarksStore.getState().load()
 }
 
-/** WAL を本体DBファイルへ畳み込む（バックアップ前に本体を完全な状態にする） */
+/** Fold the WAL into the main DB file (bring the main file to a complete state before backup) */
 function checkpointWal(): void {
   try {
     getDb().execSync('PRAGMA wal_checkpoint(TRUNCATE);')
   } catch {
-    // WAL未使用などで失敗しても致命的ではない
+    // Not fatal even if it fails (e.g. WAL not in use)
   }
 }
 
@@ -52,10 +52,10 @@ export async function runBackup(storage: BackupStorage): Promise<BackupManifest>
   checkpointWal()
   await storage.clearAll()
 
-  // DB本体
+  // Main DB
   await storage.putFile(DB_PATH, REL_DB)
 
-  // サムネ全件
+  // All thumbnails
   const thumbs = await listThumbnailFiles()
   for (const name of thumbs) {
     await storage.putFile(`${THUMB_DIR}${name}`, `${REL_THUMBS}/${name}`)
@@ -86,7 +86,7 @@ export async function readManifest(storage: BackupStorage): Promise<BackupManife
   }
 }
 
-/** 復元前に現在のDB・サムネをローカルへ退避（失敗時のロールバック用） */
+/** Save the current DB and thumbnails locally before restore (for rollback on failure) */
 async function snapshotCurrent(): Promise<void> {
   await FileSystem.deleteAsync(SAFETY_DIR, { idempotent: true })
   await FileSystem.makeDirectoryAsync(`${SAFETY_DIR}thumbnails/`, { intermediates: true })
@@ -129,33 +129,33 @@ async function deleteDbFiles(): Promise<void> {
 }
 
 /**
- * 復元：保存先のDB・サムネでローカルを上書きする。
- * サムネの絶対パスは端末ごとに変わるため、復元後に現在の documentDirectory へ書き換える。
+ * Restore: overwrite local data with the DB and thumbnails from the backup destination.
+ * Thumbnail absolute paths differ per device, so rewrite them to the current documentDirectory after restore.
  */
 export async function runRestore(storage: BackupStorage): Promise<BackupManifest> {
   await storage.init()
   const manifest = await readManifest(storage)
   if (!manifest) {
-    throw new Error('バックアップが見つかりません')
+    throw new Error('No backup found')
   }
 
   await snapshotCurrent()
 
   try {
-    // DB差し替え
+    // Replace DB
     closeDb()
     await deleteDbFiles()
     await FileSystem.makeDirectoryAsync(DB_DIR, { intermediates: true })
     await storage.getFile(REL_DB, DB_PATH)
 
-    // サムネ差し替え
+    // Replace thumbnails
     await FileSystem.deleteAsync(THUMB_DIR, { idempotent: true })
     await FileSystem.makeDirectoryAsync(THUMB_DIR, { intermediates: true })
     for (const name of await storage.listFiles(REL_THUMBS)) {
       await storage.getFile(`${REL_THUMBS}/${name}`, `${THUMB_DIR}${name}`)
     }
 
-    // 再オープン＋サムネ絶対パスを現端末向けに書き換え
+    // Reopen and rewrite thumbnail absolute paths for the current device
     const db = getDb()
     const rows = db.getAllSync<{ id: string; thumbnail_path: string | null }>(
       'SELECT id, thumbnail_path FROM bookmarks WHERE thumbnail_path IS NOT NULL',
@@ -171,11 +171,11 @@ export async function runRestore(storage: BackupStorage): Promise<BackupManifest
     reloadStores()
     return manifest
   } catch (e) {
-    // 失敗したら退避から戻す
+    // On failure, restore from the snapshot
     try {
       await rollbackFromSnapshot()
     } catch {
-      // ロールバックも失敗した場合はそのまま投げる
+      // If the rollback also fails, rethrow as-is
     }
     throw e
   }
