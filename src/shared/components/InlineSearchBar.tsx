@@ -1,5 +1,5 @@
 import { View, TextInput, TouchableOpacity, Text, StyleSheet } from 'react-native'
-import { colors, spacing } from '../theme'
+import { useThemedStyles, spacing, type Palette } from '../theme'
 
 type Props = {
   query: string
@@ -9,6 +9,7 @@ type Props = {
 }
 
 export function InlineSearchBar({ query, onChangeText, onCancel, placeholder = '検索' }: Props) {
+  const { c, styles } = useThemedStyles(makeStyles)
   return (
     <View style={styles.container}>
       <TextInput
@@ -17,7 +18,7 @@ export function InlineSearchBar({ query, onChangeText, onCancel, placeholder = '
         onChangeText={onChangeText}
         autoFocus
         placeholder={placeholder}
-        placeholderTextColor={colors.textSecondary}
+        placeholderTextColor={c.textSecondary}
         returnKeyType="search"
         clearButtonMode="while-editing"
       />
@@ -28,26 +29,27 @@ export function InlineSearchBar({ query, onChangeText, onCancel, placeholder = '
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  input: {
-    flex: 1,
-    height: 34,
-    backgroundColor: colors.placeholderBg,
-    borderRadius: 10,
-    paddingHorizontal: spacing.sm,
-    fontSize: 15,
-    color: colors.text,
-  },
-  cancel: {
-    flexShrink: 0,
-  },
-  cancelText: {
-    fontSize: 15,
-    color: colors.text,
-  },
-})
+const makeStyles = (c: Palette) =>
+  StyleSheet.create({
+    container: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.sm,
+    },
+    input: {
+      flex: 1,
+      height: 34,
+      backgroundColor: c.placeholderBg,
+      borderRadius: 10,
+      paddingHorizontal: spacing.sm,
+      fontSize: 15,
+      color: c.text,
+    },
+    cancel: {
+      flexShrink: 0,
+    },
+    cancelText: {
+      fontSize: 15,
+      color: c.text,
+    },
+  })

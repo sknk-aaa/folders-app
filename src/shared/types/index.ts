@@ -38,6 +38,7 @@ export type Bookmark = {
 export type DefaultBrowser = 'safari' | 'chrome' | 'edge'
 export type ViewMode = 'grid' | 'list'
 export type GridColumns = 2 | 3 | 4
+export type ThemeMode = 'light' | 'dark' | 'auto'
 
 export type Settings = {
   default_browser: DefaultBrowser
@@ -51,6 +52,7 @@ export type Settings = {
   save_count: number
   launch_count: number
   last_backup_at: number | null
+  theme_mode: ThemeMode
 }
 
 export type RootStackParamList = {

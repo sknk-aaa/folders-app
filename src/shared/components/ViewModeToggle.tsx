@@ -1,5 +1,5 @@
 import { View, TouchableOpacity, StyleSheet } from 'react-native'
-import { colors } from '../theme'
+import { useThemedStyles, type Palette } from '../theme'
 import type { ViewMode } from '../types'
 
 type Props = {
@@ -9,6 +9,7 @@ type Props = {
 }
 
 export function ViewModeToggle({ value, onGridPress, onListPress }: Props) {
+  const { styles } = useThemedStyles(makeStyles)
   return (
     <View style={styles.container}>
       <TouchableOpacity
@@ -39,45 +40,46 @@ export function ViewModeToggle({ value, onGridPress, onListPress }: Props) {
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    padding: 2,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.divider,
-    borderRadius: 12,
-    backgroundColor: 'rgba(255,255,255,0.92)',
-  },
-  button: {
-    width: 36,
-    height: 28,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 10,
-  },
-  buttonActive: {
-    backgroundColor: colors.placeholderBg,
-  },
-  gridIcon: {
-    width: 15,
-    height: 15,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 2,
-  },
-  gridDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 1.5,
-    backgroundColor: colors.text,
-  },
-  listIcon: {
-    gap: 2.7,
-  },
-  listLine: {
-    width: 15,
-    height: 2,
-    borderRadius: 1,
-    backgroundColor: colors.text,
-  },
-})
+const makeStyles = (c: Palette) =>
+  StyleSheet.create({
+    container: {
+      flexDirection: 'row',
+      padding: 2,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: c.divider,
+      borderRadius: 12,
+      backgroundColor: c.surfaceElevated,
+    },
+    button: {
+      width: 36,
+      height: 28,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: 10,
+    },
+    buttonActive: {
+      backgroundColor: c.placeholderBg,
+    },
+    gridIcon: {
+      width: 15,
+      height: 15,
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 2,
+    },
+    gridDot: {
+      width: 6,
+      height: 6,
+      borderRadius: 1.5,
+      backgroundColor: c.text,
+    },
+    listIcon: {
+      gap: 2.7,
+    },
+    listLine: {
+      width: 15,
+      height: 2,
+      borderRadius: 1,
+      backgroundColor: c.text,
+    },
+  })

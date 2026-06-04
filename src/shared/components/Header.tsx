@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useNavigation, DrawerActions } from '@react-navigation/native'
-import { colors, spacing } from '../theme'
+import { useTheme, useThemedStyles, spacing, type Palette } from '../theme'
 
 type Props = {
   title?: string
@@ -34,6 +34,7 @@ export function Header({
 }: Props) {
   const insets = useSafeAreaInsets()
   const navigation = useNavigation()
+  const { styles } = useThemedStyles(makeStyles)
   const hasContentSlot = Boolean(contentSlot)
 
   const handleBack = () => {
@@ -101,12 +102,13 @@ export function Header({
 }
 
 function HamburgerIcon() {
+  const c = useTheme()
   return (
     <View style={{ gap: 4, paddingVertical: 2 }}>
       {[0, 1, 2].map((i) => (
         <View
           key={i}
-          style={{ width: 20, height: 1.5, backgroundColor: colors.text, borderRadius: 1 }}
+          style={{ width: 20, height: 1.5, backgroundColor: c.text, borderRadius: 1 }}
         />
       ))}
     </View>
@@ -114,6 +116,7 @@ function HamburgerIcon() {
 }
 
 function SearchIcon() {
+  const c = useTheme()
   return (
     <View style={{ width: 22, height: 22, alignItems: 'center', justifyContent: 'center' }}>
       <View
@@ -122,7 +125,7 @@ function SearchIcon() {
           height: 13,
           borderRadius: 7,
           borderWidth: 1.8,
-          borderColor: colors.text,
+          borderColor: c.text,
         }}
       />
       <View
@@ -132,7 +135,7 @@ function SearchIcon() {
           right: 1,
           width: 6,
           height: 1.8,
-          backgroundColor: colors.text,
+          backgroundColor: c.text,
           borderRadius: 1,
           transform: [{ rotate: '45deg' }],
         }}
@@ -141,81 +144,82 @@ function SearchIcon() {
   )
 }
 
-const styles = StyleSheet.create({
-  wrapper: {
-    backgroundColor: colors.headerBg,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.divider,
-  },
-  wrapperNoBorder: {
-    borderBottomWidth: 0,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    height: 56,
-    paddingTop: 10,
-    paddingHorizontal: spacing.lg,
-  },
-  left: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-    gap: 8,
-  },
-  leftCompact: {
-    flex: 0,
-  },
-  contentSlot: {
-    flex: 1,
-    minWidth: 0,
-    marginLeft: spacing.sm,
-    marginRight: spacing.md,
-  },
-  center: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 12,
-    alignItems: 'center',
-  },
-  right: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-    justifyContent: 'flex-end',
-    gap: 16,
-  },
-  rightCompact: {
-    flex: 0,
-  },
-  iconBtn: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    minWidth: 24,
-    minHeight: 24,
-  },
-  backArrow: {
-    fontSize: 30,
-    color: colors.text,
-    lineHeight: 30,
-    marginTop: -2,
-    fontWeight: '300',
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.text,
-  },
-  addIcon: {
-    fontSize: 24,
-    color: colors.text,
-    lineHeight: 26,
-    fontWeight: '300',
-  },
-  moreIcon: {
-    fontSize: 10,
-    color: colors.text,
-    letterSpacing: 1,
-  },
-})
+const makeStyles = (c: Palette) =>
+  StyleSheet.create({
+    wrapper: {
+      backgroundColor: c.headerBg,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: c.divider,
+    },
+    wrapperNoBorder: {
+      borderBottomWidth: 0,
+    },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      height: 56,
+      paddingTop: 10,
+      paddingHorizontal: spacing.lg,
+    },
+    left: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      flex: 1,
+      gap: 8,
+    },
+    leftCompact: {
+      flex: 0,
+    },
+    contentSlot: {
+      flex: 1,
+      minWidth: 0,
+      marginLeft: spacing.sm,
+      marginRight: spacing.md,
+    },
+    center: {
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      top: 12,
+      alignItems: 'center',
+    },
+    right: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      flex: 1,
+      justifyContent: 'flex-end',
+      gap: 16,
+    },
+    rightCompact: {
+      flex: 0,
+    },
+    iconBtn: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      minWidth: 24,
+      minHeight: 24,
+    },
+    backArrow: {
+      fontSize: 30,
+      color: c.text,
+      lineHeight: 30,
+      marginTop: -2,
+      fontWeight: '300',
+    },
+    title: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: c.text,
+    },
+    addIcon: {
+      fontSize: 24,
+      color: c.text,
+      lineHeight: 26,
+      fontWeight: '300',
+    },
+    moreIcon: {
+      fontSize: 10,
+      color: c.text,
+      letterSpacing: 1,
+    },
+  })

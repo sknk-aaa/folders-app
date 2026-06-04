@@ -21,6 +21,7 @@ const DEFAULTS: Settings = {
   save_count: 0,
   launch_count: 0,
   last_backup_at: null,
+  theme_mode: 'auto',
 }
 
 async function requestReviewIfAvailable(): Promise<void> {
@@ -52,6 +53,8 @@ function parse(key: keyof Settings, raw: string): Settings[keyof Settings] {
     case 'last_selected_folder_id':
     case 'default_folder_id':
       return raw || null
+    case 'theme_mode':
+      return raw === 'light' || raw === 'dark' || raw === 'auto' ? raw : 'auto'
     default:
       return raw
   }

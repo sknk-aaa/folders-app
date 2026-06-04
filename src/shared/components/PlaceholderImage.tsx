@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet } from 'react-native'
-import { colors } from '../theme'
+import { useThemedStyles, type Palette } from '../theme'
 
 type Props = {
   width?: number
@@ -8,6 +8,7 @@ type Props = {
 }
 
 export function PlaceholderImage({ width, height, style }: Props) {
+  const { styles } = useThemedStyles(makeStyles)
   return (
     <View
       style={[
@@ -23,19 +24,20 @@ export function PlaceholderImage({ width, height, style }: Props) {
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.placeholderBg,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 4,
-  },
-  icon: {
-    fontSize: 24,
-    opacity: 0.4,
-  },
-  text: {
-    fontSize: 11,
-    color: colors.textTertiary,
-  },
-})
+const makeStyles = (c: Palette) =>
+  StyleSheet.create({
+    container: {
+      backgroundColor: c.placeholderBg,
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 4,
+    },
+    icon: {
+      fontSize: 24,
+      opacity: 0.4,
+    },
+    text: {
+      fontSize: 11,
+      color: c.textTertiary,
+    },
+  })

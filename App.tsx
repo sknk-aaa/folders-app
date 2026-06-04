@@ -11,9 +11,15 @@ import { useProStore } from './src/features/pro/store'
 import { useFoldersStore } from './src/features/folders/store'
 import { useBookmarksStore } from './src/features/bookmarks/store'
 import { RootNavigator } from './src/navigation'
+import { useTheme, darkColors } from './src/shared/theme'
 import type { RootStackParamList } from './src/shared/types'
 
 export const navigationRef = createNavigationContainerRef<RootStackParamList>()
+
+function ThemedStatusBar() {
+  const c = useTheme()
+  return <StatusBar style={c === darkColors ? 'light' : 'dark'} />
+}
 
 function handleIncomingUrl(url: string) {
   const parsed = Linking.parse(url)
@@ -145,7 +151,7 @@ export default function App() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <NavigationContainer ref={navigationRef} onReady={handleNavigationReady}>
-          <StatusBar style="dark" />
+          <ThemedStatusBar />
           <RootNavigator initialRouteName={initialRouteName} />
         </NavigationContainer>
       </SafeAreaProvider>
