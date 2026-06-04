@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import Purchases, { LOG_LEVEL } from 'react-native-purchases'
+import Purchases, { LOG_LEVEL, type PurchasesPackage } from 'react-native-purchases'
 import { useSettingsStore } from '../settings/store'
 import { setPremium } from '../../shared/storage/sharedStorage'
 
@@ -13,7 +13,7 @@ type ProStore = {
   isLoading: boolean
   configure: () => void
   load: () => Promise<void>
-  purchase: () => Promise<{ success: boolean; error?: string }>
+  purchase: (pkg: PurchasesPackage) => Promise<{ success: boolean; error?: string }>
   restore: () => Promise<{ success: boolean; found: boolean }>
 }
 
@@ -43,15 +43,9 @@ export const useProStore = create<ProStore>((setState) => ({
     }
   },
 
-  purchase: async () => {
+  purchase: async (pkg) => {
     setState({ isLoading: true })
     try {
-      const offerings = await Purchases.getOfferings()
-      const pkg = offerings.current?.availablePackages[0]
-      if (!pkg) {
-        setState({ isLoading: false })
-        return { success: false, error: '商品情報を取得できませんでした' }
-      }
       const { customerInfo } = await Purchases.purchasePackage(pkg)
       const isPro = customerInfo.entitlements.active[ENTITLEMENT_ID] !== undefined
       setState({ isPro, isLoading: false })
