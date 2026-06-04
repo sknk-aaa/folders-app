@@ -13,7 +13,15 @@ import {
   View,
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { useVideoPlayer, VideoView } from 'expo-video'
+// expo-video is a native module. On a dev client built before it was added,
+// requiring it throws ("Cannot find native module 'ExpoVideo'"). Guard it so the
+// app still boots; video pages fall back to a placeholder. Production has it.
+let ExpoVideo: typeof import('expo-video') | null = null
+try {
+  ExpoVideo = require('expo-video')
+} catch {
+  ExpoVideo = null
+}
 import { useNavigation } from '@react-navigation/native'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useSettingsStore } from '../settings/store'
@@ -381,7 +389,34 @@ function VideoFrame({
   height: number
   durationMs: number
 }) {
-  const player = useVideoPlayer(source, (p) => {
+  if (!ExpoVideo) {
+    return (
+      <View style={[styles.phoneFrame, styles.videoFallback, { width, height }]}>
+        <Text style={styles.videoFallbackText}>
+          {tr({ en: 'Video plays in the built app', ja: '動画はビルドで再生されます' })}
+        </Text>
+      </View>
+    )
+  }
+  return (
+    <VideoPlayerFrame source={source} width={width} height={height} durationMs={durationMs} Video={ExpoVideo} />
+  )
+}
+
+function VideoPlayerFrame({
+  source,
+  width,
+  height,
+  durationMs,
+  Video,
+}: {
+  source: number
+  width: number
+  height: number
+  durationMs: number
+  Video: NonNullable<typeof ExpoVideo>
+}) {
+  const player = Video.useVideoPlayer(source, (p) => {
     p.loop = true
     p.muted = true
     p.play()
@@ -405,7 +440,7 @@ function VideoFrame({
   })
   return (
     <View style={[styles.phoneFrame, { width, height }]}>
-      <VideoView
+      <Video.VideoView
         player={player}
         style={styles.phoneImage}
         contentFit="cover"
@@ -579,6 +614,17 @@ const styles = StyleSheet.create({
   videoProgressFill: {
     height: '100%',
     backgroundColor: '#FFFFFF',
+  },
+  videoFallback: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: PALETTE.surface,
+    paddingHorizontal: 16,
+  },
+  videoFallbackText: {
+    fontSize: 12,
+    color: PALETTE.textMuted,
+    textAlign: 'center',
   },
   duoRow: {
     flexDirection: 'row',
