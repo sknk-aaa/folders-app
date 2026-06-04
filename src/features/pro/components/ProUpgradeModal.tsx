@@ -164,7 +164,10 @@ export function ProUpgradeModal({ visible, onClose, hint }: Props) {
           </View>
           <Text style={styles.planDesc}>{tr({ en: 'One-time, yours forever', ja: '一度きり・ずっと使える' })}</Text>
         </View>
-        <Text style={styles.planPrice}>{lifetimePrice}</Text>
+        <View style={styles.planRight}>
+          <Text style={styles.planPrice}>{lifetimePrice}</Text>
+          <Ionicons name="chevron-forward" size={18} color={c.textTertiary} />
+        </View>
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -178,10 +181,13 @@ export function ProUpgradeModal({ visible, onClose, hint }: Props) {
           <Text style={styles.planName}>{tr({ en: 'Monthly', ja: '月額' })}</Text>
           <Text style={styles.planDesc}>{tr({ en: 'Cancel anytime', ja: 'いつでも解約できます' })}</Text>
         </View>
-        <Text style={styles.planPrice}>
-          {monthlyPrice}
-          {tr({ en: '/mo', ja: '／月' })}
-        </Text>
+        <View style={styles.planRight}>
+          <Text style={styles.planPrice}>
+            {monthlyPrice}
+            {tr({ en: '/mo', ja: '／月' })}
+          </Text>
+          <Ionicons name="chevron-forward" size={18} color={c.textTertiary} />
+        </View>
       </TouchableOpacity>
 
       {isLoading ? <ActivityIndicator color={c.textSecondary} style={styles.plansSpinner} /> : null}
@@ -369,12 +375,20 @@ const makeStyles = (c: Palette) =>
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-      borderWidth: 1.5,
+      borderWidth: StyleSheet.hairlineWidth,
       borderColor: c.cardBorder,
       borderRadius: 14,
       paddingVertical: 15,
-      paddingHorizontal: 18,
+      paddingLeft: 18,
+      paddingRight: 14,
+      backgroundColor: c.surface,
+      shadowColor: '#000',
+      shadowOpacity: 0.08,
+      shadowRadius: 7,
+      shadowOffset: { width: 0, height: 2 },
+      elevation: 2,
     },
+    planRight: { flexDirection: 'row', alignItems: 'center', gap: 3 },
     planLeft: { gap: 3, flexShrink: 1 },
     planNameRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
     planName: { fontSize: 16, fontWeight: '700', color: c.text },
