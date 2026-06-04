@@ -37,7 +37,7 @@ export async function scheduleWeeklyReminder(unreadCount: number): Promise<void>
   await N.scheduleNotificationAsync({
     identifier: REMINDER_NOTIFICATION_ID,
     content: {
-      title: 'Thumbmark',
+      title: 'Bookrest',
       body: `You have ${unreadCount} unread bookmarks. Want to check out the pages you haven't seen yet?`,
     },
     trigger: {

@@ -103,7 +103,7 @@ export function DrawerContent() {
         <View style={styles.header}>
           <Image source={APP_ICON} style={styles.icon} />
           <View style={styles.headerText}>
-            <Text style={styles.appName}>Thumbmark</Text>
+            <Text style={styles.appName}>Bookrest</Text>
             <Text style={styles.appTagline}>{settings.is_premium ? 'Pro' : 'All your favorites in one place'}</Text>
           </View>
         </View>
@@ -127,7 +127,7 @@ export function DrawerContent() {
                   <Text style={styles.proBadgeText}>PRO</Text>
                 </View>
                 <View style={styles.proTextBlock}>
-                  <Text style={styles.proTitle}>Thumbmark Pro</Text>
+                  <Text style={styles.proTitle}>Bookrest Pro</Text>
                   <Text style={styles.proSub}>Unlimited saves and custom folder covers</Text>
                 </View>
                 <Text style={styles.chevron}>›</Text>

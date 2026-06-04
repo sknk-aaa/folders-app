@@ -105,7 +105,7 @@ export function ProUpgradeModal({ visible, onClose, hint }: Props) {
           <View style={styles.badge}>
             <Text style={styles.badgeText}>PRO</Text>
           </View>
-          <Text style={styles.title}>Thumbmark Pro</Text>
+          <Text style={styles.title}>Bookrest Pro</Text>
           <Text style={styles.subtitle}>How it compares to the free version</Text>
 
           {/* Comparison table */}

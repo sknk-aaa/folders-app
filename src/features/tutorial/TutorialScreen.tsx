@@ -78,14 +78,14 @@ const PAGES: Page[] = [
     },
     number: '02',
     title: 'Save with One Tap from Share',
-    description: 'Tap "Thumbmark" in the share menu. Just pick a thumbnail, name, and folder, then save.',
+    description: 'Tap "Bookrest" in the share menu. Just pick a thumbnail, name, and folder, then save.',
   },
   {
     key: '5',
     visual: {
       kind: 'icon',
       image: require('../../../assets/icon.png'),
-      label: 'Thumbmark',
+      label: 'Bookrest',
     },
     number: '03',
     title: "Let's Get Started",
