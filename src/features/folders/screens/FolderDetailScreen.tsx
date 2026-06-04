@@ -86,6 +86,7 @@ export function FolderDetailScreen() {
   return (
     <View style={styles.container}>
       <Header
+        title={isSearching ? undefined : folder.name}
         showBack
         onBack={isSearching ? handleSearchClose : () => navigation.goBack()}
         showSearch={!isSearching}
@@ -99,21 +100,6 @@ export function FolderDetailScreen() {
         }
         hideBorder
       />
-
-      {!isSearching && (
-        <View style={styles.folderBand}>
-          <FolderHeaderSummary
-            folder={folder}
-            thumbnail={headerThumbnail}
-            bookmarkCount={bookmarks.length}
-          />
-          <ViewModeToggle
-            value={viewMode}
-            onGridPress={() => setViewMode('grid')}
-            onListPress={() => setViewMode('list')}
-          />
-        </View>
-      )}
 
       <View style={styles.collectionWrap}>
         <GestureDetector gesture={pinchGesture}>
@@ -129,7 +115,7 @@ export function FolderDetailScreen() {
               onReorder={(nextBookmarks) => reorder(folderId, nextBookmarks)}
               emptyText="このフォルダにはまだブックマークがありません"
               columns={columns}
-              hideToolbar={!isSearching}
+              title={isSearching ? undefined : `${bookmarks.length}件のブックマーク`}
             />
           </View>
         </GestureDetector>
