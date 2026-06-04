@@ -2,106 +2,93 @@
 
 ## 現在の状態
 
-v1.2.0 をApp Store Connectに提出済み（2026-05-26）。
-build number 22、EAS build ID `e3c7f24f-36f5-4fd5-8d11-4ac1d0208d47`。
+**v1.5.0 を App Store Connect に提出済み（2026-06-04）。** 主要言語は日本語のまま提出。
+ビルドは GitHub Actions（push → fastlane → TestFlight）。build number は CI 自動採番（`GITHUB_RUN_NUMBER + 100`）。
+
+- 公開中: v1.2.0（30件上限・ライトのみ・日本語のみ）
+- 提出済み: v1.5.0（下記の大型アップデート）
 
 ---
 
-## 実装済み
+## 実装済み（v1.5.0 で追加された主な機能）
 
-| フェーズ | 内容 |
+| 機能 | 内容 |
 |---|---|
-| Phase 1 | フォルダ/ブックマークCRUD、グリッド/リスト表示、並び替え、検索、SQLite永続化 |
-| Phase 2 | Share Extension（expo-share-extension v5、App Group経由） |
-| Phase 3 | チュートリアル（5ページスワイプ）、30件上限 + Proモーダル、RevenueCat連携 |
-| その他 | アプリアイコン・スプラッシュ、ドロワーメニュー（レビュー・FAQ・設定） |
+| メモ（Pro） | ブックマークにメモ。アプリ内（追加/編集）＋ Share Extension で入力。`bookmarks.memo` |
+| ダークモード（Pro） | テーマ自体をPro限定。無料はライト固定。`useTheme()` が `!is_premium` でライトを返す |
+| 3表示モード | grid / list / photo（正方形サムネ）。ピンチで列密度変更 |
+| 積ん読リマインダー（通知） | 週1で未読（タップ0回=`viewed_at` null）を通知。設定トグル＋オンボ最後で許可。expo-notifications |
+| Pro購入画面の刷新 | モーダル→ナビゲーション画面（`ProUpgradeScreen`）。機能ショーケース画像＋プラン選択UI＋単一購入ボタン |
+| 2プラン課金 | 買い切り `com.sknk.foldersapp.pro` ＋ 月額 `com.sknk.foldersapp.pro.monthly`。RevenueCat entitlement `Bookrest Pro` |
+| 無料上限 | ブックマーク 100件（警告90件）・フォルダ 5個 |
+| i18n（端末言語で日英自動切替） | `src/shared/i18n` の `tr({en,ja})`。日本語端末→日本語、他→英語。iOS標準のアプリ別言語に追従 |
+| アプリ名ローカライズ | ホーム画面名 日本語端末=サムネブクマ / 英語端末=Bookrest（`ios/Bookrest/{ja,en}.lproj/InfoPlist.strings`） |
+| オンボーディング | 全4ページ。02=共有保存の動画、03=表示モードの動画（expo-video、ループ/ミュート/再生中バッジ＋プログレスバー） |
+| iCloudバックアップ（Pro） | 実機で動作確認済み |
+
+過去フェーズ（Phase1: CRUD/グリッド/検索/SQLite、Phase2: Share Extension、Phase3: チュートリアル/RevenueCat連携）は既存どおり。
 
 ---
 
 ## 残タスク
 
-### 🔴 高優先
+### 🔴 審査通過後にやる
 
 | タスク | 詳細 |
 |---|---|
-| Pro課金フロー実装 | RevenueCat は設定済み。App Store Connect でプロダクト登録 + 購入・復元フロー実装が必要 |
-| AdMob広告 | `react-native-google-mobile-ads` 追加 → HomeScreen下部バナー（無料版のみ）。EAS Build が必要 |
+| 英語プライマリへ切替 | **1.5.0 審査通過後**、App Store Connect の主要言語を英語に。併せてバイナリ既定も反転（base `CFBundleDisplayName`→Bookrest、許可文→英語、`CFBundleDevelopmentRegion`→en、日本語を `ja.lproj` へ）。海外展開の増幅装置。それまでは日本語プライマリ維持（海外露出を抑える方針） |
 
-### 🟡 中優先
-
-| タスク | 詳細 |
-|---|---|
-| NAVITIME URL問題 | 一部サイトでShare Extension経由のURL自動取得が失敗（詳細↓） |
-| オンボーディング page 1 | `assets/onboarding/welcome.png` を上部が自然に見える構図に差し替え |
-
-### 🟢 低優先
+### 🟡 任意・様子見
 
 | タスク | 詳細 |
 |---|---|
-| （他に追加があればここへ） | |
-
-### 進行中: iCloudバックアップ（Pro）
-
-`react-native-cloud-storage` v3 で実装中。
-
-- **フェーズ1（ローカル検証）完了**: 保存先を抽象化(`src/features/backup/storage/`)、バックアップ/復元エンジン(`engine.ts`)を実装し、dev build + Metro で復元ロジックを実機検証済み。
-- **フェーズ2（iCloud実装）コード完了・未ビルド**: iCloudバックエンド実装、エンタイトルメント手動追記済み。**残：Developer Portalでコンテナ作成 → EAS dev build で実地確認 → 本番**。手順は [OPERATIONS.md](OPERATIONS.md) の「iCloudバックアップ セットアップ手順」参照。
-- 注意: dev=environment `Development` / 本番=`Production` に entitlements を切り替える。`DEV_FORCE_PRO` は本番前に false へ。
+| 依存の版ズレ | `npx expo install --check` で `react-native-view-shot`（5.1.0 vs 推奨4.0.3）等。サムネ保存に問題が出たら揃える |
+| AdMob広告 | 現状ペンディング（無料版バナー構想。未実装） |
 
 ---
 
-## 既知の問題
+## 既知の問題・ハマりどころ
 
-### Share Extension URL取得失敗（一部サイト）
+### 通知が SDK 非互換でクラッシュ（解決済み・再発注意）
+`expo-notifications` を素の `npm install` で入れると SDK54 非互換の最新メジャー（v56）が入り、通知許可時に **SIGABRT**。**必ず `npx expo install` で入れる**こと（正版 `~0.32.17`）。
 
-NAVITIMEの路線時刻表ページ等、一部サイトでURLが自動取得できない。
+### バージョン表記は Info.plist を手動更新
+CI（fastlane）は `CFBundleVersion`（ビルド番号）のみ自動採番。**`CFBundleShortVersionString`（表示版）は committed の `Info.plist` 値がそのまま出る**ため、版を上げる時は `ios/Bookrest/Info.plist` と `ios/BookrestShareExtension/Info.plist` の両方を手で更新する（拡張とメインは一致必須）。
 
-**現状**: `preprocessing.js` に `fallbackUrl` の防御的修正を入れたが、development buildでも解消しなかった。根本原因は未特定。v1.2.0では「一部サイトでURL手入力が必要な既知の制限」として提出。
+### Share Extension のキーボード
+入力時にシートが上がりすぎ/隠れる問題は、`KeyboardAvoidingView` を外し ScrollView に `automaticallyAdjustKeyboardInsets` を付けて対応。Metro では確認不可、要ビルド。
 
-**次のアクション**:
-1. `ShareExtensionViewController.swift` 側に診断情報（受信データのダンプ）を仕込む
-2. 診断を含む development build を作り、同一ページで Safari から共有して確認
-3. PC側のMetroログには出ない想定で調査する
+### ネイティブモジュールは旧 dev client で落ちる
+expo-localization / expo-video / expo-notifications は古い dev client に無いと起動クラッシュ。`i18n/index.ts`・`TutorialScreen`・`notifications/engine.ts` で require ガード済み（未搭載時フォールバック）。本番は全搭載で正常。
+
+### Share Extension URL取得失敗（一部サイト・未解決）
+NAVITIME等でURL自動取得が失敗することがある。`preprocessing.js` に防御策済みだが根本未特定。「一部サイトは手入力」の既知制限。
 
 ---
 
-## 主要ファイルマップ
+## 主要ファイルマップ（抜粋・v1.5.0）
 
 ```
 src/
 ├── features/
-│   ├── folders/
-│   │   ├── components/FolderCard.tsx           フォルダカード（モザイクサムネ）
-│   │   ├── components/SortableFolderGrid.tsx   ドラッグ並び替えグリッド
-│   │   ├── components/FolderEditModal.tsx       フォルダ名・カバー編集
-│   │   ├── screens/HomeScreen.tsx              ホーム
-│   │   ├── screens/FolderDetailScreen.tsx      フォルダ詳細
-│   │   └── store.ts
-│   ├── bookmarks/
-│   │   ├── components/BookmarkCard.tsx
-│   │   ├── components/BookmarkEditModal.tsx
-│   │   ├── screens/AddBookmarkScreen.tsx       上限ロジック・Proモーダル起点
-│   │   ├── screens/TrimScreen.tsx
-│   │   ├── screens/AllBookmarksScreen.tsx
-│   │   └── store.ts
+│   ├── folders/ … HomeScreen / FolderDetailScreen / FolderEditModal / store
+│   ├── bookmarks/ … AddBookmarkScreen(上限ロジック→ProUpgradeへ navigate) / BookmarkCard / store
 │   ├── pro/
-│   │   └── components/ProUpgradeModal.tsx
-│   ├── settings/
-│   │   └── store.ts
-│   └── tutorial/
-│       └── TutorialScreen.tsx
+│   │   ├── screens/ProUpgradeScreen.tsx        購入“ページ”（旧モーダルから移行）
+│   │   └── store.ts                            RevenueCat。DEV_FORCE_PRO / DEV_FORCE_FREE（本番は__DEVで無効）
+│   ├── notifications/engine.ts                 週1通知（require ガード）
+│   ├── backup/ …                               iCloudバックアップ（Pro）
+│   ├── settings/store.ts                       theme_mode / notification_enabled 等
+│   └── tutorial/TutorialScreen.tsx             オンボ4ページ（動画2本）
 ├── shared/
-│   ├── components/Header.tsx
+│   ├── i18n/index.ts                           tr({en,ja}) 端末言語で日英切替
 │   ├── components/DrawerContent.tsx
-│   ├── db/client.ts
-│   ├── db/migrations.ts                       スキーマ・初期データ（シード）
-│   ├── mockVisuals.ts                         サンプルブックマーク定義
+│   ├── db/migrations.ts                        memo / viewed_at 列追加（ALTER）
+│   ├── theme.ts                                useTheme() がPro限定でダーク
 │   └── types/index.ts
-├── navigation/index.tsx
-ShareExtension.tsx                             Share Extension エントリポイント
-preprocessing.js                               ← 変更時は ios/ 配下と必ず同期
-ios/BookrestShareExtension/preprocessing.js    Safari内で実行される実体
-docs/
-├── faq.html                                   FAQページ（Webランディング）
-├── index.html                                 ランディングページ
+├── navigation/index.tsx                        ProUpgrade ルート登録
+ShareExtension.tsx                              ← preprocessing.js は ios/ 配下と同期必須
+ios/Bookrest/{ja,en}.lproj/InfoPlist.strings    アプリ名ローカライズ（pbxprojに手動登録済み）
+fastlane/Fastfile                               CFBundleVersionのみ自動採番
+docs/{index,faq}.html                           ランディング/FAQ（英日併記）
 ```

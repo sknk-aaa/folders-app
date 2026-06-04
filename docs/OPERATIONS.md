@@ -17,40 +17,67 @@
 
 | 項目 | 値 |
 |---|---|
-| バージョン | 1.2.0 |
-| Build Number | 22（提出済み） |
-| 次のbuild number | 23（EAS auto-increment） |
+| 公開中 | 1.2.0 |
+| 提出済み | 1.5.0（2026-06-04 提出、主要言語=日本語） |
+| Build Number | CI 自動採番（fastlane: `GITHUB_RUN_NUMBER + 100`） |
 
-`eas.json` で `autoIncrement: true`、`appVersionSource: "local"` を設定済み。
-production build 失敗時も auto-increment が動くことがある。次のビルド前に `app.json` を確認すること。
+### ★ 表示バージョン（CFBundleShortVersionString）は手動更新
+CI（`fastlane/Fastfile`）は **`CFBundleVersion`（ビルド番号）のみ**自動設定する。
+**`CFBundleShortVersionString`（ユーザーに見える版）は committed の Info.plist 値がそのまま使われる**。
+版を上げる時は **両方**を手で更新（拡張とメインは一致必須）:
+- `ios/Bookrest/Info.plist`
+- `ios/BookrestShareExtension/Info.plist`
+
+`app.json` の version はネイティブに反映されない（prebuild が走らないため）。表示版の真実は Info.plist。
 
 ---
 
 ## ビルド・配信手順
 
-詳細は `~/.claude/docs/IOS_CICD_RECIPE.md` を参照。
+ビルドは **GitHub Actions（EASではない）**。`.github/workflows/ios.yml` → `fastlane ios beta` → TestFlight。
 
 ### JS変更のみ（Metro Dev Clientで確認）
 ```bash
 npx expo start --dev-client --tunnel
 ```
-iPhone側でフォルダズアプリ（開発用）を起動 → 表示された `exp://` URLを入力。
+※ ネイティブモジュール（通知/動画/localization等）の挙動・Share Extension・アプリ名は Metro では確認不可。要ビルド。
 
-### ネイティブ変更を含む場合（EAS Build）
+### ネイティブ変更を含む / 提出用（GitHub Actions）
 ```bash
-npx eas-cli build --platform ios --profile development   # 開発確認用
-npx eas-cli build --platform ios --profile production    # 本番提出用（~15-20分）
+git push          # main への push で ios.yml が走り TestFlight へ
+# or 手動: gh workflow run ios.yml
+```
+ネイティブ変更に該当: `app.json`・新規npmパッケージ・Share Extension（Swift/preprocessing）・権限・Info.plist・pbxproj。
+
+### ★ 新しいネイティブ依存は `npx expo install` で入れる
+素の `npm install` だと SDK 非互換の最新メジャーが入る。実例: `expo-notifications` を npm で入れて v56（SDK54非互換）が入り、通知許可で **SIGABRT クラッシュ**。必ず:
+```bash
+npx expo install <package>      # ✓ SDKに合った版
+npx expo install --check        # 版ズレ確認
 ```
 
-ネイティブ変更に該当するもの: `app.json`・新規npmパッケージ・Share Extension（Swift/preprocessing）・権限追加。
+---
+
+## In-App Purchase / RevenueCat
+
+| 項目 | 値 |
+|---|---|
+| 買い切り（Lifetime） | product ID `com.sknk.foldersapp.pro` |
+| 月額（Monthly） | product ID `com.sknk.foldersapp.pro.monthly` |
+| RevenueCat Entitlement | `Bookrest Pro`（両プロダクトを割当） |
+| RevenueCat Offering | `default`（LIFETIME / MONTHLY パッケージ） |
+
+`src/features/pro/store.ts` の `DEV_FORCE_PRO` / `DEV_FORCE_FREE` は dev用（`__DEV__` ガードで本番無効）。
+買い切りは v1.2 で承認済みのため、提出時の「審査へ提出するIAP」一覧には新規/編集分（月額・編集した買い切り）だけが出る。
 
 ---
 
 ## ビルド前チェックリスト
 
 1. `npx tsc --noEmit` でTypeScriptエラーがないこと
-2. 追加アセットがGit管理されていること（`git status` で確認）
-3. `app.json` と `ios/*/Info.plist` のバージョン・build numberが一致していること
+2. 追加アセットがGit管理されていること（`git status` で確認、ファイル名は ASCII）
+3. **版を上げたら `ios/Bookrest/Info.plist` と `ios/BookrestShareExtension/Info.plist` の `CFBundleShortVersionString` を両方更新**
+4. 新規ネイティブ依存は `npx expo install` で入れたか
 
 ---
 
