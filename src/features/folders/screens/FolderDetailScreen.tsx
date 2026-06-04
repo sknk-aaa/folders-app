@@ -113,7 +113,7 @@ export function FolderDetailScreen() {
               onReorder={(nextBookmarks) => reorder(folderId, nextBookmarks)}
               emptyText="このフォルダにはまだブックマークがありません"
               columns={columns}
-              contentTopInset={40}
+              contentTopInset={28}
             />
           </View>
         </GestureDetector>

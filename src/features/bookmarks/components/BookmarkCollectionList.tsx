@@ -52,7 +52,7 @@ export function BookmarkCollectionList({
     viewMode === 'grid' && columns > 1 ? styles.columnWrapper : undefined
 
   const toolbar = (
-    <View style={[styles.toolbar, { paddingBottom: 12 + contentTopInset }]}>
+    <View style={[styles.toolbar, { paddingTop: 15 + contentTopInset }]}>
       {headerAccessory}
       {title ? (
         <Text style={styles.toolbarTitle} numberOfLines={1}>
