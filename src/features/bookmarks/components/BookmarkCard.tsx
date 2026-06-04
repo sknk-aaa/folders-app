@@ -71,6 +71,9 @@ export function BookmarkCard({ bookmark, allFolders, onDelete, onMove, drag, isA
               {!compact && (
                 <Text style={styles.domain} numberOfLines={1}>{getDomain(bookmark.url)}</Text>
               )}
+              {!compact && bookmark.memo ? (
+                <Text style={styles.cardMemo} numberOfLines={1}>{bookmark.memo}</Text>
+              ) : null}
             </View>
           </View>
           <MoreButton onPress={() => setSheetVisible(true)} />
@@ -80,7 +83,7 @@ export function BookmarkCard({ bookmark, allFolders, onDelete, onMove, drag, isA
       <BookmarkEditModal
         bookmark={editVisible ? bookmark : null}
         onClose={() => setEditVisible(false)}
-        onSave={(name, url) => update(bookmark.id, name, url)}
+        onSave={(name, url, memo) => update(bookmark.id, name, url, memo)}
       />
 
       <CustomActionSheet
@@ -191,5 +194,10 @@ const makeStyles = (c: Palette) => StyleSheet.create({
     fontSize: 11,
     color: c.textSecondary,
     marginTop: 1,
+  },
+  cardMemo: {
+    fontSize: 11,
+    color: c.text,
+    marginTop: 3,
   },
 })

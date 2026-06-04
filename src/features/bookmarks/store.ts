@@ -20,7 +20,7 @@ type BookmarksStore = {
   bookmarks: Bookmark[]
   load: () => void
   add: (data: Omit<Bookmark, 'id' | 'createdAt' | 'sortOrder'>) => Bookmark
-  update: (id: string, name: string, url: string) => void
+  update: (id: string, name: string, url: string, memo: string | null) => void
   updateThumbnail: (id: string, thumbnailPath: string | null) => void
   move: (id: string, folderId: string) => void
   remove: (id: string) => void
@@ -42,6 +42,7 @@ function toBookmark(row: Record<string, unknown>): Bookmark {
     thumbnailPath: (row.thumbnail_path as string | null) ?? null,
     sortOrder: row.sort_order as number,
     createdAt: row.created_at as number,
+    memo: (row.memo as string | null) ?? null,
   }
 }
 
@@ -64,7 +65,7 @@ export const useBookmarksStore = create<BookmarksStore>((setState, getState) => 
       .bookmarks.filter((b) => b.folderId === data.folderId)
       .reduce((m, b) => Math.max(m, b.sortOrder), -1)
     db.runSync(
-      'INSERT INTO bookmarks (id, folder_id, name, url, favicon_url, thumbnail_path, sort_order, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      'INSERT INTO bookmarks (id, folder_id, name, url, favicon_url, thumbnail_path, sort_order, created_at, memo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
       [
         id,
         data.folderId,
@@ -74,6 +75,7 @@ export const useBookmarksStore = create<BookmarksStore>((setState, getState) => 
         data.thumbnailPath,
         maxOrder + 1,
         now,
+        data.memo,
       ],
     )
     const bookmark: Bookmark = { ...data, id, sortOrder: maxOrder + 1, createdAt: now }
@@ -81,11 +83,11 @@ export const useBookmarksStore = create<BookmarksStore>((setState, getState) => 
     return bookmark
   },
 
-  update: (id, name, url) => {
+  update: (id, name, url, memo) => {
     const db = getDb()
-    db.runSync('UPDATE bookmarks SET name = ?, url = ? WHERE id = ?', [name, url, id])
+    db.runSync('UPDATE bookmarks SET name = ?, url = ?, memo = ? WHERE id = ?', [name, url, memo, id])
     setState((s) => ({
-      bookmarks: s.bookmarks.map((b) => (b.id === id ? { ...b, name, url } : b)),
+      bookmarks: s.bookmarks.map((b) => (b.id === id ? { ...b, name, url, memo } : b)),
     }))
   },
 
@@ -161,6 +163,7 @@ export const useBookmarksStore = create<BookmarksStore>((setState, getState) => 
         url: q.url,
         faviconUrl: null,
         thumbnailPath: null,
+        memo: q.memo ?? null,
       })
       addedCount += 1
 

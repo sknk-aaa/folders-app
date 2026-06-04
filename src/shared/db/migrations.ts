@@ -18,6 +18,12 @@ export function migrateSchema(): void {
   if (!hasCustomThumb) {
     db.execSync('ALTER TABLE folders ADD COLUMN custom_thumbnail_path TEXT')
   }
+  const hasMemo = db.getFirstSync<{ count: number }>(
+    "SELECT COUNT(*) as count FROM pragma_table_info('bookmarks') WHERE name='memo'",
+  )?.count ?? 0
+  if (!hasMemo) {
+    db.execSync('ALTER TABLE bookmarks ADD COLUMN memo TEXT')
+  }
 }
 
 export function initializeDatabase(): void {
@@ -42,6 +48,7 @@ export function initializeDatabase(): void {
       thumbnail_path TEXT,
       sort_order INTEGER NOT NULL DEFAULT 0,
       created_at INTEGER NOT NULL,
+      memo TEXT,
       FOREIGN KEY (folder_id) REFERENCES folders(id)
     );
     CREATE TABLE IF NOT EXISTS settings (

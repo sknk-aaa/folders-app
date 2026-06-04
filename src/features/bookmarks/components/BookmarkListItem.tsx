@@ -55,6 +55,9 @@ export function BookmarkListItem({ bookmark, allFolders, onDelete, onMove }: Pro
         <View style={styles.textBlock}>
           <Text style={styles.name} numberOfLines={2}>{bookmark.name}</Text>
           <Text style={styles.domain} numberOfLines={1}>{bookmark.url}</Text>
+          {bookmark.memo ? (
+            <Text style={styles.memo} numberOfLines={2}>{bookmark.memo}</Text>
+          ) : null}
         </View>
         <MoreButton onPress={() => setSheetVisible(true)} />
       </TouchableOpacity>
@@ -62,7 +65,7 @@ export function BookmarkListItem({ bookmark, allFolders, onDelete, onMove }: Pro
       <BookmarkEditModal
         bookmark={editVisible ? bookmark : null}
         onClose={() => setEditVisible(false)}
-        onSave={(name, url) => update(bookmark.id, name, url)}
+        onSave={(name, url, memo) => update(bookmark.id, name, url, memo)}
       />
 
       <CustomActionSheet
@@ -117,5 +120,11 @@ const makeStyles = (c: Palette) => StyleSheet.create({
     fontSize: 12,
     color: c.textSecondary,
     marginTop: 2,
+  },
+  memo: {
+    fontSize: 12,
+    color: c.text,
+    marginTop: 4,
+    lineHeight: 16,
   },
 })

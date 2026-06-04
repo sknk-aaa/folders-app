@@ -20,6 +20,7 @@ export type QueuedBookmark = {
   folderId: string
   ogImageUrl: string | null
   createdAt: number
+  memo?: string | null
 }
 
 export function setFolders(folders: SharedFolder[]): void {

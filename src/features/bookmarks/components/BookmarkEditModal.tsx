@@ -10,22 +10,26 @@ import {
   Platform,
 } from 'react-native'
 import { useThemedStyles, spacing, radius, type Palette } from '../../../shared/theme'
+import { useSettingsStore } from '../../settings/store'
 import type { Bookmark } from '../../../shared/types'
 
 type Props = {
   bookmark: Bookmark | null
   onClose: () => void
-  onSave: (name: string, url: string) => void
+  onSave: (name: string, url: string, memo: string | null) => void
 }
 
 export function BookmarkEditModal({ bookmark, onClose, onSave }: Props) {
   const [name, setName] = useState(bookmark?.name ?? '')
   const [url, setUrl] = useState(bookmark?.url ?? '')
+  const [memo, setMemo] = useState(bookmark?.memo ?? '')
+  const { settings } = useSettingsStore()
   const { c, styles } = useThemedStyles(makeStyles)
 
   useEffect(() => {
     setName(bookmark?.name ?? '')
     setUrl(bookmark?.url ?? '')
+    setMemo(bookmark?.memo ?? '')
   }, [bookmark])
 
   if (!bookmark) return null
@@ -34,7 +38,7 @@ export function BookmarkEditModal({ bookmark, onClose, onSave }: Props) {
     const trimName = name.trim()
     const trimUrl = url.trim()
     if (!trimName || !trimUrl) return
-    onSave(trimName, trimUrl)
+    onSave(trimName, trimUrl, settings.is_premium ? memo.trim() || null : null)
     onClose()
   }
 
@@ -84,6 +88,20 @@ export function BookmarkEditModal({ bookmark, onClose, onSave }: Props) {
               onSubmitEditing={handleSave}
             />
           </View>
+
+          {settings.is_premium && (
+            <View style={styles.field}>
+              <Text style={styles.label}>メモ</Text>
+              <TextInput
+                style={[styles.input, styles.memoInput]}
+                value={memo}
+                onChangeText={setMemo}
+                placeholder="メモ（任意）"
+                placeholderTextColor={c.textTertiary}
+                multiline
+              />
+            </View>
+          )}
         </View>
       </KeyboardAvoidingView>
     </Modal>
@@ -130,5 +148,9 @@ const makeStyles = (c: Palette) => StyleSheet.create({
     padding: 12,
     fontSize: 15,
     color: c.text,
+  },
+  memoInput: {
+    minHeight: 72,
+    textAlignVertical: 'top',
   },
 })

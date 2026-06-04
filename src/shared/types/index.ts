@@ -33,6 +33,7 @@ export type Bookmark = {
   thumbnailPath: string | null
   sortOrder: number
   createdAt: number
+  memo: string | null
 }
 
 export type DefaultBrowser = 'safari' | 'chrome' | 'edge'
