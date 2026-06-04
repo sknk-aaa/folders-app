@@ -4,19 +4,26 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { DrawerActions, useNavigation } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import type { RootStackParamList } from '../types'
+import type { RootStackParamList, ThemeMode } from '../types'
 import { useSettingsStore } from '../../features/settings/store'
 import { useFoldersStore } from '../../features/folders/store'
 import { ProUpgradeModal } from '../../features/pro/components/ProUpgradeModal'
-import { colors, spacing } from '../theme'
+import { useThemedStyles, darkColors, spacing, type Palette } from '../theme'
 
 const APP_ICON = require('../../../assets/icon.png')
+
+const THEME_OPTIONS: { mode: ThemeMode; label: string }[] = [
+  { mode: 'light', label: 'ライト' },
+  { mode: 'dark', label: 'ダーク' },
+  { mode: 'auto', label: '自動' },
+]
 
 export function DrawerContent() {
   const insets = useSafeAreaInsets()
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
   const { settings, set } = useSettingsStore()
   const { folders } = useFoldersStore()
+  const { c, styles } = useThemedStyles(makeStyles)
   const [proModalVisible, setProModalVisible] = useState(false)
 
   const defaultFolderName =
@@ -131,7 +138,7 @@ export function DrawerContent() {
         <View style={styles.card}>
           <TouchableOpacity style={styles.rowColumn} onPress={handleDefaultFolderChange}>
             <View style={styles.rowLeft}>
-              <Ionicons name="folder-outline" size={20} color={colors.textSecondary} style={styles.itemIcon} />
+              <Ionicons name="folder-outline" size={20} color={c.textSecondary} style={styles.itemIcon} />
               <Text style={styles.label}>デフォルトの保存先</Text>
             </View>
             <View style={styles.rowColumnRight}>
@@ -142,7 +149,7 @@ export function DrawerContent() {
           <View style={styles.separator} />
           <TouchableOpacity style={styles.row} onPress={handleBrowserChange}>
             <View style={styles.rowLeft}>
-              <Ionicons name="globe-outline" size={20} color={colors.textSecondary} style={styles.itemIcon} />
+              <Ionicons name="globe-outline" size={20} color={c.textSecondary} style={styles.itemIcon} />
               <Text style={styles.label}>デフォルトブラウザ</Text>
             </View>
             <View style={styles.rowRight}>
@@ -153,7 +160,7 @@ export function DrawerContent() {
           <View style={styles.separator} />
           <TouchableOpacity style={styles.row} onPress={handleBackup}>
             <View style={styles.rowLeft}>
-              <Ionicons name="cloud-outline" size={20} color={colors.textSecondary} style={styles.itemIcon} />
+              <Ionicons name="cloud-outline" size={20} color={c.textSecondary} style={styles.itemIcon} />
               <Text style={styles.label}>iCloudバックアップ</Text>
             </View>
             <View style={styles.rowRight}>
@@ -167,9 +174,26 @@ export function DrawerContent() {
           </TouchableOpacity>
         </View>
 
+        {/* テーマ */}
+        <SectionTitle>テーマ</SectionTitle>
+        <View style={styles.themeSeg}>
+          {THEME_OPTIONS.map(({ mode, label }) => {
+            const on = settings.theme_mode === mode
+            return (
+              <TouchableOpacity
+                key={mode}
+                style={[styles.themeSegItem, on && styles.themeSegItemOn]}
+                onPress={() => set('theme_mode', mode)}
+                activeOpacity={0.8}
+              >
+                <Text style={[styles.themeSegText, on && styles.themeSegTextOn]}>{label}</Text>
+              </TouchableOpacity>
+            )
+          })}
+        </View>
       </ScrollView>
       <View style={[styles.footer, { paddingBottom: insets.bottom + 12 }]}>
-        <Text style={styles.footerText}>v1.1.0</Text>
+        <Text style={styles.footerText}>v1.3.0</Text>
       </View>
       <ProUpgradeModal visible={proModalVisible} onClose={() => setProModalVisible(false)} />
     </View>
@@ -177,6 +201,7 @@ export function DrawerContent() {
 }
 
 function SectionTitle({ children }: { children: string }) {
+  const { styles } = useThemedStyles(makeStyles)
   return <Text style={styles.sectionTitle}>{children}</Text>
 }
 
@@ -191,11 +216,12 @@ function DrawerLinkItem({
   onPress: () => void
   isLast?: boolean
 }) {
+  const { c, styles } = useThemedStyles(makeStyles)
   return (
     <>
       <TouchableOpacity style={styles.row} onPress={onPress} activeOpacity={0.7}>
         <View style={styles.rowLeft}>
-          <Ionicons name={icon} size={20} color={colors.textSecondary} style={styles.itemIcon} />
+          <Ionicons name={icon} size={20} color={c.textSecondary} style={styles.itemIcon} />
           <Text style={styles.label}>{label}</Text>
         </View>
         <Text style={styles.chevron}>›</Text>
@@ -205,179 +231,192 @@ function DrawerLinkItem({
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.drawerBg,
-    paddingHorizontal: spacing.lg,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 4,
-    paddingTop: 8,
-    paddingBottom: 28,
-    gap: 12,
-  },
-  icon: {
-    width: 52,
-    height: 52,
-    borderRadius: 12,
-  },
-  headerText: {
-    flex: 1,
-    minWidth: 0,
-  },
-  appName: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: colors.text,
-    letterSpacing: 0.2,
-  },
-  appTagline: {
-    fontSize: 12,
-    color: colors.textSecondary,
-    marginTop: 3,
-  },
-  sectionTitle: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: colors.textSecondary,
-    letterSpacing: 0.6,
-    textTransform: 'uppercase',
-    marginTop: 24,
-    marginBottom: 8,
-    marginLeft: 6,
-  },
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 14,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.cardBorder,
-    overflow: 'hidden',
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 14,
-    paddingVertical: 14,
-  },
-  rowLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    flex: 1,
-    minWidth: 0,
-  },
-  rowRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  itemIcon: {
-    width: 22,
-  },
-  toggleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 14,
-  },
-  toggleText: {
-    flex: 1,
-    minWidth: 0,
-  },
-  description: {
-    fontSize: 11,
-    color: colors.textSecondary,
-    marginTop: 3,
-    lineHeight: 15,
-  },
-  label: {
-    fontSize: 15,
-    color: colors.text,
-  },
-  value: {
-    fontSize: 14,
-    color: colors.textSecondary,
-  },
-  chevron: {
-    fontSize: 18,
-    color: colors.textTertiary,
-    fontWeight: '300',
-    lineHeight: 18,
-  },
-  rowColumn: {
-    paddingHorizontal: 14,
-    paddingVertical: 14,
-    gap: 2,
-  },
-  rowColumnRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingLeft: 34,
-  },
-  separator: {
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: colors.cardBorder,
-    marginLeft: 14,
-  },
-  proRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 14,
-    paddingVertical: 14,
-    gap: 12,
-  },
-  proBadge: {
-    backgroundColor: '#1C1C1E',
-    borderRadius: 6,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-  },
-  miniProBadge: {
-    backgroundColor: '#1C1C1E',
-    borderRadius: 5,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-  },
-  miniProBadgeText: {
-    fontSize: 9,
-    fontWeight: '700',
-    color: '#FFD60A',
-    letterSpacing: 0.8,
-  },
-  proBadgeText: {
-    fontSize: 10,
-    fontWeight: '700',
-    color: '#FFD60A',
-    letterSpacing: 1,
-  },
-  proTextBlock: {
-    flex: 1,
-    minWidth: 0,
-  },
-  proTitle: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: colors.text,
-  },
-  proSub: {
-    fontSize: 11,
-    color: colors.textSecondary,
-    marginTop: 2,
-  },
-  footer: {
-    paddingTop: 12,
-    alignItems: 'center',
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: colors.cardBorder,
-  },
-  footerText: {
-    fontSize: 11,
-    color: colors.textTertiary,
-  },
-})
+const makeStyles = (c: Palette) => {
+  const dark = c === darkColors
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: c.drawerBg,
+      paddingHorizontal: spacing.lg,
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: 4,
+      paddingTop: 8,
+      paddingBottom: 28,
+      gap: 12,
+    },
+    icon: {
+      width: 52,
+      height: 52,
+      borderRadius: 12,
+    },
+    headerText: {
+      flex: 1,
+      minWidth: 0,
+    },
+    appName: {
+      fontSize: 18,
+      fontWeight: '700',
+      color: c.text,
+      letterSpacing: 0.2,
+    },
+    appTagline: {
+      fontSize: 12,
+      color: c.textSecondary,
+      marginTop: 3,
+    },
+    sectionTitle: {
+      fontSize: 11,
+      fontWeight: '600',
+      color: c.textSecondary,
+      letterSpacing: 0.6,
+      textTransform: 'uppercase',
+      marginTop: 24,
+      marginBottom: 8,
+      marginLeft: 6,
+    },
+    card: {
+      backgroundColor: c.surface,
+      borderRadius: 14,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: c.cardBorder,
+      overflow: 'hidden',
+    },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: 14,
+      paddingVertical: 14,
+    },
+    rowLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+      flex: 1,
+      minWidth: 0,
+    },
+    rowRight: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 4,
+    },
+    itemIcon: {
+      width: 22,
+    },
+    label: {
+      fontSize: 15,
+      color: c.text,
+    },
+    value: {
+      fontSize: 14,
+      color: c.textSecondary,
+    },
+    chevron: {
+      fontSize: 18,
+      color: c.textTertiary,
+      fontWeight: '300',
+      lineHeight: 18,
+    },
+    rowColumn: {
+      paddingHorizontal: 14,
+      paddingVertical: 14,
+      gap: 2,
+    },
+    rowColumnRight: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingLeft: 34,
+    },
+    separator: {
+      height: StyleSheet.hairlineWidth,
+      backgroundColor: c.cardBorder,
+      marginLeft: 14,
+    },
+    proRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: 14,
+      paddingVertical: 14,
+      gap: 12,
+    },
+    proBadge: {
+      backgroundColor: dark ? '#FFD60A' : '#1C1C1E',
+      borderRadius: 6,
+      paddingHorizontal: 8,
+      paddingVertical: 3,
+    },
+    proBadgeText: {
+      fontSize: 10,
+      fontWeight: '700',
+      color: dark ? '#1C1C1E' : '#FFD60A',
+      letterSpacing: 1,
+    },
+    miniProBadge: {
+      backgroundColor: dark ? '#FFD60A' : '#1C1C1E',
+      borderRadius: 5,
+      paddingHorizontal: 6,
+      paddingVertical: 2,
+    },
+    miniProBadgeText: {
+      fontSize: 9,
+      fontWeight: '700',
+      color: dark ? '#1C1C1E' : '#FFD60A',
+      letterSpacing: 0.8,
+    },
+    proTextBlock: {
+      flex: 1,
+      minWidth: 0,
+    },
+    proTitle: {
+      fontSize: 15,
+      fontWeight: '600',
+      color: c.text,
+    },
+    proSub: {
+      fontSize: 11,
+      color: c.textSecondary,
+      marginTop: 2,
+    },
+    themeSeg: {
+      flexDirection: 'row',
+      backgroundColor: c.iconBg,
+      borderRadius: 10,
+      padding: 3,
+    },
+    themeSegItem: {
+      flex: 1,
+      alignItems: 'center',
+      paddingVertical: 7,
+      borderRadius: 8,
+    },
+    themeSegItemOn: {
+      backgroundColor: dark ? '#48484A' : c.surface,
+      shadowColor: '#000',
+      shadowOpacity: dark ? 0 : 0.12,
+      shadowRadius: 3,
+      shadowOffset: { width: 0, height: 1 },
+    },
+    themeSegText: {
+      fontSize: 12,
+      fontWeight: '600',
+      color: c.textSecondary,
+    },
+    themeSegTextOn: {
+      color: c.text,
+    },
+    footer: {
+      paddingTop: 12,
+      alignItems: 'center',
+      borderTopWidth: StyleSheet.hairlineWidth,
+      borderTopColor: c.cardBorder,
+    },
+    footerText: {
+      fontSize: 11,
+      color: c.textTertiary,
+    },
+  })
+}
