@@ -7,6 +7,8 @@ const REVENUECAT_API_KEY = 'appl_uesZfCuFvseRYpwJqpMMcFrDRfc'
 const ENTITLEMENT_ID = 'Bookrest Pro'
 // For UI testing during development. Always set back to false before a production release.
 const DEV_FORCE_PRO = __DEV__ && false
+// Force the free (non-premium) state in dev, ignoring RevenueCat. Set back to false before release.
+const DEV_FORCE_FREE = __DEV__ && true
 
 type ProStore = {
   isPro: boolean
@@ -33,6 +35,11 @@ export const useProStore = create<ProStore>((setState) => ({
   },
 
   load: async () => {
+    if (DEV_FORCE_FREE) {
+      setState({ isPro: false })
+      syncToPremium(false)
+      return
+    }
     try {
       const info = await Purchases.getCustomerInfo()
       const isPro = info.entitlements.active[ENTITLEMENT_ID] !== undefined
