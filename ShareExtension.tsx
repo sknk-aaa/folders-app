@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import {
   Image,
-  KeyboardAvoidingView,
   Platform,
   ScrollView,
   StyleSheet,
@@ -128,11 +127,7 @@ export default function ShareExtension({ url, text, preprocessingResults }: Prop
         {tr({ en: 'Add Bookmark', ja: 'ブックマークを追加' })}
       </Text>
 
-      <KeyboardAvoidingView
-        style={styles.keyboardAvoid}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={0}
-      >
+      <View style={styles.keyboardAvoid}>
         <ScrollView
           style={styles.scroll}
           contentContainerStyle={styles.scrollContent}
@@ -271,7 +266,7 @@ export default function ShareExtension({ url, text, preprocessingResults }: Prop
             </Text>
           </TouchableOpacity>
         </View>
-      </KeyboardAvoidingView>
+      </View>
     </View>
   )
 }
