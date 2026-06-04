@@ -24,6 +24,8 @@ type Props = {
   headerAccessory?: ReactNode
   onReorder?: (bookmarks: Bookmark[]) => void
   columns?: number
+  /** ツールバー上部に追加する余白。フォルダ詳細のヘッダー帯と本文の被りを防ぐ */
+  contentTopInset?: number
 }
 
 export function BookmarkCollectionList({
@@ -39,6 +41,7 @@ export function BookmarkCollectionList({
   headerAccessory,
   onReorder,
   columns: columnsProp = 2,
+  contentTopInset = 0,
 }: Props) {
   const { styles } = useThemedStyles(makeStyles)
   const columns = viewMode === 'grid' ? columnsProp : 1
@@ -49,7 +52,7 @@ export function BookmarkCollectionList({
     viewMode === 'grid' && columns > 1 ? styles.columnWrapper : undefined
 
   const toolbar = (
-    <View style={styles.toolbar}>
+    <View style={[styles.toolbar, { paddingBottom: 12 + contentTopInset }]}>
       {headerAccessory}
       {title ? (
         <Text style={styles.toolbarTitle} numberOfLines={1}>
