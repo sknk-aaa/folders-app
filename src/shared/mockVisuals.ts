@@ -1,11 +1,12 @@
 import type { FolderIconId } from './types'
+import { tr } from './i18n'
 
 export const MOCK_FOLDERS: Array<{
   name: string
   iconId: FolderIconId
   isDefault: 0 | 1
 }> = [
-  { name: 'Uncategorized', iconId: 'default', isDefault: 1 },
+  { name: tr({ en: 'Uncategorized', ja: '未分類' }), iconId: 'default', isDefault: 1 },
 ]
 
 export type MockBookmark = {

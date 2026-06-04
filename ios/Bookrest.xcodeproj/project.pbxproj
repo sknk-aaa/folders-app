@@ -16,6 +16,7 @@
 		225D96D60EEC4E9CB8C4ABC4 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D375259A6AB74C928ED3A52C /* Info.plist */; };
 		25AFDF91A419431CB577D1D2 /* BookrestShareExtension.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 8E71A2DDC34349CDA88EB792 /* BookrestShareExtension.entitlements */; };
 		F0771EDFA2CC410DA648FDE2 /* preprocessing.js in Resources */ = {isa = PBXBuildFile; fileRef = 81D34F35E02849A38DDC1C23 /* preprocessing.js */; };
+		D0C0FFEE000000000000A004 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D0C0FFEE000000000000A001 /* InfoPlist.strings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,8 @@
 		D375259A6AB74C928ED3A52C /* Info.plist */ = {isa = PBXFileReference; name = "Info.plist"; path = "Info.plist"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = text.plist.xml; explicitFileType = undefined; includeInIndex = 0; };
 		8E71A2DDC34349CDA88EB792 /* BookrestShareExtension.entitlements */ = {isa = PBXFileReference; name = "BookrestShareExtension.entitlements"; path = "BookrestShareExtension.entitlements"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		81D34F35E02849A38DDC1C23 /* preprocessing.js */ = {isa = PBXFileReference; name = "preprocessing.js"; path = "preprocessing.js"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		D0C0FFEE000000000000A002 /* ja */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = ja; path = Bookrest/ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		D0C0FFEE000000000000A003 /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = en; path = Bookrest/en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +64,7 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
+				D0C0FFEE000000000000A001 /* InfoPlist.strings */,
 			);
 			name = Bookrest;
 			sourceTree = "<group>";
@@ -213,6 +217,7 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
+				D0C0FFEE000000000000A004 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -225,6 +230,18 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		D0C0FFEE000000000000A001 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D0C0FFEE000000000000A002 /* ja */,
+				D0C0FFEE000000000000A003 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin PBXShellScriptBuildPhase section */
 		00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */ = {

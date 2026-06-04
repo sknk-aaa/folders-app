@@ -25,6 +25,10 @@
     "android": {
       "package": "com.sknk.foldersapp"
     },
+    "locales": {
+      "ja": "./assets/locales/ja.json",
+      "en": "./assets/locales/en.json"
+    },
     "plugins": [
       "expo-sqlite",
       "expo-web-browser",
