@@ -37,7 +37,7 @@ type Feature = { image: ImageSourcePropType; ratio: number; title: string; body:
 const FEATURES: Feature[] = [
   {
     image: require('../../../../assets/pro-feature_dark.png'),
-    ratio: 828 / 1792,
+    ratio: 828 / 933,
     title: tr({ en: 'Dark Mode', ja: 'ダークモード' }),
     body: tr({
       en: 'An easy-on-the-eyes dark theme — your own quiet study at night.',
@@ -83,6 +83,7 @@ export function ProUpgradeModal({ visible, onClose, hint }: Props) {
   const [monthlyPkg, setMonthlyPkg] = useState<PurchasesPackage | null>(null)
   const [toastMsg, setToastMsg] = useState('')
   const [toastVisible, setToastVisible] = useState(false)
+  const [selected, setSelected] = useState<'lifetime' | 'monthly'>('lifetime')
 
   const showToast = (msg: string) => {
     setToastMsg(msg)
@@ -146,53 +147,79 @@ export function ProUpgradeModal({ visible, onClose, hint }: Props) {
   const lifetimePrice = lifetimePkg?.product.priceString ?? '¥1,500'
   const monthlyPrice = monthlyPkg?.product.priceString ?? '¥400'
 
-  const plans = (keySuffix: string) => (
-    <View style={styles.plans}>
-      <TouchableOpacity
-        key={`life-${keySuffix}`}
-        style={[styles.planCard, isLoading && styles.disabled]}
-        onPress={() => void buy(lifetimePkg)}
-        disabled={isLoading}
-        activeOpacity={0.85}
-      >
-        <View style={styles.planLeft}>
-          <View style={styles.planNameRow}>
-            <Text style={styles.planName}>{tr({ en: 'Lifetime', ja: '買い切り' })}</Text>
-            <View style={styles.recommendChip}>
-              <Text style={styles.recommendText}>{tr({ en: 'Popular', ja: 'おすすめ' })}</Text>
+  const buyLabel =
+    selected === 'lifetime'
+      ? tr({ en: `Buy · ${lifetimePrice}`, ja: `${lifetimePrice}で購入` })
+      : tr({ en: `Subscribe · ${monthlyPrice}/mo`, ja: `${monthlyPrice}／月で購入` })
+
+  const plans = (keySuffix: string) => {
+    const lifeActive = selected === 'lifetime'
+    const monthActive = selected === 'monthly'
+    return (
+      <View style={styles.plans}>
+        {/* Lifetime — selectable */}
+        <TouchableOpacity
+          key={`life-${keySuffix}`}
+          style={[styles.planCard, lifeActive ? styles.planCardActive : styles.planCardIdle]}
+          onPress={() => setSelected('lifetime')}
+          activeOpacity={0.9}
+        >
+          <View style={styles.planLeft}>
+            <View style={styles.planNameRow}>
+              <Text style={[styles.planName, lifeActive && styles.planTextOnActive]}>
+                {tr({ en: 'Lifetime', ja: '買い切り' })}
+              </Text>
+              <View style={[styles.recommendChip, lifeActive && styles.recommendChipActive]}>
+                <Text style={[styles.recommendText, lifeActive && styles.planTextOnActive]}>
+                  {tr({ en: 'Popular', ja: 'おすすめ' })}
+                </Text>
+              </View>
             </View>
+            <Text style={[styles.planDesc, lifeActive && styles.planDescOnActive]}>
+              {tr({ en: 'One payment, yours forever', ja: '一度の支払いで永久に使える' })}
+            </Text>
           </View>
-          <Text style={styles.planDesc}>{tr({ en: 'One-time, yours forever', ja: '一度きり・ずっと使える' })}</Text>
-        </View>
-        <View style={styles.planRight}>
-          <Text style={styles.planPrice}>{lifetimePrice}</Text>
-          <Ionicons name="chevron-forward" size={18} color={c.textTertiary} />
-        </View>
-      </TouchableOpacity>
+          <Text style={[styles.planPrice, lifeActive && styles.planTextOnActive]}>{lifetimePrice}</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity
-        key={`month-${keySuffix}`}
-        style={[styles.planCard, isLoading && styles.disabled]}
-        onPress={() => void buy(monthlyPkg)}
-        disabled={isLoading}
-        activeOpacity={0.85}
-      >
-        <View style={styles.planLeft}>
-          <Text style={styles.planName}>{tr({ en: 'Monthly', ja: '月額' })}</Text>
-          <Text style={styles.planDesc}>{tr({ en: 'Cancel anytime', ja: 'いつでも解約できます' })}</Text>
-        </View>
-        <View style={styles.planRight}>
-          <Text style={styles.planPrice}>
+        {/* Monthly — selectable */}
+        <TouchableOpacity
+          key={`month-${keySuffix}`}
+          style={[styles.planCard, monthActive ? styles.planCardActive : styles.planCardIdle]}
+          onPress={() => setSelected('monthly')}
+          activeOpacity={0.9}
+        >
+          <View style={styles.planLeft}>
+            <Text style={[styles.planName, monthActive && styles.planTextOnActive]}>
+              {tr({ en: 'Monthly', ja: '月額プラン' })}
+            </Text>
+            <Text style={[styles.planDesc, monthActive && styles.planDescOnActive]}>
+              {tr({ en: 'Cancel anytime', ja: 'いつでもキャンセル可能' })}
+            </Text>
+          </View>
+          <Text style={[styles.planPrice, monthActive && styles.planTextOnActive]}>
             {monthlyPrice}
-            {tr({ en: '/mo', ja: '／月' })}
+            <Text style={[styles.planPriceUnit, monthActive && styles.planDescOnActive]}>{tr({ en: '/mo', ja: '／月' })}</Text>
           </Text>
-          <Ionicons name="chevron-forward" size={18} color={c.textTertiary} />
-        </View>
-      </TouchableOpacity>
+        </TouchableOpacity>
 
-      {isLoading ? <ActivityIndicator color={c.textSecondary} style={styles.plansSpinner} /> : null}
-    </View>
-  )
+        {/* Single purchase button for the selected plan */}
+        <TouchableOpacity
+          key={`buy-${keySuffix}`}
+          style={[styles.buyBtn, isLoading && styles.disabled]}
+          onPress={() => void buy(selected === 'lifetime' ? lifetimePkg : monthlyPkg)}
+          disabled={isLoading}
+          activeOpacity={0.88}
+        >
+          {isLoading ? (
+            <ActivityIndicator color={c.background} />
+          ) : (
+            <Text style={styles.buyBtnText}>{buyLabel}</Text>
+          )}
+        </TouchableOpacity>
+      </View>
+    )
+  }
 
   return (
     <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
@@ -368,40 +395,54 @@ const makeStyles = (c: Palette) =>
     cellVal: { flex: 1, fontSize: 14, color: c.textSecondary, textAlign: 'center' },
     cellValPro: { color: c.text, fontWeight: '600' },
 
-    // Balanced plan cards (used both after the table and at the bottom)
+    // Selectable plan cards + a single purchase button
     plans: { width: '100%', gap: 10, marginBottom: 4 },
     planCard: {
       width: '100%',
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: c.cardBorder,
       borderRadius: 14,
       paddingVertical: 15,
-      paddingLeft: 18,
-      paddingRight: 14,
-      backgroundColor: c.surface,
-      shadowColor: '#000',
-      shadowOpacity: 0.08,
-      shadowRadius: 7,
-      shadowOffset: { width: 0, height: 2 },
-      elevation: 2,
+      paddingHorizontal: 18,
     },
-    planRight: { flexDirection: 'row', alignItems: 'center', gap: 3 },
+    planCardIdle: {
+      backgroundColor: c.surface,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: c.cardBorder,
+    },
+    planCardActive: {
+      backgroundColor: c.text,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: c.text,
+    },
     planLeft: { gap: 3, flexShrink: 1 },
     planNameRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
     planName: { fontSize: 16, fontWeight: '700', color: c.text },
     planDesc: { fontSize: 12.5, color: c.textSecondary },
     planPrice: { fontSize: 18, fontWeight: '700', color: c.text },
+    planPriceUnit: { fontSize: 12.5, fontWeight: '600', color: c.textSecondary },
+    planTextOnActive: { color: c.background },
+    planDescOnActive: { color: c.background, opacity: 0.65 },
     recommendChip: {
       backgroundColor: c.placeholderBg,
       borderRadius: 6,
       paddingHorizontal: 7,
       paddingVertical: 2,
     },
+    recommendChipActive: { backgroundColor: 'rgba(255,255,255,0.2)' },
     recommendText: { fontSize: 10, fontWeight: '700', color: c.textSecondary, letterSpacing: 0.5 },
-    plansSpinner: { marginTop: 4 },
+    buyBtn: {
+      width: '100%',
+      backgroundColor: c.text,
+      borderRadius: 14,
+      paddingVertical: 17,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: 8,
+      minHeight: 54,
+    },
+    buyBtnText: { fontSize: 16, fontWeight: '700', color: c.background, letterSpacing: 0.2 },
     disabled: { opacity: 0.5 },
 
     // Feature showcase
