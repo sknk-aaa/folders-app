@@ -15,6 +15,7 @@ import { useBookmarksStore } from '../store'
 import { useFoldersStore } from '../../folders/store'
 import { BookmarkCard } from '../components/BookmarkCard'
 import { useThemedStyles, spacing, type Palette } from '../../../shared/theme'
+import { tr } from '../../../shared/i18n'
 import type { RootStackParamList } from '../../../shared/types'
 
 const { width: SCREEN_W } = Dimensions.get('window')
@@ -56,14 +57,14 @@ export function SearchScreen() {
           style={styles.input}
           value={query}
           onChangeText={setQuery}
-          placeholder="Search..."
+          placeholder={tr({ en: 'Search...', ja: '検索...' })}
           placeholderTextColor={c.textTertiary}
           autoFocus
           returnKeyType="search"
           clearButtonMode="while-editing"
         />
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.cancelBtn}>
-          <Text style={styles.cancelText}>Cancel</Text>
+          <Text style={styles.cancelText}>{tr({ en: 'Cancel', ja: 'キャンセル' })}</Text>
         </TouchableOpacity>
       </View>
 
@@ -85,7 +86,7 @@ export function SearchScreen() {
         )}
         ListEmptyComponent={
           <Text style={styles.emptyText}>
-            {query ? 'No results found' : 'Enter a keyword'}
+            {query ? tr({ en: 'No results found', ja: '検索結果がありません' }) : tr({ en: 'Enter a keyword', ja: 'キーワードを入力してください' })}
           </Text>
         }
       />

@@ -16,6 +16,7 @@ import { InlineSearchBar } from '../../../shared/components/InlineSearchBar'
 import { ViewModeToggle } from '../../../shared/components/ViewModeToggle'
 import { FOLDER_PLACEHOLDER } from '../../../shared/mockVisuals'
 import { useThemedStyles, spacing, radius, type Palette } from '../../../shared/theme'
+import { tr } from '../../../shared/i18n'
 import type {
   RootStackParamList,
   Folder,
@@ -87,7 +88,7 @@ export function FolderDetailScreen() {
   return (
     <View style={styles.container}>
       <Header
-        title={isSearching ? undefined : 'Bookmarks'}
+        title={isSearching ? undefined : tr({ en: 'Bookmarks', ja: 'ブックマーク' })}
         showBack
         onBack={isSearching ? handleSearchClose : () => navigation.goBack()}
         showSearch={!isSearching}
@@ -130,7 +131,7 @@ export function FolderDetailScreen() {
               onDelete={(bookmark) => remove(bookmark.id)}
               onMove={(bookmark, targetFolderId) => move(bookmark.id, targetFolderId)}
               onReorder={(nextBookmarks) => reorder(folderId, nextBookmarks)}
-              emptyText="No bookmarks in this folder yet"
+              emptyText={tr({ en: 'No bookmarks in this folder yet', ja: 'このフォルダにはまだブックマークがありません' })}
               columns={columns}
               hideToolbar={!isSearching}
             />
@@ -173,7 +174,7 @@ function FolderHeaderSummary({
           {folder.name}
         </Text>
         <Text style={styles.headerSub} numberOfLines={1}>
-          {bookmarkCount} bookmarks
+          {tr({ en: `${bookmarkCount} bookmarks`, ja: `${bookmarkCount}件のブックマーク` })}
         </Text>
       </View>
     </View>

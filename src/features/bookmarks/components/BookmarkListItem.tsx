@@ -5,6 +5,7 @@ import { CustomActionSheet } from '../../../shared/components/CustomActionSheet'
 import { MoreButton } from '../../../shared/components/MoreButton'
 import { PlaceholderImage } from '../../../shared/components/PlaceholderImage'
 import { useThemedStyles, spacing, radius, type Palette } from '../../../shared/theme'
+import { tr } from '../../../shared/i18n'
 import { openInBrowser } from '../../../shared/utils/url'
 import { useBookmarksStore } from '../store'
 import { useSettingsStore } from '../../settings/store'
@@ -35,9 +36,9 @@ export function BookmarkListItem({ bookmark, allFolders, onDelete, onMove }: Pro
   }
 
   const handleDeleteConfirm = () => {
-    Alert.alert('Delete', `Delete "${bookmark.name}"?`, [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Delete', style: 'destructive', onPress: onDelete },
+    Alert.alert(tr({ en: 'Delete', ja: '削除' }), tr({ en: `Delete "${bookmark.name}"?`, ja: `「${bookmark.name}」を削除しますか？` }), [
+      { text: tr({ en: 'Cancel', ja: 'キャンセル' }), style: 'cancel' },
+      { text: tr({ en: 'Delete', ja: '削除' }), style: 'destructive', onPress: onDelete },
     ])
   }
 
@@ -73,18 +74,18 @@ export function BookmarkListItem({ bookmark, allFolders, onDelete, onMove }: Pro
         visible={sheetVisible}
         title={bookmark.name}
         options={[
-          { label: 'Edit', onPress: () => setEditVisible(true) },
+          { label: tr({ en: 'Edit', ja: '編集' }), onPress: () => setEditVisible(true) },
           ...(allFolders.length > 1
-            ? [{ label: 'Move', onPress: () => setMoveSheetVisible(true) }]
+            ? [{ label: tr({ en: 'Move', ja: '移動' }), onPress: () => setMoveSheetVisible(true) }]
             : []),
-          { label: 'Delete', destructive: true, onPress: handleDeleteConfirm },
+          { label: tr({ en: 'Delete', ja: '削除' }), destructive: true, onPress: handleDeleteConfirm },
         ]}
         onCancel={() => setSheetVisible(false)}
       />
 
       <CustomActionSheet
         visible={moveSheetVisible}
-        title="Move to folder"
+        title={tr({ en: 'Move to folder', ja: '移動先フォルダ' })}
         options={allFolders.map((f) => ({ label: f.name, onPress: () => onMove(f.id) }))}
         onCancel={() => setMoveSheetVisible(false)}
       />

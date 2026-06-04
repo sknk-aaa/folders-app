@@ -7,6 +7,7 @@ import { useUnlockStore } from '../unlockStore'
 import type { Folder, Bookmark } from '../../../shared/types'
 import { useThemedStyles, spacing, radius, type Palette } from '../../../shared/theme'
 import { FOLDER_PLACEHOLDER } from '../../../shared/mockVisuals'
+import { tr } from '../../../shared/i18n'
 
 type Props = {
   folder: Folder
@@ -54,11 +55,14 @@ export function FolderCard({
 
   const handleDeleteConfirm = () => {
     Alert.alert(
-      'Delete Folder',
-      `Delete "${folder.name}" and all bookmarks inside it?`,
+      tr({ en: 'Delete Folder', ja: 'フォルダを削除' }),
+      tr({
+        en: `Delete "${folder.name}" and all bookmarks inside it?`,
+        ja: `「${folder.name}」とその中のブックマークをすべて削除しますか？`,
+      }),
       [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Delete', style: 'destructive', onPress: onDelete },
+        { text: tr({ en: 'Cancel', ja: 'キャンセル' }), style: 'cancel' },
+        { text: tr({ en: 'Delete', ja: '削除' }), style: 'destructive', onPress: onDelete },
       ],
     )
   }
@@ -108,8 +112,8 @@ export function FolderCard({
       visible={sheetVisible}
       title={folder.name}
       options={[
-        { label: 'Edit', onPress: onEdit },
-        { label: 'Delete', destructive: true, onPress: handleDeleteConfirm },
+        { label: tr({ en: 'Edit', ja: '編集' }), onPress: onEdit },
+        { label: tr({ en: 'Delete', ja: '削除' }), destructive: true, onPress: handleDeleteConfirm },
       ]}
       onCancel={() => setSheetVisible(false)}
     />

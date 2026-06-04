@@ -31,6 +31,7 @@ import { MOCK_BOOKMARKS } from '../../../shared/mockVisuals'
 import { openInBrowser } from '../../../shared/utils/url'
 import type { RootStackParamList, Folder, FolderIconId, ViewMode } from '../../../shared/types'
 import { useSettingsStore } from '../../settings/store'
+import { tr } from '../../../shared/i18n'
 
 const { width: SCREEN_W } = Dimensions.get('window')
 const GRID_PADDING = spacing.lg
@@ -118,7 +119,7 @@ export function HomeScreen() {
 
   const listHeader = (
     <View style={styles.sectionHeader}>
-      <Text style={styles.sectionTitle}>Folders</Text>
+      <Text style={styles.sectionTitle}>{tr({ en: 'Folders', ja: 'フォルダ' })}</Text>
       <ViewModeToggle
         value={viewMode}
         onGridPress={() => setViewMode('grid')}
@@ -130,14 +131,14 @@ export function HomeScreen() {
   const listFooter = (
     <View>
       <View style={styles.recentHeader}>
-        <Text style={styles.sectionTitle}>Recently Added Bookmarks</Text>
+        <Text style={styles.sectionTitle}>{tr({ en: 'Recently Added Bookmarks', ja: '最近追加したブックマーク' })}</Text>
         <TouchableOpacity onPress={() => navigation.navigate('AllBookmarks')}>
-          <Text style={styles.sectionAction}>See All ›</Text>
+          <Text style={styles.sectionAction}>{tr({ en: 'See All ›', ja: 'すべて見る 〉' })}</Text>
         </TouchableOpacity>
       </View>
 
       {recentItems.length === 0 ? (
-        <Text style={styles.emptyText}>No bookmarks yet</Text>
+        <Text style={styles.emptyText}>{tr({ en: 'No bookmarks yet', ja: 'まだブックマークがありません' })}</Text>
       ) : (
         <FlatList
           data={recentItems}
@@ -156,7 +157,7 @@ export function HomeScreen() {
   return (
     <View style={styles.container}>
       <Header
-        title="Bookmarks"
+        title={tr({ en: 'Bookmarks', ja: 'ブックマーク' })}
         showSearch
         onSearch={() => navigation.navigate('Search', {})}
         showAdd
@@ -214,8 +215,8 @@ export function HomeScreen() {
       <CustomActionSheet
         visible={addSheetVisible}
         options={[
-          { label: 'Add Folder', onPress: openFolderAdd },
-          { label: 'Add Bookmark', onPress: () => navigation.navigate('AddBookmark', {}) },
+          { label: tr({ en: 'Add Folder', ja: 'フォルダを追加' }), onPress: openFolderAdd },
+          { label: tr({ en: 'Add Bookmark', ja: 'ブックマークを追加' }), onPress: () => navigation.navigate('AddBookmark', {}) },
         ]}
         onCancel={() => setAddSheetVisible(false)}
       />
@@ -230,8 +231,8 @@ function FolderEmptyHint() {
   return (
     <View style={styles.folderEmptyHint}>
       <Text style={styles.folderEmptyIcon}>📁</Text>
-      <Text style={styles.folderEmptyTitle}>No folders yet</Text>
-      <Text style={styles.folderEmptyDesc}>Tap + in the top right to add a folder</Text>
+      <Text style={styles.folderEmptyTitle}>{tr({ en: 'No folders yet', ja: 'フォルダがありません' })}</Text>
+      <Text style={styles.folderEmptyDesc}>{tr({ en: 'Tap + in the top right to add a folder', ja: '右上の + からフォルダを追加できます' })}</Text>
     </View>
   )
 }
@@ -308,11 +309,14 @@ function FolderListRow({
 
   const handleDeleteConfirm = () => {
     Alert.alert(
-      'Delete Folder',
-      `Delete "${folder.name}" and all bookmarks inside it?`,
+      tr({ en: 'Delete Folder', ja: 'フォルダを削除' }),
+      tr({
+        en: `Delete "${folder.name}" and all bookmarks inside it?`,
+        ja: `「${folder.name}」とその中のブックマークをすべて削除しますか？`,
+      }),
       [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Delete', style: 'destructive', onPress: onDelete },
+        { text: tr({ en: 'Cancel', ja: 'キャンセル' }), style: 'cancel' },
+        { text: tr({ en: 'Delete', ja: '削除' }), style: 'destructive', onPress: onDelete },
       ],
     )
   }
@@ -349,8 +353,8 @@ function FolderListRow({
         visible={sheetVisible}
         title={folder.name}
         options={[
-          { label: 'Edit', onPress: onEdit },
-          { label: 'Delete', destructive: true, onPress: handleDeleteConfirm },
+          { label: tr({ en: 'Edit', ja: '編集' }), onPress: onEdit },
+          { label: tr({ en: 'Delete', ja: '削除' }), destructive: true, onPress: handleDeleteConfirm },
         ]}
         onCancel={() => setSheetVisible(false)}
       />

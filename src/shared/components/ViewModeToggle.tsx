@@ -1,5 +1,6 @@
 import { View, TouchableOpacity, StyleSheet } from 'react-native'
 import { useThemedStyles, type Palette } from '../theme'
+import { tr } from '../i18n'
 import type { ViewMode } from '../types'
 
 type Props = {
@@ -17,7 +18,7 @@ export function ViewModeToggle({ value, onGridPress, onPhotoPress, onListPress }
         onPress={onGridPress}
         style={[styles.button, value === 'grid' && styles.buttonActive]}
         accessibilityRole="button"
-        accessibilityLabel="Grid view"
+        accessibilityLabel={tr({ en: 'Grid view', ja: 'グリッド表示' })}
       >
         <View style={styles.gridIcon}>
           {[0, 1, 2, 3].map((i) => (
@@ -30,7 +31,7 @@ export function ViewModeToggle({ value, onGridPress, onPhotoPress, onListPress }
           onPress={onPhotoPress}
           style={[styles.button, value === 'photo' && styles.buttonActive]}
           accessibilityRole="button"
-          accessibilityLabel="Photo view"
+          accessibilityLabel={tr({ en: 'Photo view', ja: '画像表示' })}
         >
           <View style={styles.photoIcon}>
             {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
@@ -43,7 +44,7 @@ export function ViewModeToggle({ value, onGridPress, onPhotoPress, onListPress }
         onPress={onListPress}
         style={[styles.button, value === 'list' && styles.buttonActive]}
         accessibilityRole="button"
-        accessibilityLabel="List view"
+        accessibilityLabel={tr({ en: 'List view', ja: 'リスト表示' })}
       >
         <View style={styles.listIcon}>
           {[0, 1, 2].map((i) => (

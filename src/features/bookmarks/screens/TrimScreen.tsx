@@ -16,6 +16,7 @@ import type { NativeStackNavigationProp, NativeStackScreenProps } from '@react-n
 import * as ImageManipulator from 'expo-image-manipulator'
 import * as FileSystem from 'expo-file-system/legacy'
 import { spacing, radius } from '../../../shared/theme'
+import { tr } from '../../../shared/i18n'
 import type { RootStackParamList } from '../../../shared/types'
 
 type Nav = NativeStackNavigationProp<RootStackParamList>
@@ -144,11 +145,11 @@ export function TrimScreen() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.cancelText}>Cancel</Text>
+          <Text style={styles.cancelText}>{tr({ en: 'Cancel', ja: 'キャンセル' })}</Text>
         </TouchableOpacity>
-        <Text style={styles.title}>Crop</Text>
+        <Text style={styles.title}>{tr({ en: 'Crop', ja: 'トリミング' })}</Text>
         <TouchableOpacity onPress={handleCrop} disabled={saving}>
-          <Text style={[styles.doneText, saving && { opacity: 0.4 }]}>Done</Text>
+          <Text style={[styles.doneText, saving && { opacity: 0.4 }]}>{tr({ en: 'Done', ja: '完了' })}</Text>
         </TouchableOpacity>
       </View>
 
@@ -203,7 +204,7 @@ export function TrimScreen() {
 
       {/* Footer hint */}
       <View style={[styles.footer, { paddingBottom: insets.bottom + 8 }]}>
-        <Text style={styles.hintText}>Drag to select an area</Text>
+        <Text style={styles.hintText}>{tr({ en: 'Drag to select an area', ja: 'ドラッグして範囲を選択' })}</Text>
       </View>
     </View>
   )

@@ -12,6 +12,7 @@ import { useFoldersStore } from './src/features/folders/store'
 import { useBookmarksStore } from './src/features/bookmarks/store'
 import { RootNavigator } from './src/navigation'
 import { useTheme, darkColors } from './src/shared/theme'
+import { tr } from './src/shared/i18n'
 import type { RootStackParamList } from './src/shared/types'
 
 export const navigationRef = createNavigationContainerRef<RootStackParamList>()
@@ -133,10 +134,10 @@ export default function App() {
         }}
       >
         <Text style={{ fontSize: 16, fontWeight: '600', color: '#111', marginBottom: 8 }}>
-          Failed to initialize the app
+          {tr({ en: 'Failed to initialize the app', ja: 'アプリの初期化に失敗しました' })}
         </Text>
         <Text style={{ fontSize: 13, color: '#666', textAlign: 'center' }}>
-          Please restart the app. If the problem persists, check the logs.
+          {tr({ en: 'Please restart the app. If the problem persists, check the logs.', ja: 'アプリを再起動してください。問題が続く場合はログを確認してください。' })}
         </Text>
       </View>
     )

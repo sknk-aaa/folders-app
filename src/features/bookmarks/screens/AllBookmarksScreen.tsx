@@ -10,6 +10,7 @@ import { InlineSearchBar } from '../../../shared/components/InlineSearchBar'
 import { BookmarkCollectionList } from '../components/BookmarkCollectionList'
 import { FolderEditModal } from '../../folders/components/FolderEditModal'
 import { useThemedStyles, type Palette } from '../../../shared/theme'
+import { tr } from '../../../shared/i18n'
 import type { RootStackParamList, ViewMode } from '../../../shared/types'
 
 
@@ -66,7 +67,7 @@ export function AllBookmarksScreen() {
   return (
     <View style={styles.container}>
       <Header
-        title={searchVisible ? undefined : 'Bookmarks'}
+        title={searchVisible ? undefined : tr({ en: 'Bookmarks', ja: 'ブックマーク' })}
         showBack
         onBack={searchVisible ? closeSearch : handleBack}
         showSearch={!searchVisible}
@@ -79,7 +80,7 @@ export function AllBookmarksScreen() {
               query={query}
               onChangeText={setQuery}
               onCancel={closeSearch}
-              placeholder="Search bookmarks"
+              placeholder={tr({ en: 'Search bookmarks', ja: 'ブックマークを検索' })}
             />
           ) : undefined
         }
@@ -96,8 +97,8 @@ export function AllBookmarksScreen() {
             onListPress={() => setViewMode('list')}
             onDelete={(bookmark) => remove(bookmark.id)}
             onMove={(bookmark, folderId) => move(bookmark.id, folderId)}
-            title="All Bookmarks"
-            emptyText={query.trim() ? 'No results found' : 'No bookmarks yet'}
+            title={tr({ en: 'All Bookmarks', ja: 'すべてのブックマーク' })}
+            emptyText={query.trim() ? tr({ en: 'No results found', ja: '検索結果がありません' }) : tr({ en: 'No bookmarks yet', ja: 'ブックマークがまだありません' })}
             columns={columns}
           />
         </View>

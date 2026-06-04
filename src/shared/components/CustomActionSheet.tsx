@@ -1,6 +1,7 @@
 import { Modal, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useThemedStyles, radius, spacing, type Palette } from '../theme'
+import { tr } from '../i18n'
 
 type Option = {
   label: string
@@ -52,7 +53,7 @@ export function CustomActionSheet({ visible, title, options, onCancel }: Props) 
 
           <View style={styles.cancelSeparator} />
           <TouchableOpacity activeOpacity={0.6} style={styles.cancelBtn} onPress={onCancel}>
-            <Text style={styles.cancelText}>Cancel</Text>
+            <Text style={styles.cancelText}>{tr({ en: 'Cancel', ja: 'キャンセル' })}</Text>
           </TouchableOpacity>
         </Pressable>
       </Pressable>

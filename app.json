@@ -57,7 +57,8 @@
           "iCloudContainerIdentifier": "iCloud.com.sknk.foldersapp"
         }
       ],
-      "expo-video"
+      "expo-video",
+      "expo-localization"
     ],
     "extra": {
       "eas": {

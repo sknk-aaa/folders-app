@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native'
 import { useThemedStyles, type Palette } from '../theme'
+import { tr } from '../i18n'
 
 type Props = {
   width?: number
@@ -19,7 +20,7 @@ export function PlaceholderImage({ width, height, style }: Props) {
       ]}
     >
       <Text style={styles.icon}>🖼</Text>
-      <Text style={styles.text}>No image</Text>
+      <Text style={styles.text}>{tr({ en: 'No image', ja: '画像がありません' })}</Text>
     </View>
   )
 }

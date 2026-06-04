@@ -1,4 +1,5 @@
 import { Platform } from 'react-native'
+import { tr } from '../../shared/i18n'
 
 const REMINDER_NOTIFICATION_ID = 'tsundoku-weekly'
 
@@ -29,7 +30,7 @@ export async function scheduleWeeklyReminder(unreadCount: number): Promise<void>
 
   if (Platform.OS === 'android') {
     await N.setNotificationChannelAsync('tsundoku-reminder', {
-      name: 'Reading reminder',
+      name: tr({ en: 'Reading reminder', ja: '積ん読リマインダー' }),
       importance: N.AndroidImportance.DEFAULT,
     })
   }
@@ -37,8 +38,11 @@ export async function scheduleWeeklyReminder(unreadCount: number): Promise<void>
   await N.scheduleNotificationAsync({
     identifier: REMINDER_NOTIFICATION_ID,
     content: {
-      title: 'Bookrest',
-      body: `You have ${unreadCount} unread bookmarks. Want to check out the pages you haven't seen yet?`,
+      title: tr({ en: 'Bookrest', ja: 'サムネブクマ' }),
+      body: tr({
+        en: `You have ${unreadCount} unread bookmarks. Want to check out the pages you haven't seen yet?`,
+        ja: `${unreadCount}件の積ん読があります。まだ見ていないページをチェックしませんか？`,
+      }),
     },
     trigger: {
       type: N.SchedulableTriggerInputTypes.TIME_INTERVAL,

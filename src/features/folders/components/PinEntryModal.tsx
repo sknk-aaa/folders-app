@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { View, Text, TouchableOpacity, Modal, StyleSheet, Pressable } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useThemedStyles, spacing, radius, type Palette } from '../../../shared/theme'
+import { tr } from '../../../shared/i18n'
 
 type Props =
   | { mode: 'unlock'; correctPin: string; onSuccess: () => void; onCancel: () => void }
@@ -30,7 +31,7 @@ export function PinEntryModal(props: Props) {
             props.onSuccess()
           }, 500)
         } else {
-          setError('Incorrect PIN')
+          setError(tr({ en: 'Incorrect PIN', ja: 'PINが違います' }))
           setInput('')
         }
       }
@@ -56,7 +57,7 @@ export function PinEntryModal(props: Props) {
               props.onSet(pin)
             }, 500)
           } else {
-            setError('PINs do not match')
+            setError(tr({ en: 'PINs do not match', ja: 'PINが一致しません' }))
             setConfirmInput('')
             setInput('')
             setStep('enter')
@@ -86,12 +87,14 @@ export function PinEntryModal(props: Props) {
   const currentLength = success ? 4 : (props.mode === 'unlock' || step === 'enter' ? input.length : confirmInput.length)
 
   const title = success
-    ? (props.mode === 'unlock' ? 'Unlocked' : 'PIN set')
+    ? (props.mode === 'unlock'
+        ? tr({ en: 'Unlocked', ja: 'ロックを解除しました' })
+        : tr({ en: 'PIN set', ja: 'PINを設定しました' }))
     : props.mode === 'unlock'
-      ? 'Enter PIN'
+      ? tr({ en: 'Enter PIN', ja: 'PINを入力' })
       : step === 'enter'
-        ? 'Enter a new PIN'
-        : 'Re-enter PIN to confirm'
+        ? tr({ en: 'Enter a new PIN', ja: '新しいPINを入力' })
+        : tr({ en: 'Re-enter PIN to confirm', ja: 'PINを再入力して確認' })
 
   return (
     <Modal visible animationType="fade" transparent onRequestClose={handleCancel}>
@@ -123,7 +126,7 @@ export function PinEntryModal(props: Props) {
           </View>
 
           <TouchableOpacity onPress={handleCancel} style={styles.cancelBtn}>
-            <Text style={styles.cancelText}>Cancel</Text>
+            <Text style={styles.cancelText}>{tr({ en: 'Cancel', ja: 'キャンセル' })}</Text>
           </TouchableOpacity>
         </Pressable>
       </Pressable>

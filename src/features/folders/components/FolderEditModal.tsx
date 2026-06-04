@@ -23,6 +23,7 @@ import {
 } from '../../../shared/utils/folderThumbnail'
 import type { Bookmark, Folder, FolderIconId } from '../../../shared/types'
 import { useThemedStyles, darkColors, spacing, radius, type Palette } from '../../../shared/theme'
+import { tr } from '../../../shared/i18n'
 
 type PinFlow = 'idle' | 'set' | 'changeVerify' | 'changeSet' | 'removeVerify'
 
@@ -135,7 +136,11 @@ export function FolderEditModal({
           <View style={styles.handle} />
 
           <Text style={styles.title}>
-            {manageOnly ? 'Manage Bookmarks' : folder ? 'Edit Folder' : 'New Folder'}
+            {manageOnly
+              ? tr({ en: 'Manage Bookmarks', ja: 'ブックマーク管理' })
+              : folder
+                ? tr({ en: 'Edit Folder', ja: 'フォルダを編集' })
+                : tr({ en: 'New Folder', ja: '新しいフォルダ' })}
           </Text>
 
           {!manageOnly && (
@@ -143,7 +148,7 @@ export function FolderEditModal({
               style={styles.input}
               value={name}
               onChangeText={setName}
-              placeholder="Folder name"
+              placeholder={tr({ en: 'Folder name', ja: 'フォルダ名' })}
               placeholderTextColor={c.textTertiary}
               returnKeyType="done"
               onSubmitEditing={handleSave}
@@ -153,7 +158,7 @@ export function FolderEditModal({
           {!manageOnly && folder && (
             <View style={styles.lockSection}>
               <View style={styles.lockRow}>
-                <Text style={styles.lockRowLabel}>PIN Lock</Text>
+                <Text style={styles.lockRowLabel}>{tr({ en: 'PIN Lock', ja: 'PINロック' })}</Text>
                 <View style={styles.lockActions}>
                   {hasPin ? (
                     <>
@@ -162,14 +167,14 @@ export function FolderEditModal({
                         onPress={() => setPinFlow('changeVerify')}
                         activeOpacity={0.7}
                       >
-                        <Text style={styles.lockBtnText}>Change</Text>
+                        <Text style={styles.lockBtnText}>{tr({ en: 'Change', ja: '変更' })}</Text>
                       </TouchableOpacity>
                       <TouchableOpacity
                         style={styles.lockBtn}
                         onPress={() => setPinFlow('removeVerify')}
                         activeOpacity={0.7}
                       >
-                        <Text style={styles.lockBtnDestructive}>Remove</Text>
+                        <Text style={styles.lockBtnDestructive}>{tr({ en: 'Remove', ja: '解除' })}</Text>
                       </TouchableOpacity>
                     </>
                   ) : (
@@ -178,13 +183,16 @@ export function FolderEditModal({
                       onPress={() => setPinFlow('set')}
                       activeOpacity={0.7}
                     >
-                      <Text style={styles.lockBtnText}>Set</Text>
+                      <Text style={styles.lockBtnText}>{tr({ en: 'Set', ja: '設定する' })}</Text>
                     </TouchableOpacity>
                   )}
                 </View>
               </View>
               <Text style={styles.lockCaption}>
-                Locked folders are hidden from Recently Added, All Bookmarks, and Search
+                {tr({
+                  en: 'Locked folders are hidden from Recently Added, All Bookmarks, and Search',
+                  ja: 'ロック中のフォルダは「最近追加」「すべてのブックマーク」「検索」にも表示されません',
+                })}
               </Text>
             </View>
           )}
@@ -193,7 +201,7 @@ export function FolderEditModal({
             <View style={styles.thumbSection}>
               <View style={styles.thumbRow}>
                 <View style={styles.thumbLabelRow}>
-                  <Text style={styles.thumbLabel}>Thumbnail image</Text>
+                  <Text style={styles.thumbLabel}>{tr({ en: 'Thumbnail image', ja: 'サムネイル画像' })}</Text>
                   <View style={styles.proBadge}>
                     <Text style={styles.proBadgeText}>PRO</Text>
                   </View>
@@ -206,14 +214,14 @@ export function FolderEditModal({
                         onPress={handleSetThumb}
                         activeOpacity={0.7}
                       >
-                        <Text style={styles.lockBtnText}>Change</Text>
+                        <Text style={styles.lockBtnText}>{tr({ en: 'Change', ja: '変更' })}</Text>
                       </TouchableOpacity>
                       <TouchableOpacity
                         style={styles.lockBtn}
                         onPress={handleRemoveThumb}
                         activeOpacity={0.7}
                       >
-                        <Text style={styles.lockBtnDestructive}>Delete</Text>
+                        <Text style={styles.lockBtnDestructive}>{tr({ en: 'Delete', ja: '削除' })}</Text>
                       </TouchableOpacity>
                     </>
                   ) : (
@@ -222,12 +230,12 @@ export function FolderEditModal({
                       onPress={handleSetThumb}
                       activeOpacity={0.7}
                     >
-                      <Text style={styles.lockBtnText}>Set</Text>
+                      <Text style={styles.lockBtnText}>{tr({ en: 'Set', ja: '設定する' })}</Text>
                     </TouchableOpacity>
                   )}
                 </View>
               </View>
-              <Text style={styles.lockCaption}>Customize the folder cover image freely</Text>
+              <Text style={styles.lockCaption}>{tr({ en: 'Customize the folder cover image freely', ja: 'フォルダカバーを自由に変更できます' })}</Text>
             </View>
           )}
 
@@ -235,16 +243,18 @@ export function FolderEditModal({
             <View style={styles.bookmarkSection}>
               <View style={styles.bookmarkHeader}>
                 <Text style={styles.bookmarkSectionTitle}>
-                  {manageOnly ? 'Select bookmarks to delete' : 'Manage Bookmarks'}
+                  {manageOnly
+                    ? tr({ en: 'Select bookmarks to delete', ja: '削除するブックマークを選択' })
+                    : tr({ en: 'Manage Bookmarks', ja: 'ブックマーク管理' })}
                 </Text>
                 {selectedIds.size > 0 && (
                   manageOnly ? (
                     <View style={styles.selectionBadge}>
-                      <Text style={styles.selectionBadgeText}>{selectedIds.size} selected</Text>
+                      <Text style={styles.selectionBadgeText}>{tr({ en: `${selectedIds.size} selected`, ja: `${selectedIds.size}件選択中` })}</Text>
                     </View>
                   ) : (
                     <TouchableOpacity onPress={handleDeleteSelected} style={styles.deleteBtn}>
-                      <Text style={styles.deleteBtnText}>Delete {selectedIds.size}</Text>
+                      <Text style={styles.deleteBtnText}>{tr({ en: `Delete ${selectedIds.size}`, ja: `${selectedIds.size}件を削除` })}</Text>
                     </TouchableOpacity>
                   )
                 )}
@@ -267,7 +277,7 @@ export function FolderEditModal({
 
           <View style={styles.buttons}>
             <TouchableOpacity style={styles.cancelBtn} onPress={onClose}>
-              <Text style={styles.cancelText}>Cancel</Text>
+              <Text style={styles.cancelText}>{tr({ en: 'Cancel', ja: 'キャンセル' })}</Text>
             </TouchableOpacity>
             {manageOnly ? (
               <TouchableOpacity
@@ -279,7 +289,7 @@ export function FolderEditModal({
                 onPress={handleSave}
                 disabled={selectedIds.size === 0}
               >
-                <Text style={styles.saveText}>Delete</Text>
+                <Text style={styles.saveText}>{tr({ en: 'Delete', ja: '削除' })}</Text>
               </TouchableOpacity>
             ) : (
               <TouchableOpacity
@@ -287,7 +297,7 @@ export function FolderEditModal({
                 onPress={handleSave}
                 disabled={!name.trim()}
               >
-                <Text style={styles.saveText}>Save</Text>
+                <Text style={styles.saveText}>{tr({ en: 'Save', ja: '保存' })}</Text>
               </TouchableOpacity>
             )}
           </View>

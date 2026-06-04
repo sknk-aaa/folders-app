@@ -1,6 +1,7 @@
 import * as FileSystem from 'expo-file-system/legacy'
 import { CloudStorage } from 'react-native-cloud-storage'
 import type { BackupStorage } from './types'
+import { tr } from '../../../shared/i18n'
 
 // AppData scope (default) = stored in a hidden area not visible to the user.
 const ROOT = '/smb-backup'
@@ -36,7 +37,7 @@ export const icloudBackupStorage: BackupStorage = {
   async init() {
     const available = await CloudStorage.isCloudAvailable()
     if (!available) {
-      throw new Error('Please sign in to iCloud')
+      throw new Error(tr({ en: 'Please sign in to iCloud', ja: 'iCloudにサインインしてください' }))
     }
     await ensureDir(ROOT)
   },

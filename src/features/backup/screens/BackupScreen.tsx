@@ -15,9 +15,10 @@ import { useSettingsStore } from '../../settings/store'
 import { useBackupStore } from '../store'
 import { ProUpgradeModal } from '../../pro/components/ProUpgradeModal'
 import { useThemedStyles, spacing, radius, type Palette } from '../../../shared/theme'
+import { tr } from '../../../shared/i18n'
 
 function formatDate(ts: number | null): string {
-  if (!ts) return 'Not backed up yet'
+  if (!ts) return tr({ en: 'Not backed up yet', ja: 'まだバックアップしていません' })
   const d = new Date(ts)
   const p = (n: number) => String(n).padStart(2, '0')
   return `${d.getFullYear()}/${p(d.getMonth() + 1)}/${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`
@@ -37,29 +38,29 @@ export function BackupScreen() {
   const handleBackup = async () => {
     const r = await backup()
     if (r.ok) {
-      Alert.alert('Backup Done', `Saved ${r.manifest?.bookmarkCount ?? 0} bookmarks`)
+      Alert.alert(tr({ en: 'Backup Done', ja: 'バックアップ完了' }), tr({ en: `Saved ${r.manifest?.bookmarkCount ?? 0} bookmarks`, ja: `${r.manifest?.bookmarkCount ?? 0}件のブックマークを保存しました` }))
     } else {
-      Alert.alert('Backup Failed', r.error ?? 'Please try again later')
+      Alert.alert(tr({ en: 'Backup Failed', ja: 'バックアップに失敗' }), r.error ?? tr({ en: 'Please try again later', ja: '時間をおいて再度お試しください' }))
     }
   }
 
   const handleRestore = () => {
     Alert.alert(
-      'Confirm Restore',
-      'All current bookmarks will be overwritten. Are you sure?',
+      tr({ en: 'Confirm Restore', ja: '復元の確認' }),
+      tr({ en: 'All current bookmarks will be overwritten. Are you sure?', ja: '現在のブックマークはすべて上書きされます。よろしいですか？' }),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: tr({ en: 'Cancel', ja: 'キャンセル' }), style: 'cancel' },
         {
-          text: 'Restore',
+          text: tr({ en: 'Restore', ja: '復元する' }),
           style: 'destructive',
           onPress: async () => {
             const r = await restore()
             if (r.ok) {
-              Alert.alert('Restore Done', `Restored ${r.manifest?.bookmarkCount ?? 0} bookmarks`, [
+              Alert.alert(tr({ en: 'Restore Done', ja: '復元完了' }), tr({ en: `Restored ${r.manifest?.bookmarkCount ?? 0} bookmarks`, ja: `${r.manifest?.bookmarkCount ?? 0}件のブックマークを復元しました` }), [
                 { text: 'OK', onPress: () => navigation.goBack() },
               ])
             } else {
-              Alert.alert('Restore Failed', r.error ?? 'Please try again later')
+              Alert.alert(tr({ en: 'Restore Failed', ja: '復元に失敗' }), r.error ?? tr({ en: 'Please try again later', ja: '時間をおいて再度お試しください' }))
             }
           },
         },
@@ -71,9 +72,9 @@ export function BackupScreen() {
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.modalHeader}>
         <TouchableOpacity onPress={() => navigation.goBack()} disabled={busy}>
-          <Text style={[styles.cancelText, busy && styles.disabled]}>Close</Text>
+          <Text style={[styles.cancelText, busy && styles.disabled]}>{tr({ en: 'Close', ja: '閉じる' })}</Text>
         </TouchableOpacity>
-        <Text style={styles.modalTitle}>iCloud Backup</Text>
+        <Text style={styles.modalTitle}>{tr({ en: 'iCloud Backup', ja: 'iCloudバックアップ' })}</Text>
         <View style={{ width: 48 }} />
       </View>
 
@@ -81,12 +82,12 @@ export function BackupScreen() {
         {!isPremium ? (
           <View style={styles.lockCard}>
             <Ionicons name="cloud-outline" size={40} color={c.textSecondary} />
-            <Text style={styles.lockTitle}>This is a Pro feature</Text>
+            <Text style={styles.lockTitle}>{tr({ en: 'This is a Pro feature', ja: 'Proで使える機能です' })}</Text>
             <Text style={styles.lockDesc}>
-              Save your bookmarks and thumbnails to iCloud, so you can restore them even after switching devices or reinstalling the app.
+              {tr({ en: 'Save your bookmarks and thumbnails to iCloud, so you can restore them even after switching devices or reinstalling the app.', ja: 'ブックマークとサムネイルをiCloudに保存し、機種変更やアプリの入れ直しでも元に戻せます。' })}
             </Text>
             <TouchableOpacity style={styles.primaryBtn} onPress={() => setProModalVisible(true)}>
-              <Text style={styles.primaryBtnText}>Upgrade to Pro</Text>
+              <Text style={styles.primaryBtnText}>{tr({ en: 'Upgrade to Pro', ja: 'Proにアップグレード' })}</Text>
             </TouchableOpacity>
           </View>
         ) : (
@@ -94,7 +95,7 @@ export function BackupScreen() {
             <View style={styles.infoCard}>
               <View style={styles.infoRow}>
                 <Ionicons name="time-outline" size={18} color={c.textSecondary} />
-                <Text style={styles.infoLabel}>Last Backup</Text>
+                <Text style={styles.infoLabel}>{tr({ en: 'Last Backup', ja: '最終バックアップ' })}</Text>
                 <Text style={styles.infoValue}>{formatDate(settings.last_backup_at)}</Text>
               </View>
             </View>
@@ -107,7 +108,7 @@ export function BackupScreen() {
               {state === 'backing-up' ? (
                 <ActivityIndicator color={c.background} />
               ) : (
-                <Text style={styles.primaryBtnText}>Back Up Now</Text>
+                <Text style={styles.primaryBtnText}>{tr({ en: 'Back Up Now', ja: '今すぐバックアップ' })}</Text>
               )}
             </TouchableOpacity>
 
@@ -119,12 +120,12 @@ export function BackupScreen() {
               {state === 'restoring' ? (
                 <ActivityIndicator color={c.destructive} />
               ) : (
-                <Text style={styles.secondaryBtnText}>Restore from Backup</Text>
+                <Text style={styles.secondaryBtnText}>{tr({ en: 'Restore from Backup', ja: 'バックアップから復元' })}</Text>
               )}
             </TouchableOpacity>
 
             <Text style={styles.note}>
-              Restoring overwrites your current data. The backup is saved only to this device's iCloud and is not visible to others.
+              {tr({ en: "Restoring overwrites your current data. The backup is saved only to this device's iCloud and is not visible to others.", ja: '復元すると現在のデータは上書きされます。バックアップはこの端末のiCloudにのみ保存され、他人からは見えません。' })}
             </Text>
           </>
         )}

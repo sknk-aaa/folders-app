@@ -32,6 +32,7 @@ import { PlaceholderImage } from '../../../shared/components/PlaceholderImage'
 import { Toast } from '../../../shared/components/Toast'
 import { fetchOgp } from '../../../shared/utils/url'
 import { useThemedStyles, spacing, radius, type Palette } from '../../../shared/theme'
+import { tr } from '../../../shared/i18n'
 import type { RootStackParamList } from '../../../shared/types'
 
 type Nav = NativeStackNavigationProp<RootStackParamList>
@@ -174,7 +175,7 @@ export function AddBookmarkScreen() {
       setThumbnailUri(dest)
       setStep('meta')
     } catch {
-      showToast('Failed to capture screenshot')
+      showToast(tr({ en: 'Failed to capture screenshot', ja: 'スクリーンショットの取得に失敗しました' }))
       setStep('meta')
     }
   }
@@ -192,14 +193,14 @@ export function AddBookmarkScreen() {
     setProModalVisible(false)
     if (savedPendingNav) {
       setSavedPendingNav(false)
-      showToast('Bookmark added')
+      showToast(tr({ en: 'Bookmark added', ja: 'ブックマークを追加しました' }))
       setTimeout(() => navigation.goBack(), 500)
     }
   }
 
   const handleSave = async () => {
     if (!name.trim() || !url.trim() || !folderId) {
-      Alert.alert('Input error', 'Please enter a site name, URL, and destination folder')
+      Alert.alert(tr({ en: 'Input error', ja: '入力エラー' }), tr({ en: 'Please enter a site name, URL, and destination folder', ja: 'サイト名、URL、保存先フォルダを入力してください' }))
       return
     }
 
@@ -224,19 +225,19 @@ export function AddBookmarkScreen() {
 
     const newTotal = total + 1
     if (!settings.is_premium && newTotal === FREE_LIMIT) {
-      setProModalHint('You\'ve reached the free plan limit. Upgrade to Pro to save unlimited bookmarks')
+      setProModalHint(tr({ en: 'You\'ve reached the free plan limit. Upgrade to Pro to save unlimited bookmarks', ja: '無料プランの上限に達しました。Proで無制限に保存できます' }))
       setSavedPendingNav(true)
       setProModalVisible(true)
       return
     }
     if (!settings.is_premium && newTotal === WARN_AT) {
-      setProModalHint(`${FREE_LIMIT - WARN_AT} more until the limit. Upgrade to Pro to save unlimited bookmarks`)
+      setProModalHint(tr({ en: `${FREE_LIMIT - WARN_AT} more until the limit. Upgrade to Pro to save unlimited bookmarks`, ja: `あと${FREE_LIMIT - WARN_AT}件で上限です。Proで無制限に保存できます` }))
       setSavedPendingNav(true)
       setProModalVisible(true)
       return
     }
 
-    showToast('Bookmark added')
+    showToast(tr({ en: 'Bookmark added', ja: 'ブックマークを追加しました' }))
     setTimeout(() => {
       navigation.goBack()
       void useSettingsStore.getState().recordSaveForReview()
@@ -260,9 +261,9 @@ export function AddBookmarkScreen() {
         <View style={[styles.container, { paddingTop: insets.top }]}>
           <View style={styles.modalHeader}>
             <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Text style={styles.cancelText}>Cancel</Text>
+              <Text style={styles.cancelText}>{tr({ en: 'Cancel', ja: 'キャンセル' })}</Text>
             </TouchableOpacity>
-            <Text style={styles.modalTitle}>Add Bookmark</Text>
+            <Text style={styles.modalTitle}>{tr({ en: 'Add Bookmark', ja: 'ブックマークを追加' })}</Text>
             <View style={{ width: 60 }} />
           </View>
 
@@ -288,12 +289,12 @@ export function AddBookmarkScreen() {
             </View>
 
             <View style={styles.section}>
-              <Text style={styles.label}>Site name</Text>
+              <Text style={styles.label}>{tr({ en: 'Site name', ja: 'サイト名' })}</Text>
               <TextInput
                 style={styles.input}
                 value={name}
                 onChangeText={setName}
-                placeholder="Site name"
+                placeholder={tr({ en: 'Site name', ja: 'サイト名' })}
                 placeholderTextColor={c.textTertiary}
                 returnKeyType="done"
                 onSubmitEditing={handleUrlSubmit}
@@ -301,7 +302,7 @@ export function AddBookmarkScreen() {
             </View>
 
             <View style={styles.section}>
-              <Text style={styles.label}>Destination folder</Text>
+              <Text style={styles.label}>{tr({ en: 'Destination folder', ja: '保存先フォルダ' })}</Text>
               <FolderPicker folders={folders} folderId={folderId} onSelect={setFolderId} />
             </View>
           </ScrollView>
@@ -315,7 +316,7 @@ export function AddBookmarkScreen() {
               onPress={handleUrlSubmit}
               disabled={!urlInput.trim() || !folderId}
             >
-              <Text style={styles.primaryBtnText}>Next</Text>
+              <Text style={styles.primaryBtnText}>{tr({ en: 'Next', ja: '次へ' })}</Text>
             </TouchableOpacity>
           </View>
 
@@ -330,7 +331,7 @@ export function AddBookmarkScreen() {
     return (
       <View style={[styles.container, styles.centered, { paddingTop: insets.top }]}>
         <ActivityIndicator size="large" color={c.text} />
-        <Text style={styles.loadingText}>Loading...</Text>
+        <Text style={styles.loadingText}>{tr({ en: 'Loading...', ja: '読み込み中...' })}</Text>
       </View>
     )
   }
@@ -344,14 +345,14 @@ export function AddBookmarkScreen() {
       <View style={[styles.container, { paddingTop: insets.top }]}>
         <View style={styles.modalHeader}>
           <TouchableOpacity onPress={() => setStep('meta')}>
-            <Text style={styles.cancelText}>Skip</Text>
+            <Text style={styles.cancelText}>{tr({ en: 'Skip', ja: 'スキップ' })}</Text>
           </TouchableOpacity>
-          <Text style={styles.modalTitle}>Choose thumbnail</Text>
+          <Text style={styles.modalTitle}>{tr({ en: 'Choose thumbnail', ja: 'サムネを選択' })}</Text>
           <TouchableOpacity onPress={handleWebViewCapture}>
-            <Text style={styles.captureText}>Use this screen</Text>
+            <Text style={styles.captureText}>{tr({ en: 'Use this screen', ja: 'この画面を使う' })}</Text>
           </TouchableOpacity>
         </View>
-        <Text style={styles.webviewHint}>The area inside the frame will be saved</Text>
+        <Text style={styles.webviewHint}>{tr({ en: 'The area inside the frame will be saved', ja: '枠の中が保存されます' })}</Text>
         <View style={styles.webviewWrap}>
           <View ref={webviewWrapRef} collapsable={false} style={{ flex: 1 }}>
             <WebView
@@ -385,11 +386,11 @@ export function AddBookmarkScreen() {
       <View style={[styles.container, { paddingTop: insets.top }]}>
         <View style={styles.modalHeader}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={styles.cancelText}>Cancel</Text>
+            <Text style={styles.cancelText}>{tr({ en: 'Cancel', ja: 'キャンセル' })}</Text>
           </TouchableOpacity>
-          <Text style={styles.modalTitle}>Bookmark details</Text>
+          <Text style={styles.modalTitle}>{tr({ en: 'Bookmark details', ja: 'ブックマーク情報' })}</Text>
           <TouchableOpacity onPress={handleSave}>
-            <Text style={styles.saveText}>Save</Text>
+            <Text style={styles.saveText}>{tr({ en: 'Save', ja: '保存' })}</Text>
           </TouchableOpacity>
         </View>
 
@@ -405,18 +406,18 @@ export function AddBookmarkScreen() {
             )}
             <TouchableOpacity style={styles.retakeBtn} onPress={() => setStep('webview')}>
               <Text style={styles.retakeText}>
-                {thumbnailUri ? 'Retake thumbnail' : 'Capture thumbnail'}
+                {thumbnailUri ? tr({ en: 'Retake thumbnail', ja: 'サムネを撮り直す' }) : tr({ en: 'Capture thumbnail', ja: 'サムネを撮影する' })}
               </Text>
             </TouchableOpacity>
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.label}>Site name</Text>
+            <Text style={styles.label}>{tr({ en: 'Site name', ja: 'サイト名' })}</Text>
             <TextInput
               style={styles.input}
               value={name}
               onChangeText={setName}
-              placeholder="Site name"
+              placeholder={tr({ en: 'Site name', ja: 'サイト名' })}
               placeholderTextColor={c.textTertiary}
               returnKeyType="next"
             />
@@ -438,12 +439,12 @@ export function AddBookmarkScreen() {
 
           {settings.is_premium && (
             <View style={styles.section}>
-              <Text style={styles.label}>Note</Text>
+              <Text style={styles.label}>{tr({ en: 'Note', ja: 'メモ' })}</Text>
               <TextInput
                 style={[styles.input, styles.memoInput]}
                 value={memo}
                 onChangeText={setMemo}
-                placeholder="Note (optional)"
+                placeholder={tr({ en: 'Note (optional)', ja: 'メモ（任意）' })}
                 placeholderTextColor={c.textTertiary}
                 multiline
               />

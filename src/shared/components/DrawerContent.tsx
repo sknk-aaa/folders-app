@@ -11,13 +11,14 @@ import { ProUpgradeModal } from '../../features/pro/components/ProUpgradeModal'
 import { useThemedStyles, darkColors, spacing, type Palette } from '../theme'
 import { requestNotificationPermission, scheduleWeeklyReminder, cancelWeeklyReminder } from '../../features/notifications/engine'
 import { useBookmarksStore } from '../../features/bookmarks/store'
+import { tr } from '../i18n'
 
 const APP_ICON = require('../../../assets/icon.png')
 
 const THEME_OPTIONS: { mode: ThemeMode; label: string }[] = [
-  { mode: 'light', label: 'Light' },
-  { mode: 'dark', label: 'Dark' },
-  { mode: 'auto', label: 'Auto' },
+  { mode: 'light', label: tr({ en: 'Light', ja: 'ライト' }) },
+  { mode: 'dark', label: tr({ en: 'Dark', ja: 'ダーク' }) },
+  { mode: 'auto', label: tr({ en: 'Auto', ja: '自動' }) },
 ]
 
 export function DrawerContent() {
@@ -30,17 +31,17 @@ export function DrawerContent() {
   const { bookmarks } = useBookmarksStore()
 
   const defaultFolderName =
-    folders.find((f) => f.id === settings.default_folder_id)?.name ?? 'Not set'
+    folders.find((f) => f.id === settings.default_folder_id)?.name ?? tr({ en: 'Not set', ja: '未設定' })
 
   const close = () => navigation.dispatch(DrawerActions.closeDrawer())
 
   const handleDefaultFolderChange = () => {
-    Alert.alert('Default folder', 'Choose the folder selected by default when adding a bookmark', [
+    Alert.alert(tr({ en: 'Default folder', ja: 'デフォルトの保存先' }), tr({ en: 'Choose the folder selected by default when adding a bookmark', ja: 'ブクマ追加時の初期フォルダを選択' }), [
       ...folders.map((f) => ({
         text: f.name,
         onPress: () => set('default_folder_id', f.id),
       })),
-      { text: 'Cancel', style: 'cancel' as const },
+      { text: tr({ en: 'Cancel', ja: 'キャンセル' }), style: 'cancel' as const },
     ])
   }
 
@@ -79,11 +80,11 @@ export function DrawerContent() {
   }
 
   const handleBrowserChange = () => {
-    Alert.alert('Default browser', 'Choose the browser to use', [
+    Alert.alert(tr({ en: 'Default browser', ja: 'デフォルトブラウザ' }), tr({ en: 'Choose the browser to use', ja: '使用するブラウザを選択してください' }), [
       { text: 'Safari', onPress: () => set('default_browser', 'safari') },
       { text: 'Chrome', onPress: () => set('default_browser', 'chrome') },
       { text: 'Edge', onPress: () => set('default_browser', 'edge') },
-      { text: 'Cancel', style: 'cancel' },
+      { text: tr({ en: 'Cancel', ja: 'キャンセル' }), style: 'cancel' },
     ])
   }
 
@@ -103,32 +104,32 @@ export function DrawerContent() {
         <View style={styles.header}>
           <Image source={APP_ICON} style={styles.icon} />
           <View style={styles.headerText}>
-            <Text style={styles.appName}>Bookrest</Text>
-            <Text style={styles.appTagline}>{settings.is_premium ? 'Pro' : 'All your favorites in one place'}</Text>
+            <Text style={styles.appName}>{tr({ en: 'Bookrest', ja: 'サムネブクマ' })}</Text>
+            <Text style={styles.appTagline}>{settings.is_premium ? 'Pro' : tr({ en: 'All your favorites in one place', ja: 'お気に入りをひとまとめに' })}</Text>
           </View>
         </View>
 
         {/* Support */}
-        <SectionTitle>Support</SectionTitle>
+        <SectionTitle>{tr({ en: 'Support', ja: 'サポート' })}</SectionTitle>
         <View style={styles.card}>
-          <DrawerLinkItem icon="compass-outline" label="How to use" onPress={openTutorial} />
-          <DrawerLinkItem icon="help-circle-outline" label="FAQ" onPress={handleFaq} />
-          <DrawerLinkItem icon="chatbubble-ellipses-outline" label="Report a bug or request" onPress={handleReportBug} />
-          <DrawerLinkItem icon="star-outline" label="Review and support us" onPress={() => { void handleReview() }} isLast />
+          <DrawerLinkItem icon="compass-outline" label={tr({ en: 'How to use', ja: '使い方' })} onPress={openTutorial} />
+          <DrawerLinkItem icon="help-circle-outline" label={tr({ en: 'FAQ', ja: 'よくある質問' })} onPress={handleFaq} />
+          <DrawerLinkItem icon="chatbubble-ellipses-outline" label={tr({ en: 'Report a bug or request', ja: '不具合・要望を報告' })} onPress={handleReportBug} />
+          <DrawerLinkItem icon="star-outline" label={tr({ en: 'Review and support us', ja: 'レビューして応援する' })} onPress={() => { void handleReview() }} isLast />
         </View>
 
         {/* Pro */}
         {!settings.is_premium && (
           <>
-            <SectionTitle>Premium</SectionTitle>
+            <SectionTitle>{tr({ en: 'Premium', ja: 'プレミアム' })}</SectionTitle>
             <View style={styles.card}>
               <TouchableOpacity style={styles.proRow} onPress={handlePro} activeOpacity={0.7}>
                 <View style={styles.proBadge}>
                   <Text style={styles.proBadgeText}>PRO</Text>
                 </View>
                 <View style={styles.proTextBlock}>
-                  <Text style={styles.proTitle}>Bookrest Pro</Text>
-                  <Text style={styles.proSub}>Unlimited saves and custom folder covers</Text>
+                  <Text style={styles.proTitle}>{tr({ en: 'Bookrest Pro', ja: 'サムネブクマ Pro' })}</Text>
+                  <Text style={styles.proSub}>{tr({ en: 'Unlimited saves and custom folder covers', ja: '無制限保存・フォルダカバー変更' })}</Text>
                 </View>
                 <Text style={styles.chevron}>›</Text>
               </TouchableOpacity>
@@ -137,12 +138,12 @@ export function DrawerContent() {
         )}
 
         {/* Settings */}
-        <SectionTitle>Settings</SectionTitle>
+        <SectionTitle>{tr({ en: 'Settings', ja: '設定' })}</SectionTitle>
         <View style={styles.card}>
           <TouchableOpacity style={styles.rowColumn} onPress={handleDefaultFolderChange}>
             <View style={styles.rowLeft}>
               <Ionicons name="folder-outline" size={20} color={c.textSecondary} style={styles.itemIcon} />
-              <Text style={styles.label}>Default folder</Text>
+              <Text style={styles.label}>{tr({ en: 'Default folder', ja: 'デフォルトの保存先' })}</Text>
             </View>
             <View style={styles.rowColumnRight}>
               <Text style={styles.value} numberOfLines={1}>{defaultFolderName}</Text>
@@ -153,7 +154,7 @@ export function DrawerContent() {
           <TouchableOpacity style={styles.row} onPress={handleBrowserChange}>
             <View style={styles.rowLeft}>
               <Ionicons name="globe-outline" size={20} color={c.textSecondary} style={styles.itemIcon} />
-              <Text style={styles.label}>Default browser</Text>
+              <Text style={styles.label}>{tr({ en: 'Default browser', ja: 'デフォルトブラウザ' })}</Text>
             </View>
             <View style={styles.rowRight}>
               <Text style={styles.value}>{browserLabel[settings.default_browser]}</Text>
@@ -164,7 +165,7 @@ export function DrawerContent() {
           <TouchableOpacity style={styles.row} onPress={handleBackup}>
             <View style={styles.rowLeft}>
               <Ionicons name="cloud-outline" size={20} color={c.textSecondary} style={styles.itemIcon} />
-              <Text style={styles.label}>iCloud Backup</Text>
+              <Text style={styles.label}>{tr({ en: 'iCloud Backup', ja: 'iCloudバックアップ' })}</Text>
             </View>
             <View style={styles.rowRight}>
               {!settings.is_premium && (
@@ -178,7 +179,7 @@ export function DrawerContent() {
         </View>
 
         {/* Reading reminder notification */}
-        <SectionTitle>Reading reminder</SectionTitle>
+        <SectionTitle>{tr({ en: 'Reading reminder', ja: '積ん読リマインダー' })}</SectionTitle>
         <TouchableOpacity
           style={styles.row}
           onPress={async () => {
@@ -186,7 +187,7 @@ export function DrawerContent() {
             if (next) {
               const granted = await requestNotificationPermission()
               if (!granted) {
-                Alert.alert('Notifications are not allowed', 'Please enable notifications from the Settings app.')
+                Alert.alert(tr({ en: 'Notifications are not allowed', ja: '通知が許可されていません' }), tr({ en: 'Please enable notifications from the Settings app.', ja: '設定アプリから通知を許可してください。' }))
                 return
               }
               const unread = bookmarks.filter((b) => !b.viewedAt).length
@@ -198,14 +199,14 @@ export function DrawerContent() {
           }}
         >
           <Ionicons name="notifications-outline" size={20} color={c.textSecondary} style={styles.itemIcon} />
-          <Text style={styles.label}>Weekly reading reminder</Text>
+          <Text style={styles.label}>{tr({ en: 'Weekly reading reminder', ja: '週1で積ん読をお知らせ' })}</Text>
           <View style={[styles.toggle, settings.notification_enabled && styles.toggleOn]}>
             <View style={[styles.toggleThumb, settings.notification_enabled && styles.toggleThumbOn]} />
           </View>
         </TouchableOpacity>
 
         {/* Theme (Pro-only) */}
-        <SectionTitle>{settings.is_premium ? 'Theme' : 'Theme (PRO)'}</SectionTitle>
+        <SectionTitle>{settings.is_premium ? tr({ en: 'Theme', ja: 'テーマ' }) : tr({ en: 'Theme (PRO)', ja: 'テーマ（PRO）' })}</SectionTitle>
         <View style={styles.themeSeg}>
           {THEME_OPTIONS.map(({ mode, label }) => {
             const activeMode = settings.is_premium ? settings.theme_mode : 'light'

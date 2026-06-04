@@ -1,5 +1,6 @@
 import { View, TextInput, TouchableOpacity, Text, StyleSheet } from 'react-native'
 import { useThemedStyles, spacing, type Palette } from '../theme'
+import { tr } from '../i18n'
 
 type Props = {
   query: string
@@ -8,7 +9,7 @@ type Props = {
   placeholder?: string
 }
 
-export function InlineSearchBar({ query, onChangeText, onCancel, placeholder = 'Search' }: Props) {
+export function InlineSearchBar({ query, onChangeText, onCancel, placeholder = tr({ en: 'Search', ja: '検索' }) }: Props) {
   const { c, styles } = useThemedStyles(makeStyles)
   return (
     <View style={styles.container}>
@@ -23,7 +24,7 @@ export function InlineSearchBar({ query, onChangeText, onCancel, placeholder = '
         clearButtonMode="while-editing"
       />
       <TouchableOpacity onPress={onCancel} style={styles.cancel}>
-        <Text style={styles.cancelText}>Cancel</Text>
+        <Text style={styles.cancelText}>{tr({ en: 'Cancel', ja: 'キャンセル' })}</Text>
       </TouchableOpacity>
     </View>
   )

@@ -5,6 +5,7 @@ import { useFoldersStore } from '../folders/store'
 import { useBookmarksStore } from '../bookmarks/store'
 import type { BackupStorage, BackupManifest } from './storage/types'
 import { BACKUP_FORMAT_VERSION } from './storage/types'
+import { tr } from '../../shared/i18n'
 
 const DOC = FileSystem.documentDirectory
 const DB_DIR = `${DOC}SQLite/`
@@ -136,7 +137,7 @@ export async function runRestore(storage: BackupStorage): Promise<BackupManifest
   await storage.init()
   const manifest = await readManifest(storage)
   if (!manifest) {
-    throw new Error('No backup found')
+    throw new Error(tr({ en: 'No backup found', ja: 'バックアップが見つかりません' }))
   }
 
   await snapshotCurrent()

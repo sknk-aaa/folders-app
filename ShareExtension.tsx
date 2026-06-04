@@ -10,6 +10,7 @@ import {
 import { Text, TextInput, View } from 'expo-share-extension'
 import { close, type InitialProps } from 'expo-share-extension'
 import { getFolders, getPremium, queueBookmark } from './src/shared/storage/sharedStorage'
+import { tr } from './src/shared/i18n'
 
 type Preprocessing = {
   url?: string
@@ -89,7 +90,7 @@ export default function ShareExtension({ url, text, preprocessingResults }: Prop
     return (
       <View style={[styles.preview, styles.previewPlaceholder]}>
         <Text style={styles.previewPlaceholderText} allowFontScaling={false}>
-          No image available
+          {tr({ en: 'No image available', ja: '取得可能な画像がありません' })}
         </Text>
       </View>
     )
@@ -124,7 +125,7 @@ export default function ShareExtension({ url, text, preprocessingResults }: Prop
     <View style={styles.container}>
       <View style={styles.handle} />
       <Text style={styles.title} allowFontScaling={false}>
-        Add Bookmark
+        {tr({ en: 'Add Bookmark', ja: 'ブックマークを追加' })}
       </Text>
 
       <KeyboardAvoidingView
@@ -140,7 +141,7 @@ export default function ShareExtension({ url, text, preprocessingResults }: Prop
         >
           {!initialUrl ? (
             <Text style={styles.noUrl} allowFontScaling={false}>
-              Could not detect a URL automatically. Please enter a URL.
+              {tr({ en: 'Could not detect a URL automatically. Please enter a URL.', ja: 'URLを自動取得できませんでした。URLを入力してください。' })}
             </Text>
           ) : null}
           <>
@@ -154,7 +155,7 @@ export default function ShareExtension({ url, text, preprocessingResults }: Prop
                     style={styles.toggleBtn}
                   >
                     <Text style={styles.toggleText} allowFontScaling={false}>
-                      {showPicker ? 'Close' : 'Choose another image ▽'}
+                      {showPicker ? tr({ en: 'Close', ja: '閉じる' }) : tr({ en: 'Choose another image ▽', ja: '別の画像にする ▽' })}
                     </Text>
                   </TouchableOpacity>
                 )}
@@ -169,7 +170,7 @@ export default function ShareExtension({ url, text, preprocessingResults }: Prop
 
             <View style={styles.field}>
               <Text style={styles.label} allowFontScaling={false}>
-                URL
+                {tr({ en: 'URL', ja: 'URL' })}
               </Text>
               <TextInput
                 style={styles.input}
@@ -187,13 +188,13 @@ export default function ShareExtension({ url, text, preprocessingResults }: Prop
 
             <View style={styles.field}>
               <Text style={styles.label} allowFontScaling={false}>
-                Site name
+                {tr({ en: 'Site name', ja: 'サイト名' })}
               </Text>
               <TextInput
                 style={styles.input}
                 value={name}
                 onChangeText={setName}
-                placeholder="Site name"
+                placeholder={tr({ en: 'Site name', ja: 'サイト名' })}
                 placeholderTextColor="#C7C7CC"
                 allowFontScaling={false}
                 returnKeyType="done"
@@ -203,13 +204,13 @@ export default function ShareExtension({ url, text, preprocessingResults }: Prop
             {isPremium ? (
               <View style={styles.field}>
                 <Text style={styles.label} allowFontScaling={false}>
-                  Note
+                  {tr({ en: 'Note', ja: 'メモ' })}
                 </Text>
                 <TextInput
                   style={[styles.input, styles.memoInput]}
                   value={memo}
                   onChangeText={setMemo}
-                  placeholder="Note (optional)"
+                  placeholder={tr({ en: 'Note (optional)', ja: 'メモ（任意）' })}
                   placeholderTextColor="#C7C7CC"
                   allowFontScaling={false}
                   multiline
@@ -219,11 +220,11 @@ export default function ShareExtension({ url, text, preprocessingResults }: Prop
 
             <View style={styles.field}>
               <Text style={styles.label} allowFontScaling={false}>
-                Folder
+                {tr({ en: 'Folder', ja: '保存先' })}
               </Text>
               {folders.length === 0 ? (
                 <Text style={styles.noFolder} allowFontScaling={false}>
-                  No folders yet. Please open the app first.
+                  {tr({ en: 'No folders yet. Please open the app first.', ja: 'フォルダがありません。先にアプリを起動してください。' })}
                 </Text>
               ) : (
                 <ScrollView
@@ -257,7 +258,7 @@ export default function ShareExtension({ url, text, preprocessingResults }: Prop
         <View style={styles.buttons}>
           <TouchableOpacity style={styles.cancelBtn} onPress={close}>
             <Text style={styles.cancelText} allowFontScaling={false}>
-              Cancel
+              {tr({ en: 'Cancel', ja: 'キャンセル' })}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -266,7 +267,7 @@ export default function ShareExtension({ url, text, preprocessingResults }: Prop
             disabled={!actualUrl || !folderId}
           >
             <Text style={styles.saveText} allowFontScaling={false}>
-              Save
+              {tr({ en: 'Save', ja: '保存' })}
             </Text>
           </TouchableOpacity>
         </View>

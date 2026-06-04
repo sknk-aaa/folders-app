@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import Purchases, { LOG_LEVEL, type PurchasesPackage } from 'react-native-purchases'
 import { useSettingsStore } from '../settings/store'
 import { setPremium } from '../../shared/storage/sharedStorage'
+import { tr } from '../../shared/i18n'
 
 const REVENUECAT_API_KEY = 'appl_uesZfCuFvseRYpwJqpMMcFrDRfc'
 const ENTITLEMENT_ID = 'Bookrest Pro'
@@ -61,7 +62,13 @@ export const useProStore = create<ProStore>((setState) => ({
     } catch (e: unknown) {
       setState({ isLoading: false })
       if ((e as { userCancelled?: boolean }).userCancelled) return { success: false }
-      return { success: false, error: 'Purchase failed. Please wait a moment and try again.' }
+      return {
+        success: false,
+        error: tr({
+          en: 'Purchase failed. Please wait a moment and try again.',
+          ja: '購入に失敗しました。時間をおいて再試行してください。',
+        }),
+      }
     }
   },
 

@@ -17,6 +17,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useSettingsStore } from '../settings/store'
 import type { RootStackParamList } from '../../shared/types'
 import { requestNotificationPermission, scheduleWeeklyReminder } from '../notifications/engine'
+import { tr } from '../../shared/i18n'
 
 const { width: W, height: H } = Dimensions.get('window')
 
@@ -66,8 +67,11 @@ const PAGES: Page[] = [
       image: require('../../../assets/onboarding/welcome.png'),
     },
     number: '01',
-    title: 'Save Sites as Thumbnails',
-    description: 'Turn pages that catch your eye into a personal gallery, complete with images. Browse them back at a glance.',
+    title: tr({ en: 'Save Sites as Thumbnails', ja: '気になるページを、\nすっきり保存。' }),
+    description: tr({
+      en: 'Turn pages that catch your eye into a personal gallery, complete with images. Browse them back at a glance.',
+      ja: 'ブラウザから1タップで、\n画像つきブックマークに。',
+    }),
   },
   {
     key: 'view-modes',
@@ -76,8 +80,11 @@ const PAGES: Page[] = [
       source: require('../../../assets/onboarding/movie_02.mp4'),
     },
     number: '02',
-    title: 'Three Ways to Browse',
-    description: 'Switch between grid, list, and photo views to see your bookmarks just the way you like.',
+    title: tr({ en: 'Three Ways to Browse', ja: '3つの表示モード' }),
+    description: tr({
+      en: 'Switch between grid, list, and photo views to see your bookmarks just the way you like.',
+      ja: 'グリッド・リスト・写真の3つの表示を切り替えて、自分好みでブックマークを見返せます。',
+    }),
   },
   {
     key: '4',
@@ -89,19 +96,25 @@ const PAGES: Page[] = [
       secondAspect: 828 / 1792,
     },
     number: '03',
-    title: 'Save with One Tap from Share',
-    description: 'Tap "Bookrest" in the share menu. Just pick a thumbnail, name, and folder, then save.',
+    title: tr({ en: 'Save with One Tap from Share', ja: '共有から1タップで保存' }),
+    description: tr({
+      en: 'Tap "Bookrest" in the share menu. Just pick a thumbnail, name, and folder, then save.',
+      ja: '共有メニューから「サムネブクマ」をタップ。\nサムネ・名前・フォルダを選んで\n保存するだけ。',
+    }),
   },
   {
     key: '5',
     visual: {
       kind: 'icon',
       image: require('../../../assets/icon.png'),
-      label: 'Bookrest',
+      label: tr({ en: 'Bookrest', ja: 'サムネブクマ' }),
     },
     number: '04',
-    title: "Let's Get Started",
-    description: "Let's start building your very own bookmark collection.",
+    title: tr({ en: "Let's Get Started", ja: 'さあ、始めよう' }),
+    description: tr({
+      en: "Let's start building your very own bookmark collection.",
+      ja: 'あなただけのブックマーク集を\n作っていきましょう。',
+    }),
   },
 ]
 
@@ -128,16 +141,19 @@ export function TutorialScreen() {
     } else {
       // Last page: prompt for notification permission for unread reminders, then finish
       Alert.alert(
-        'Get reminded of unread bookmarks',
-        "When you haven't viewed your saved bookmarks yet, we'll remind you once a week.",
+        tr({ en: 'Get reminded of unread bookmarks', ja: '積ん読をお知らせします' }),
+        tr({
+          en: "When you haven't viewed your saved bookmarks yet, we'll remind you once a week.",
+          ja: '登録したブックマークをまだ見ていないとき、週1回お知らせします。',
+        }),
         [
           {
-            text: 'Skip',
+            text: tr({ en: 'Skip', ja: 'スキップ' }),
             style: 'cancel',
             onPress: finish,
           },
           {
-            text: 'Allow',
+            text: tr({ en: 'Allow', ja: '許可する' }),
             onPress: async () => {
               const granted = await requestNotificationPermission()
               if (granted) {
@@ -165,7 +181,7 @@ export function TutorialScreen() {
           </Text>
         </View>
         <TouchableOpacity onPress={finish} hitSlop={12} style={styles.skipBtn}>
-          <Text style={styles.skipText}>Skip</Text>
+          <Text style={styles.skipText}>{tr({ en: 'Skip', ja: 'スキップ' })}</Text>
         </TouchableOpacity>
       </View>
 
@@ -203,7 +219,7 @@ export function TutorialScreen() {
           onPress={goNext}
           style={styles.nextBtn}
         >
-          <Text style={styles.nextText}>{isLast ? 'Get Started' : 'Next'}</Text>
+          <Text style={styles.nextText}>{isLast ? tr({ en: 'Get Started', ja: '始める' }) : tr({ en: 'Next', ja: '次へ' })}</Text>
         </TouchableOpacity>
       </View>
     </View>

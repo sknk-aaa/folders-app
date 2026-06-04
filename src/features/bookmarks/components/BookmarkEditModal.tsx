@@ -10,6 +10,7 @@ import {
   Platform,
 } from 'react-native'
 import { useThemedStyles, spacing, radius, type Palette } from '../../../shared/theme'
+import { tr } from '../../../shared/i18n'
 import { useSettingsStore } from '../../settings/store'
 import type { Bookmark } from '../../../shared/types'
 
@@ -51,23 +52,23 @@ export function BookmarkEditModal({ bookmark, onClose, onSave }: Props) {
         <View style={styles.sheet}>
           <View style={styles.header}>
             <TouchableOpacity onPress={onClose}>
-              <Text style={styles.cancelText}>Cancel</Text>
+              <Text style={styles.cancelText}>{tr({ en: 'Cancel', ja: 'キャンセル' })}</Text>
             </TouchableOpacity>
-            <Text style={styles.title}>Edit Bookmark</Text>
+            <Text style={styles.title}>{tr({ en: 'Edit Bookmark', ja: 'ブックマークを編集' })}</Text>
             <TouchableOpacity onPress={handleSave} disabled={!name.trim() || !url.trim()}>
               <Text style={[styles.saveText, (!name.trim() || !url.trim()) && { opacity: 0.3 }]}>
-                Save
+                {tr({ en: 'Save', ja: '保存' })}
               </Text>
             </TouchableOpacity>
           </View>
 
           <View style={styles.field}>
-            <Text style={styles.label}>Site name</Text>
+            <Text style={styles.label}>{tr({ en: 'Site name', ja: 'サイト名' })}</Text>
             <TextInput
               style={styles.input}
               value={name}
               onChangeText={setName}
-              placeholder="Site name"
+              placeholder={tr({ en: 'Site name', ja: 'サイト名' })}
               placeholderTextColor={c.textTertiary}
               returnKeyType="next"
             />
@@ -91,12 +92,12 @@ export function BookmarkEditModal({ bookmark, onClose, onSave }: Props) {
 
           {settings.is_premium && (
             <View style={styles.field}>
-              <Text style={styles.label}>Note</Text>
+              <Text style={styles.label}>{tr({ en: 'Note', ja: 'メモ' })}</Text>
               <TextInput
                 style={[styles.input, styles.memoInput]}
                 value={memo}
                 onChangeText={setMemo}
-                placeholder="Note (optional)"
+                placeholder={tr({ en: 'Note (optional)', ja: 'メモ（任意）' })}
                 placeholderTextColor={c.textTertiary}
                 multiline
               />
