@@ -86,7 +86,7 @@ export function FolderDetailScreen() {
   return (
     <View style={styles.container}>
       <Header
-        title={isSearching ? undefined : folder.name}
+        title={isSearching ? undefined : 'ブックマーク'}
         showBack
         onBack={isSearching ? handleSearchClose : () => navigation.goBack()}
         showSearch={!isSearching}
