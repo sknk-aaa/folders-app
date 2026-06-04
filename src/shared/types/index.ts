@@ -36,7 +36,7 @@ export type Bookmark = {
 }
 
 export type DefaultBrowser = 'safari' | 'chrome' | 'edge'
-export type ViewMode = 'grid' | 'list'
+export type ViewMode = 'grid' | 'list' | 'photo'
 export type GridColumns = 2 | 3 | 4
 export type ThemeMode = 'light' | 'dark' | 'auto'
 

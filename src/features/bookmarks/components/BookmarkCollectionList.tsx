@@ -1,7 +1,11 @@
 import type { ReactNode } from 'react'
-import { Dimensions, FlatList, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, FlatList, Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Image } from 'expo-image'
 import { ViewModeToggle } from '../../../shared/components/ViewModeToggle'
-import { useThemedStyles, spacing, type Palette } from '../../../shared/theme'
+import { PlaceholderImage } from '../../../shared/components/PlaceholderImage'
+import { useThemedStyles, spacing, radius, type Palette } from '../../../shared/theme'
+import { openInBrowser } from '../../../shared/utils/url'
+import { useSettingsStore } from '../../settings/store'
 import type { Bookmark, Folder, ViewMode } from '../../../shared/types'
 import { BookmarkCard } from './BookmarkCard'
 import { BookmarkListItem } from './BookmarkListItem'
@@ -16,6 +20,7 @@ type Props = {
   allFolders: Folder[]
   viewMode: ViewMode
   onGridPress: () => void
+  onPhotoPress: () => void
   onListPress: () => void
   onDelete: (bookmark: Bookmark) => void
   onMove: (bookmark: Bookmark, folderId: string) => void
@@ -33,6 +38,7 @@ export function BookmarkCollectionList({
   allFolders,
   viewMode,
   onGridPress,
+  onPhotoPress,
   onListPress,
   onDelete,
   onMove,
@@ -44,12 +50,12 @@ export function BookmarkCollectionList({
   hideToolbar = false,
 }: Props) {
   const { styles } = useThemedStyles(makeStyles)
-  const columns = viewMode === 'grid' ? columnsProp : 1
+  const columns = viewMode === 'list' ? 1 : columnsProp
   const cardW = (SCREEN_W - PADDING * 2 - GAP * (columnsProp - 1)) / columnsProp
   const isDraggable = Boolean(onReorder)
   const listKey = `${viewMode}-${columnsProp}-${isDraggable ? 'draggable' : 'static'}`
   const columnWrapperStyle =
-    viewMode === 'grid' && columns > 1 ? styles.columnWrapper : undefined
+    viewMode !== 'list' && columns > 1 ? styles.columnWrapper : undefined
 
   const toolbar = hideToolbar ? null : (
     <View style={styles.toolbar}>
@@ -61,7 +67,12 @@ export function BookmarkCollectionList({
       ) : (
         <View />
       )}
-      <ViewModeToggle value={viewMode} onGridPress={onGridPress} onListPress={onListPress} />
+      <ViewModeToggle
+        value={viewMode}
+        onGridPress={onGridPress}
+        onPhotoPress={onPhotoPress}
+        onListPress={onListPress}
+      />
     </View>
   )
 
@@ -153,6 +164,10 @@ function renderBookmark({
     )
   }
 
+  if (viewMode === 'photo') {
+    return <PhotoCard bookmark={item} size={cardW} />
+  }
+
   const card = (
     <View style={{ width: cardW }}>
       <BookmarkCard
@@ -170,7 +185,37 @@ function renderBookmark({
   return card
 }
 
+function PhotoCard({ bookmark, size }: { bookmark: Bookmark; size: number }) {
+  const { settings } = useSettingsStore()
+  const { styles } = useThemedStyles(makeStyles)
+  const handlePress = () => {
+    Linking.openURL(openInBrowser(bookmark.url, settings.default_browser))
+  }
+  return (
+    <TouchableOpacity
+      onPress={handlePress}
+      activeOpacity={0.85}
+      style={[styles.photoCard, { width: size, height: size }]}
+    >
+      {bookmark.thumbnailPath ? (
+        <Image source={{ uri: bookmark.thumbnailPath }} style={styles.photoImg} contentFit="cover" />
+      ) : (
+        <PlaceholderImage width={size} height={size} style={styles.photoImg} />
+      )}
+    </TouchableOpacity>
+  )
+}
+
 const makeStyles = (c: Palette) => StyleSheet.create({
+  photoCard: {
+    borderRadius: radius.sm,
+    overflow: 'hidden',
+    backgroundColor: c.placeholderBg,
+  },
+  photoImg: {
+    width: '100%',
+    height: '100%',
+  },
   toolbar: {
     flexDirection: 'row',
     alignItems: 'center',

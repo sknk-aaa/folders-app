@@ -22,7 +22,8 @@ export function AllBookmarksScreen() {
   const { folders } = useFoldersStore()
   const { styles } = useThemedStyles(makeStyles)
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
-  const [columns, setColumns] = useState(2)
+  const [dense, setDense] = useState(false)
+  const columns = viewMode === 'photo' ? (dense ? 4 : 3) : dense ? 3 : 2
   const [searchVisible, setSearchVisible] = useState(false)
   const [query, setQuery] = useState('')
   const [manageModalVisible, setManageModalVisible] = useState(false)
@@ -31,7 +32,7 @@ export function AllBookmarksScreen() {
     () =>
       Gesture.Pinch()
         .onEnd((e) => {
-          setColumns(e.scale < 0.85 ? 3 : 2)
+          setDense(e.scale < 0.85)
         })
         .runOnJS(true),
     [],
@@ -91,6 +92,7 @@ export function AllBookmarksScreen() {
             allFolders={folders}
             viewMode={viewMode}
             onGridPress={() => setViewMode('grid')}
+            onPhotoPress={() => setViewMode('photo')}
             onListPress={() => setViewMode('list')}
             onDelete={(bookmark) => remove(bookmark.id)}
             onMove={(bookmark, folderId) => move(bookmark.id, folderId)}

@@ -41,10 +41,11 @@ export function FolderDetailScreen() {
 
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
   const [editModalVisible, setEditModalVisible] = useState(false)
-  const [columns, setColumns] = useState(2)
+  const [dense, setDense] = useState(false)
   const [isSearching, setIsSearching] = useState(false)
   const [query, setQuery] = useState('')
   const { styles } = useThemedStyles(makeStyles)
+  const columns = viewMode === 'photo' ? (dense ? 4 : 3) : dense ? 3 : 2
 
   const filteredBookmarks = useMemo(() => {
     if (!isSearching || !query.trim()) return bookmarks
@@ -64,7 +65,7 @@ export function FolderDetailScreen() {
     () =>
       Gesture.Pinch()
         .onEnd((e) => {
-          setColumns(e.scale < 0.85 ? 3 : 2)
+          setDense(e.scale < 0.85)
         })
         .runOnJS(true),
     [],
@@ -111,6 +112,7 @@ export function FolderDetailScreen() {
           <ViewModeToggle
             value={viewMode}
             onGridPress={() => setViewMode('grid')}
+            onPhotoPress={() => setViewMode('photo')}
             onListPress={() => setViewMode('list')}
           />
         </View>
@@ -124,6 +126,7 @@ export function FolderDetailScreen() {
               allFolders={folders}
               viewMode={viewMode}
               onGridPress={() => setViewMode('grid')}
+              onPhotoPress={() => setViewMode('photo')}
               onListPress={() => setViewMode('list')}
               onDelete={(bookmark) => remove(bookmark.id)}
               onMove={(bookmark, targetFolderId) => move(bookmark.id, targetFolderId)}
