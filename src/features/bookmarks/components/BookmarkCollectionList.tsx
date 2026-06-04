@@ -225,7 +225,7 @@ const makeStyles = (c: Palette) => StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: PADDING,
     paddingTop: 15,
-    paddingBottom: 12,
+    paddingBottom: 20,
   },
   toolbarTitle: {
     fontSize: 14,
