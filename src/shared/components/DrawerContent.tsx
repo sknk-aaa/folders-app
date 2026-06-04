@@ -36,7 +36,7 @@ export function DrawerContent() {
 
   const handleReview = () => {
     close()
-    void Linking.openURL('https://apps.apple.com/jp/app/id6746045050?action=write-review')
+    void Linking.openURL('https://apps.apple.com/jp/app/id6769874184?action=write-review')
   }
 
   const handleFaq = () => {
