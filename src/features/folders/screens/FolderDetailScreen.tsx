@@ -99,7 +99,6 @@ export function FolderDetailScreen() {
             <InlineSearchBar query={query} onChangeText={setQuery} onCancel={handleSearchClose} />
           ) : undefined
         }
-        hideBorder
       />
 
       {!isSearching && (
