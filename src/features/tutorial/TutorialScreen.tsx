@@ -74,32 +74,29 @@ const PAGES: Page[] = [
     }),
   },
   {
+    key: 'save-share',
+    visual: {
+      kind: 'video',
+      source: require('../../../assets/onboarding/movie_01.mp4'),
+    },
+    number: '02',
+    title: tr({ en: 'Save with One Tap from Share', ja: '共有から1タップで保存' }),
+    description: tr({
+      en: 'Tap "Bookrest" in the share menu. Just pick a thumbnail, name, and folder, then save.',
+      ja: '共有メニューから「サムネブクマ」をタップ。\nサムネ・名前・フォルダを選んで\n保存するだけ。',
+    }),
+  },
+  {
     key: 'view-modes',
     visual: {
       kind: 'video',
       source: require('../../../assets/onboarding/movie_02.mp4'),
     },
-    number: '02',
+    number: '03',
     title: tr({ en: 'Three Ways to Browse', ja: '3つの表示モード' }),
     description: tr({
       en: 'Switch between grid, list, and photo views to see your bookmarks just the way you like.',
       ja: 'グリッド・リスト・写真の3つの表示を切り替えて、自分好みでブックマークを見返せます。',
-    }),
-  },
-  {
-    key: '4',
-    visual: {
-      kind: 'duo',
-      first: require('../../../assets/onboarding/04-tap-app.png'),
-      second: require('../../../assets/onboarding/05-save-screen.png'),
-      firstAspect: 1284 / 1819,
-      secondAspect: 828 / 1792,
-    },
-    number: '03',
-    title: tr({ en: 'Save with One Tap from Share', ja: '共有から1タップで保存' }),
-    description: tr({
-      en: 'Tap "Bookrest" in the share menu. Just pick a thumbnail, name, and folder, then save.',
-      ja: '共有メニューから「サムネブクマ」をタップ。\nサムネ・名前・フォルダを選んで\n保存するだけ。',
     }),
   },
   {
