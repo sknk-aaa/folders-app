@@ -13,6 +13,7 @@ import { BookmarkCollectionList } from '../../bookmarks/components/BookmarkColle
 import { FolderEditModal } from '../components/FolderEditModal'
 import { Header } from '../../../shared/components/Header'
 import { InlineSearchBar } from '../../../shared/components/InlineSearchBar'
+import { ViewModeToggle } from '../../../shared/components/ViewModeToggle'
 import { FOLDER_PLACEHOLDER } from '../../../shared/mockVisuals'
 import { useThemedStyles, spacing, radius, type Palette } from '../../../shared/theme'
 import type {
@@ -99,6 +100,21 @@ export function FolderDetailScreen() {
         hideBorder
       />
 
+      {!isSearching && (
+        <View style={styles.folderBand}>
+          <FolderHeaderSummary
+            folder={folder}
+            thumbnail={headerThumbnail}
+            bookmarkCount={bookmarks.length}
+          />
+          <ViewModeToggle
+            value={viewMode}
+            onGridPress={() => setViewMode('grid')}
+            onListPress={() => setViewMode('list')}
+          />
+        </View>
+      )}
+
       <View style={styles.collectionWrap}>
         <GestureDetector gesture={pinchGesture}>
           <View collapsable={false} style={{ flex: 1 }}>
@@ -113,17 +129,10 @@ export function FolderDetailScreen() {
               onReorder={(nextBookmarks) => reorder(folderId, nextBookmarks)}
               emptyText="このフォルダにはまだブックマークがありません"
               columns={columns}
-              contentTopInset={28}
+              hideToolbar={!isSearching}
             />
           </View>
         </GestureDetector>
-        {!isSearching && (
-          <FolderHeaderSummary
-            folder={folder}
-            thumbnail={headerThumbnail}
-            bookmarkCount={bookmarks.length}
-          />
-        )}
       </View>
 
       <FolderEditModal
@@ -150,21 +159,19 @@ function FolderHeaderSummary({
 }) {
   const { styles } = useThemedStyles(makeStyles)
   return (
-    <View style={styles.folderSummaryWrap} pointerEvents="none">
-      <View style={styles.folderSummary}>
-        <Image
-          source={thumbnail ? { uri: thumbnail } : FOLDER_PLACEHOLDER}
-          style={styles.folderThumb}
-          contentFit="cover"
-        />
-        <View style={styles.titleBlock}>
-          <Text style={styles.headerTitle} numberOfLines={1}>
-            {folder.name}
-          </Text>
-          <Text style={styles.headerSub} numberOfLines={1}>
-            {bookmarkCount}件のブックマーク
-          </Text>
-        </View>
+    <View style={styles.folderSummary}>
+      <Image
+        source={thumbnail ? { uri: thumbnail } : FOLDER_PLACEHOLDER}
+        style={styles.folderThumb}
+        contentFit="cover"
+      />
+      <View style={styles.titleBlock}>
+        <Text style={styles.headerTitle} numberOfLines={1}>
+          {folder.name}
+        </Text>
+        <Text style={styles.headerSub} numberOfLines={1}>
+          {bookmarkCount}件のブックマーク
+        </Text>
       </View>
     </View>
   )
@@ -174,27 +181,25 @@ const makeStyles = (c: Palette) => StyleSheet.create({
   container: { flex: 1, backgroundColor: c.background },
   collectionWrap: {
     flex: 1,
-    position: 'relative',
   },
-  folderSummaryWrap: {
-    position: 'absolute',
-    top: -30,
-    left: 0,
-    right: 0,
+  folderBand: {
+    flexDirection: 'row',
     alignItems: 'center',
+    gap: spacing.md,
+    backgroundColor: c.headerBg,
     paddingHorizontal: PADDING,
-    zIndex: 10,
-    elevation: 10,
+    paddingTop: 4,
+    paddingBottom: 14,
   },
   folderSummary: {
     flexDirection: 'row',
     alignItems: 'center',
-    maxWidth: 260,
+    flex: 1,
     minWidth: 0,
   },
   folderThumb: {
-    width: 68,
-    height: 58,
+    width: 60,
+    height: 52,
     borderRadius: radius.md,
     overflow: 'hidden',
     backgroundColor: c.placeholderBg,
