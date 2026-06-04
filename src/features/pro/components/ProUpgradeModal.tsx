@@ -28,9 +28,13 @@ type Props = {
 // Gold is reserved exclusively as the subtle "Pro" accent — distinct from the app's blue accent.
 const GOLD = '#C8960A'
 const GOLD_BRIGHT = '#FFD60A'
+// Softer-than-black charcoal for the selected plan card and purchase button.
+const PLAN_DARK = '#3A3A3C'
 
-// All feature images share one height; width follows each image's own aspect ratio.
-const FEATURE_IMG_H = 224
+// All feature images share one width; height follows each image's own aspect ratio.
+const FEATURE_IMG_W = '90%' as const
+
+const APP_ICON = require('../../../../assets/icon.png')
 
 type Feature = { image: ImageSourcePropType; ratio: number; title: string; body: string }
 
@@ -239,12 +243,13 @@ export function ProUpgradeModal({ visible, onClose, hint }: Props) {
           ) : null}
 
           {/* Hero */}
-          <View style={styles.badge}>
-            <Text style={styles.badgeText}>PRO</Text>
-          </View>
-          <Text style={styles.headline}>{tr({ en: 'Unlock all of Bookrest.', ja: 'サムネブクマを、\nぜんぶ解放。' })}</Text>
+          <Image source={APP_ICON} style={styles.appIcon} />
+          <Text style={styles.title}>{tr({ en: 'Bookrest Pro', ja: 'サムネブクマ Pro' })}</Text>
           <Text style={styles.subhead}>
-            {tr({ en: 'No limits, plus Pro-only features.', ja: '無料の上限なし＋Pro限定の機能。' })}
+            {tr({
+              en: 'Unlock every feature\nand make bookmarking truly yours',
+              ja: 'すべての機能を解放して\nブックマークをもっと自由に',
+            })}
           </Text>
 
           {/* Comparison */}
@@ -281,7 +286,7 @@ export function ProUpgradeModal({ visible, onClose, hint }: Props) {
               <View key={f.title} style={styles.featureCard}>
                 <Image
                   source={f.image}
-                  style={[styles.featureImage, { height: FEATURE_IMG_H, aspectRatio: f.ratio }]}
+                  style={[styles.featureImage, { width: FEATURE_IMG_W, aspectRatio: f.ratio }]}
                   resizeMode="cover"
                 />
                 <Text style={styles.featureTitle}>{f.title}</Text>
@@ -360,6 +365,20 @@ const makeStyles = (c: Palette) =>
     },
     hintText: { fontSize: 13, color: c.textSecondary, textAlign: 'center' },
 
+    appIcon: {
+      width: 78,
+      height: 78,
+      borderRadius: 18,
+      marginBottom: 18,
+    },
+    title: {
+      fontSize: 26,
+      fontWeight: '800',
+      color: c.text,
+      textAlign: 'center',
+      letterSpacing: -0.3,
+      marginBottom: 10,
+    },
     badge: {
       backgroundColor: '#1C1C1E',
       borderRadius: 6,
@@ -376,7 +395,7 @@ const makeStyles = (c: Palette) =>
       letterSpacing: -0.3,
       lineHeight: 33,
     },
-    subhead: { fontSize: 14, color: c.textSecondary, marginTop: 8, marginBottom: 24, textAlign: 'center' },
+    subhead: { fontSize: 14.5, color: c.textSecondary, lineHeight: 22, marginBottom: 26, textAlign: 'center' },
 
     table: {
       width: '100%',
@@ -412,9 +431,9 @@ const makeStyles = (c: Palette) =>
       borderColor: c.cardBorder,
     },
     planCardActive: {
-      backgroundColor: c.text,
+      backgroundColor: PLAN_DARK,
       borderWidth: StyleSheet.hairlineWidth,
-      borderColor: c.text,
+      borderColor: PLAN_DARK,
     },
     planLeft: { gap: 3, flexShrink: 1 },
     planNameRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
@@ -434,7 +453,7 @@ const makeStyles = (c: Palette) =>
     recommendText: { fontSize: 10, fontWeight: '700', color: c.textSecondary, letterSpacing: 0.5 },
     buyBtn: {
       width: '100%',
-      backgroundColor: c.text,
+      backgroundColor: PLAN_DARK,
       borderRadius: 14,
       paddingVertical: 17,
       alignItems: 'center',
