@@ -6,6 +6,7 @@ import { PlaceholderImage } from '../../../shared/components/PlaceholderImage'
 import { useThemedStyles, spacing, radius, type Palette } from '../../../shared/theme'
 import { openInBrowser } from '../../../shared/utils/url'
 import { useSettingsStore } from '../../settings/store'
+import { useBookmarksStore } from '../store'
 import type { Bookmark, Folder, ViewMode } from '../../../shared/types'
 import { BookmarkCard } from './BookmarkCard'
 import { BookmarkListItem } from './BookmarkListItem'
@@ -187,8 +188,10 @@ function renderBookmark({
 
 function PhotoCard({ bookmark, size }: { bookmark: Bookmark; size: number }) {
   const { settings } = useSettingsStore()
+  const { markViewed } = useBookmarksStore()
   const { styles } = useThemedStyles(makeStyles)
   const handlePress = () => {
+    markViewed(bookmark.id)
     Linking.openURL(openInBrowser(bookmark.url, settings.default_browser))
   }
   return (

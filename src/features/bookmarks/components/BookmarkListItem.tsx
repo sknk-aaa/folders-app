@@ -21,7 +21,7 @@ type Props = {
 }
 
 export function BookmarkListItem({ bookmark, allFolders, onDelete, onMove }: Props) {
-  const { update } = useBookmarksStore()
+  const { update, markViewed } = useBookmarksStore()
   const { settings } = useSettingsStore()
   const { styles } = useThemedStyles(makeStyles)
   const [editVisible, setEditVisible] = useState(false)
@@ -29,6 +29,7 @@ export function BookmarkListItem({ bookmark, allFolders, onDelete, onMove }: Pro
   const [moveSheetVisible, setMoveSheetVisible] = useState(false)
 
   const handlePress = () => {
+    markViewed(bookmark.id)
     const target = openInBrowser(bookmark.url, settings.default_browser)
     Linking.openURL(target)
   }

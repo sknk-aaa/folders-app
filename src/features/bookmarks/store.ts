@@ -21,6 +21,7 @@ type BookmarksStore = {
   load: () => void
   add: (data: Omit<Bookmark, 'id' | 'createdAt' | 'sortOrder'>) => Bookmark
   update: (id: string, name: string, url: string, memo: string | null) => void
+  markViewed: (id: string) => void
   updateThumbnail: (id: string, thumbnailPath: string | null) => void
   move: (id: string, folderId: string) => void
   remove: (id: string) => void
@@ -43,6 +44,7 @@ function toBookmark(row: Record<string, unknown>): Bookmark {
     sortOrder: row.sort_order as number,
     createdAt: row.created_at as number,
     memo: (row.memo as string | null) ?? null,
+    viewedAt: (row.viewed_at as number | null) ?? null,
   }
 }
 
@@ -96,6 +98,17 @@ export const useBookmarksStore = create<BookmarksStore>((setState, getState) => 
     db.runSync('UPDATE bookmarks SET thumbnail_path = ? WHERE id = ?', [thumbnailPath, id])
     setState((s) => ({
       bookmarks: s.bookmarks.map((b) => (b.id === id ? { ...b, thumbnailPath } : b)),
+    }))
+  },
+
+  markViewed: (id) => {
+    const db = getDb()
+    const now = Date.now()
+    db.runSync('UPDATE bookmarks SET viewed_at = ? WHERE id = ? AND viewed_at IS NULL', [now, id])
+    setState((s) => ({
+      bookmarks: s.bookmarks.map((b) =>
+        b.id === id && !b.viewedAt ? { ...b, viewedAt: now } : b,
+      ),
     }))
   },
 
@@ -164,6 +177,7 @@ export const useBookmarksStore = create<BookmarksStore>((setState, getState) => 
         faviconUrl: null,
         thumbnailPath: null,
         memo: q.memo ?? null,
+        viewedAt: null,
       })
       addedCount += 1
 

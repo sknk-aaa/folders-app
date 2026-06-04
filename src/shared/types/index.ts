@@ -34,6 +34,7 @@ export type Bookmark = {
   sortOrder: number
   createdAt: number
   memo: string | null
+  viewedAt: number | null
 }
 
 export type DefaultBrowser = 'safari' | 'chrome' | 'edge'
@@ -54,6 +55,7 @@ export type Settings = {
   launch_count: number
   last_backup_at: number | null
   theme_mode: ThemeMode
+  notification_enabled: boolean
 }
 
 export type RootStackParamList = {

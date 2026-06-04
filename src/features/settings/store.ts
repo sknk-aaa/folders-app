@@ -22,6 +22,7 @@ const DEFAULTS: Settings = {
   launch_count: 0,
   last_backup_at: null,
   theme_mode: 'auto',
+  notification_enabled: false,
 }
 
 async function requestReviewIfAvailable(): Promise<void> {
@@ -42,6 +43,7 @@ function parse(key: keyof Settings, raw: string): Settings[keyof Settings] {
     case 'capture_thumbnail':
     case 'is_premium':
     case 'tutorial_completed':
+    case 'notification_enabled':
       return raw === 'true'
     case 'grid_columns':
       return (parseInt(raw, 10) || 2) as GridColumns

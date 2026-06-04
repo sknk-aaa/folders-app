@@ -24,7 +24,7 @@ type Props = {
 }
 
 export function BookmarkCard({ bookmark, allFolders, onDelete, onMove, drag, isActive, compact }: Props) {
-  const { update } = useBookmarksStore()
+  const { update, markViewed } = useBookmarksStore()
   const { settings } = useSettingsStore()
   const { styles } = useThemedStyles(makeStyles)
   const [editVisible, setEditVisible] = useState(false)
@@ -32,6 +32,7 @@ export function BookmarkCard({ bookmark, allFolders, onDelete, onMove, drag, isA
   const [moveSheetVisible, setMoveSheetVisible] = useState(false)
 
   const handlePress = () => {
+    markViewed(bookmark.id)
     const target = openInBrowser(bookmark.url, settings.default_browser)
     Linking.openURL(target)
   }

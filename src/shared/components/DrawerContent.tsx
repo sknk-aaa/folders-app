@@ -9,6 +9,8 @@ import { useSettingsStore } from '../../features/settings/store'
 import { useFoldersStore } from '../../features/folders/store'
 import { ProUpgradeModal } from '../../features/pro/components/ProUpgradeModal'
 import { useThemedStyles, darkColors, spacing, type Palette } from '../theme'
+import { requestNotificationPermission, scheduleWeeklyReminder, cancelWeeklyReminder } from '../../features/notifications/engine'
+import { useBookmarksStore } from '../../features/bookmarks/store'
 
 const APP_ICON = require('../../../assets/icon.png')
 
@@ -25,6 +27,7 @@ export function DrawerContent() {
   const { folders } = useFoldersStore()
   const { c, styles } = useThemedStyles(makeStyles)
   const [proModalVisible, setProModalVisible] = useState(false)
+  const { bookmarks } = useBookmarksStore()
 
   const defaultFolderName =
     folders.find((f) => f.id === settings.default_folder_id)?.name ?? '未設定'
@@ -173,6 +176,33 @@ export function DrawerContent() {
             </View>
           </TouchableOpacity>
         </View>
+
+        {/* 積ん読リマインダー通知 */}
+        <SectionTitle>積ん読リマインダー</SectionTitle>
+        <TouchableOpacity
+          style={styles.row}
+          onPress={async () => {
+            const next = !settings.notification_enabled
+            if (next) {
+              const granted = await requestNotificationPermission()
+              if (!granted) {
+                Alert.alert('通知が許可されていません', '設定アプリから通知を許可してください。')
+                return
+              }
+              const unread = bookmarks.filter((b) => !b.viewedAt).length
+              if (unread > 0) await scheduleWeeklyReminder(unread)
+            } else {
+              await cancelWeeklyReminder()
+            }
+            set('notification_enabled', next)
+          }}
+        >
+          <Ionicons name="notifications-outline" size={20} color={c.textSecondary} style={styles.itemIcon} />
+          <Text style={styles.label}>週1で積ん読をお知らせ</Text>
+          <View style={[styles.toggle, settings.notification_enabled && styles.toggleOn]}>
+            <View style={[styles.toggleThumb, settings.notification_enabled && styles.toggleThumbOn]} />
+          </View>
+        </TouchableOpacity>
 
         {/* テーマ（Pro限定） */}
         <SectionTitle>{settings.is_premium ? 'テーマ' : 'テーマ（PRO）'}</SectionTitle>
@@ -337,6 +367,30 @@ const makeStyles = (c: Palette) => {
       alignItems: 'center',
       justifyContent: 'space-between',
       paddingLeft: 34,
+    },
+    toggle: {
+      width: 44,
+      height: 26,
+      borderRadius: 13,
+      backgroundColor: c.placeholderBg,
+      justifyContent: 'center',
+      paddingHorizontal: 3,
+    },
+    toggleOn: {
+      backgroundColor: '#34C759',
+    },
+    toggleThumb: {
+      width: 20,
+      height: 20,
+      borderRadius: 10,
+      backgroundColor: '#fff',
+      shadowColor: '#000',
+      shadowOpacity: 0.15,
+      shadowRadius: 3,
+      shadowOffset: { width: 0, height: 1 },
+    },
+    toggleThumbOn: {
+      alignSelf: 'flex-end',
     },
     separator: {
       height: StyleSheet.hairlineWidth,

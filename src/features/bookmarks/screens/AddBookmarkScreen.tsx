@@ -27,6 +27,7 @@ import { useBookmarksStore } from '../store'
 import { useFoldersStore } from '../../folders/store'
 import { useSettingsStore } from '../../settings/store'
 import { ProUpgradeModal } from '../../pro/components/ProUpgradeModal'
+import { scheduleWeeklyReminder } from '../../notifications/engine'
 import { PlaceholderImage } from '../../../shared/components/PlaceholderImage'
 import { Toast } from '../../../shared/components/Toast'
 import { fetchOgp } from '../../../shared/utils/url'
@@ -218,6 +219,7 @@ export function AddBookmarkScreen() {
       faviconUrl: null,
       thumbnailPath: thumbnailUri,
       memo: settings.is_premium ? memo.trim() || null : null,
+      viewedAt: null,
     })
 
     const newTotal = total + 1
@@ -238,6 +240,13 @@ export function AddBookmarkScreen() {
     setTimeout(() => {
       navigation.goBack()
       void useSettingsStore.getState().recordSaveForReview()
+      // 通知が有効なら未読件数で再スケジュール
+      const { settings: s } = useSettingsStore.getState()
+      if (s.notification_enabled) {
+        const allBookmarks = useBookmarksStore.getState().bookmarks
+        const unread = allBookmarks.filter((b) => !b.viewedAt).length + 1
+        void scheduleWeeklyReminder(unread)
+      }
     }, 500)
   }
 

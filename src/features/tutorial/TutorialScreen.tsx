@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import {
+  Alert,
   Dimensions,
   FlatList,
   Image,
@@ -14,6 +15,7 @@ import { useNavigation } from '@react-navigation/native'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useSettingsStore } from '../settings/store'
 import type { RootStackParamList } from '../../shared/types'
+import { requestNotificationPermission, scheduleWeeklyReminder } from '../notifications/engine'
 
 const { width: W, height: H } = Dimensions.get('window')
 
@@ -112,7 +114,29 @@ export function TutorialScreen() {
       setCurrentIndex(next)
       listRef.current?.scrollToIndex({ index: next, animated: true })
     } else {
-      finish()
+      // 最終ページ: 積ん読リマインダーの通知許可を促してから完了
+      Alert.alert(
+        '積ん読をお知らせします',
+        '登録したブックマークをまだ見ていないとき、週1回お知らせします。',
+        [
+          {
+            text: 'スキップ',
+            style: 'cancel',
+            onPress: finish,
+          },
+          {
+            text: '許可する',
+            onPress: async () => {
+              const granted = await requestNotificationPermission()
+              if (granted) {
+                set('notification_enabled', true)
+                await scheduleWeeklyReminder(0)
+              }
+              finish()
+            },
+          },
+        ],
+      )
     }
   }
 

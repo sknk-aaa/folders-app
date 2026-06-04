@@ -24,6 +24,12 @@ export function migrateSchema(): void {
   if (!hasMemo) {
     db.execSync('ALTER TABLE bookmarks ADD COLUMN memo TEXT')
   }
+  const hasViewedAt = db.getFirstSync<{ count: number }>(
+    "SELECT COUNT(*) as count FROM pragma_table_info('bookmarks') WHERE name='viewed_at'",
+  )?.count ?? 0
+  if (!hasViewedAt) {
+    db.execSync('ALTER TABLE bookmarks ADD COLUMN viewed_at INTEGER')
+  }
 }
 
 export function initializeDatabase(): void {
@@ -49,6 +55,7 @@ export function initializeDatabase(): void {
       sort_order INTEGER NOT NULL DEFAULT 0,
       created_at INTEGER NOT NULL,
       memo TEXT,
+      viewed_at INTEGER,
       FOREIGN KEY (folder_id) REFERENCES folders(id)
     );
     CREATE TABLE IF NOT EXISTS settings (
