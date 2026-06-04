@@ -133,6 +133,8 @@ export default function ShareExtension({ url, text, preprocessingResults }: Prop
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
+          automaticallyAdjustKeyboardInsets={Platform.OS === 'ios'}
+          contentInsetAdjustmentBehavior="never"
         >
           {!initialUrl ? (
             <Text style={styles.noUrl} allowFontScaling={false}>
