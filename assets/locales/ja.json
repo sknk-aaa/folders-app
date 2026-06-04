@@ -1,5 +1,5 @@
 {
-  "CFBundleDisplayName": "サムネブックマーク",
-  "CFBundleName": "サムネブックマーク",
+  "CFBundleDisplayName": "サムネブクマ",
+  "CFBundleName": "サムネブクマ",
   "NSPhotoLibraryUsageDescription": "フォルダのサムネイル画像を選ぶために、写真ライブラリへのアクセスを使います。"
 }
