@@ -191,8 +191,8 @@ const makeStyles = (c: Palette) => StyleSheet.create({
     gap: spacing.md,
     backgroundColor: c.headerBg,
     paddingHorizontal: PADDING,
-    paddingTop: 4,
-    paddingBottom: 14,
+    paddingTop: 12,
+    paddingBottom: 20,
   },
   folderSummary: {
     flexDirection: 'row',
