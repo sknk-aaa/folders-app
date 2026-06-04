@@ -31,17 +31,16 @@ const GOLD_BRIGHT = '#FFD60A'
 // Softer-than-black charcoal for the selected plan card and purchase button.
 const PLAN_DARK = '#3A3A3C'
 
-// All feature images share one width; height follows each image's own aspect ratio.
-const FEATURE_IMG_W = '90%' as const
-
 const APP_ICON = require('../../../../assets/icon.png')
 
-type Feature = { image: ImageSourcePropType; ratio: number; title: string; body: string }
+// Each image keeps its own aspect ratio; `h` is its display height (tuned per image).
+type Feature = { image: ImageSourcePropType; ratio: number; h: number; title: string; body: string }
 
 const FEATURES: Feature[] = [
   {
     image: require('../../../../assets/pro-feature_dark.png'),
     ratio: 828 / 933,
+    h: 224,
     title: tr({ en: 'Dark Mode', ja: 'ダークモード' }),
     body: tr({
       en: 'An easy-on-the-eyes dark theme — your own quiet study at night.',
@@ -51,6 +50,7 @@ const FEATURES: Feature[] = [
   {
     image: require('../../../../assets/pro-feature_note.png'),
     ratio: 1122 / 1402,
+    h: 290,
     title: tr({ en: 'Notes', ja: 'メモ' }),
     body: tr({
       en: 'Jot why you saved it — right when you share, or anytime after.',
@@ -60,6 +60,7 @@ const FEATURES: Feature[] = [
   {
     image: require('../../../../assets/pro-feature_cover.png'),
     ratio: 1448 / 1086,
+    h: 250,
     title: tr({ en: 'Folder Covers', ja: 'フォルダのカバー' }),
     body: tr({
       en: 'Dress up each folder with a cover image of your own.',
@@ -286,7 +287,7 @@ export function ProUpgradeModal({ visible, onClose, hint }: Props) {
               <View key={f.title} style={styles.featureCard}>
                 <Image
                   source={f.image}
-                  style={[styles.featureImage, { width: FEATURE_IMG_W, aspectRatio: f.ratio }]}
+                  style={[styles.featureImage, { height: f.h, aspectRatio: f.ratio }]}
                   resizeMode="cover"
                 />
                 <Text style={styles.featureTitle}>{f.title}</Text>
