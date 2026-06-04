@@ -183,8 +183,8 @@ export function AddBookmarkScreen() {
     }
   }
 
-  const FREE_LIMIT = 30
-  const WARN_AT = 25
+  const FREE_LIMIT = 100
+  const WARN_AT = 90
 
   const handleProModalClose = () => {
     setProModalVisible(false)
