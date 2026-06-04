@@ -52,7 +52,7 @@ type Page = {
   showDivider?: boolean
 }
 
-const TOTAL = '05'
+const TOTAL = '03'
 
 const PAGES: Page[] = [
   {
@@ -66,28 +66,6 @@ const PAGES: Page[] = [
     description: 'ブラウザから1タップで、\n画像つきブックマークに。',
   },
   {
-    key: '2',
-    visual: {
-      kind: 'single',
-      image: require('../../../assets/onboarding/02-tap-more.png'),
-      aspectRatio: 1284 / 1731,
-    },
-    number: '02',
-    title: '「その他」をタップ',
-    description: '初回だけ準備が必要です。\nブラウザの共有メニューを開いて、\nアプリ一覧右端の「その他」を選びます。',
-  },
-  {
-    key: '3',
-    visual: {
-      kind: 'single',
-      image: require('../../../assets/onboarding/03-toggle-on.png'),
-      aspectRatio: 828 / 1138,
-    },
-    number: '03',
-    title: 'サムネブクマをONに',
-    description: 'リストから「サムネブクマ」を有効化。\nこれで準備は完了です。',
-  },
-  {
     key: '4',
     visual: {
       kind: 'duo',
@@ -96,7 +74,7 @@ const PAGES: Page[] = [
       firstAspect: 1284 / 1819,
       secondAspect: 828 / 1792,
     },
-    number: '04',
+    number: '02',
     title: '共有から1タップで保存',
     description: '共有メニューから「サムネブクマ」をタップ。\nサムネ・名前・フォルダを選んで\n保存するだけ。',
   },
@@ -107,7 +85,7 @@ const PAGES: Page[] = [
       image: require('../../../assets/icon.png'),
       label: 'サムネブクマ',
     },
-    number: '05',
+    number: '03',
     title: 'さあ、始めよう',
     description: 'あなただけのブックマーク集を\n作っていきましょう。',
   },
