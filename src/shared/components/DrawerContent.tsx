@@ -174,16 +174,23 @@ export function DrawerContent() {
           </TouchableOpacity>
         </View>
 
-        {/* テーマ */}
-        <SectionTitle>テーマ</SectionTitle>
+        {/* テーマ（Pro限定） */}
+        <SectionTitle>{settings.is_premium ? 'テーマ' : 'テーマ（PRO）'}</SectionTitle>
         <View style={styles.themeSeg}>
           {THEME_OPTIONS.map(({ mode, label }) => {
-            const on = settings.theme_mode === mode
+            const activeMode = settings.is_premium ? settings.theme_mode : 'light'
+            const on = activeMode === mode
             return (
               <TouchableOpacity
                 key={mode}
                 style={[styles.themeSegItem, on && styles.themeSegItemOn]}
-                onPress={() => set('theme_mode', mode)}
+                onPress={() => {
+                  if (!settings.is_premium) {
+                    setProModalVisible(true)
+                    return
+                  }
+                  set('theme_mode', mode)
+                }}
                 activeOpacity={0.8}
               >
                 <Text style={[styles.themeSegText, on && styles.themeSegTextOn]}>{label}</Text>

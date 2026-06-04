@@ -58,7 +58,10 @@ export const darkColors: Palette = {
 
 export function useTheme(): Palette {
   const mode = useSettingsStore((s) => s.settings.theme_mode)
+  const isPremium = useSettingsStore((s) => s.settings.is_premium)
   const system = useColorScheme()
+  // テーマ(ダークモード)はPro限定。無料はライト固定。
+  if (!isPremium) return lightColors
   const isDark = mode === 'dark' || (mode === 'auto' && system === 'dark')
   return isDark ? darkColors : lightColors
 }
