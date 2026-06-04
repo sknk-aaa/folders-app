@@ -209,7 +209,7 @@ export function ProUpgradeModal({ visible, onClose, hint }: Props) {
           <View style={styles.badge}>
             <Text style={styles.badgeText}>PRO</Text>
           </View>
-          <Text style={styles.headline}>{tr({ en: 'Unlock all of Bookrest.', ja: 'サムネブクマを、ぜんぶ解放。' })}</Text>
+          <Text style={styles.headline}>{tr({ en: 'Unlock all of Bookrest.', ja: 'サムネブクマを、\nぜんぶ解放。' })}</Text>
           <Text style={styles.subhead}>
             {tr({ en: 'No limits, plus Pro-only features.', ja: '無料の上限なし＋Pro限定の機能。' })}
           </Text>
