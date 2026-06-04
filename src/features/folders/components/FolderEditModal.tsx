@@ -12,16 +12,17 @@ import {
 } from 'react-native'
 import { Image } from 'expo-image'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useNavigation } from '@react-navigation/native'
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { PlaceholderImage } from '../../../shared/components/PlaceholderImage'
 import { PinEntryModal } from './PinEntryModal'
 import { useFoldersStore } from '../store'
 import { useProStore } from '../../pro/store'
-import { ProUpgradeModal } from '../../pro/components/ProUpgradeModal'
 import {
   pickAndSaveFolderThumbnail,
   deleteFolderThumbnail,
 } from '../../../shared/utils/folderThumbnail'
-import type { Bookmark, Folder, FolderIconId } from '../../../shared/types'
+import type { Bookmark, Folder, FolderIconId, RootStackParamList } from '../../../shared/types'
 import { useThemedStyles, darkColors, spacing, radius, type Palette } from '../../../shared/theme'
 import { tr } from '../../../shared/i18n'
 
@@ -47,11 +48,11 @@ export function FolderEditModal({
   manageOnly = false,
 }: Props) {
   const insets = useSafeAreaInsets()
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
   const { c, styles } = useThemedStyles(makeStyles)
   const [name, setName] = useState(folder?.name ?? '')
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [pinFlow, setPinFlow] = useState<PinFlow>('idle')
-  const [proModalVisible, setProModalVisible] = useState(false)
   const { folders, setPin, removePin, setCustomThumbnail, removeCustomThumbnail } = useFoldersStore()
   const currentFolder = folder ? folders.find((f) => f.id === folder.id) : undefined
   const hasPin = Boolean(currentFolder?.pinCode)
@@ -62,12 +63,12 @@ export function FolderEditModal({
     setName(folder?.name ?? '')
     setSelectedIds(new Set())
     setPinFlow('idle')
-    setProModalVisible(false)
   }
 
   const handleSetThumb = async () => {
     if (!isPro) {
-      setProModalVisible(true)
+      onClose()
+      navigation.navigate('ProUpgrade')
       return
     }
     if (!folder) return
@@ -343,7 +344,6 @@ export function FolderEditModal({
           onCancel={() => setPinFlow('idle')}
         />
       )}
-      <ProUpgradeModal visible={proModalVisible} onClose={() => setProModalVisible(false)} />
     </Modal>
   )
 }

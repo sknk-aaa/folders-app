@@ -67,6 +67,7 @@ export type RootStackParamList = {
   Search: { folderId?: string }
   Tutorial: undefined
   Backup: undefined
+  ProUpgrade: { hint?: string } | undefined
 }
 
 export type DrawerParamList = {

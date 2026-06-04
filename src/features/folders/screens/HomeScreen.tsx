@@ -19,7 +19,6 @@ import { useBookmarksStore } from '../../bookmarks/store'
 import { useUnlockStore } from '../unlockStore'
 import { Header } from '../../../shared/components/Header'
 import { CustomActionSheet } from '../../../shared/components/CustomActionSheet'
-import { ProUpgradeModal } from '../../pro/components/ProUpgradeModal'
 import { ViewModeToggle } from '../../../shared/components/ViewModeToggle'
 import { MoreButton } from '../../../shared/components/MoreButton'
 import { PinEntryModal } from '../components/PinEntryModal'
@@ -60,7 +59,6 @@ export function HomeScreen() {
   const [addSheetVisible, setAddSheetVisible] = useState(false)
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
   const [isGridDragging, setIsGridDragging] = useState(false)
-  const [proModalVisible, setProModalVisible] = useState(false)
 
   // Request a review on the 5th cold launch. Show it shortly after Home appears.
   useEffect(() => {
@@ -73,7 +71,7 @@ export function HomeScreen() {
   const openFolderAdd = () => {
     const isPremium = useSettingsStore.getState().settings.is_premium
     if (!isPremium && folders.length >= 5) {
-      setProModalVisible(true)
+      navigation.navigate('ProUpgrade')
       return
     }
     setEditTarget(undefined)
@@ -220,8 +218,6 @@ export function HomeScreen() {
         ]}
         onCancel={() => setAddSheetVisible(false)}
       />
-
-      <ProUpgradeModal visible={proModalVisible} onClose={() => setProModalVisible(false)} />
     </View>
   )
 }

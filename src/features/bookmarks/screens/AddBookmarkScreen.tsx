@@ -26,7 +26,6 @@ import * as FileSystem from 'expo-file-system/legacy'
 import { useBookmarksStore } from '../store'
 import { useFoldersStore } from '../../folders/store'
 import { useSettingsStore } from '../../settings/store'
-import { ProUpgradeModal } from '../../pro/components/ProUpgradeModal'
 import { scheduleWeeklyReminder } from '../../notifications/engine'
 import { PlaceholderImage } from '../../../shared/components/PlaceholderImage'
 import { Toast } from '../../../shared/components/Toast'
@@ -68,9 +67,6 @@ export function AddBookmarkScreen() {
   const [folderId, setFolderId] = useState(initialFolderId)
   const [toastMsg, setToastMsg] = useState('')
   const [toastVisible, setToastVisible] = useState(false)
-  const [proModalVisible, setProModalVisible] = useState(false)
-  const [proModalHint, setProModalHint] = useState<string | undefined>()
-  const [savedPendingNav, setSavedPendingNav] = useState(false)
   const [memo, setMemo] = useState('')
   const { c, styles } = useThemedStyles(makeStyles)
 
@@ -189,15 +185,6 @@ export function AddBookmarkScreen() {
   const FREE_LIMIT = 100
   const WARN_AT = 90
 
-  const handleProModalClose = () => {
-    setProModalVisible(false)
-    if (savedPendingNav) {
-      setSavedPendingNav(false)
-      showToast(tr({ en: 'Bookmark added', ja: 'ブックマークを追加しました' }))
-      setTimeout(() => navigation.goBack(), 500)
-    }
-  }
-
   const handleSave = async () => {
     if (!name.trim() || !url.trim() || !folderId) {
       Alert.alert(tr({ en: 'Input error', ja: '入力エラー' }), tr({ en: 'Please enter a site name, URL, and destination folder', ja: 'サイト名、URL、保存先フォルダを入力してください' }))
@@ -206,9 +193,9 @@ export function AddBookmarkScreen() {
 
     const total = useBookmarksStore.getState().total()
 
+    // Hard limit: block the save and prompt to upgrade.
     if (!settings.is_premium && total >= FREE_LIMIT) {
-      setProModalHint(undefined)
-      setProModalVisible(true)
+      navigation.navigate('ProUpgrade')
       return
     }
 
@@ -224,22 +211,15 @@ export function AddBookmarkScreen() {
     })
 
     const newTotal = total + 1
-    if (!settings.is_premium && newTotal === FREE_LIMIT) {
-      setProModalHint(tr({ en: 'You\'ve reached the free plan limit. Upgrade to Pro to save unlimited bookmarks', ja: '無料プランの上限に達しました。Proで無制限に保存できます' }))
-      setSavedPendingNav(true)
-      setProModalVisible(true)
-      return
-    }
-    if (!settings.is_premium && newTotal === WARN_AT) {
-      setProModalHint(tr({ en: `${FREE_LIMIT - WARN_AT} more until the limit. Upgrade to Pro to save unlimited bookmarks`, ja: `あと${FREE_LIMIT - WARN_AT}件で上限です。Proで無制限に保存できます` }))
-      setSavedPendingNav(true)
-      setProModalVisible(true)
-      return
-    }
+    const limitHint =
+      !settings.is_premium && newTotal === FREE_LIMIT
+        ? tr({ en: "You've reached the free plan limit. Upgrade to Pro to save unlimited bookmarks", ja: '無料プランの上限に達しました。Proで無制限に保存できます' })
+        : !settings.is_premium && newTotal === WARN_AT
+          ? tr({ en: `${FREE_LIMIT - WARN_AT} more until the limit. Upgrade to Pro to save unlimited bookmarks`, ja: `あと${FREE_LIMIT - WARN_AT}件で上限です。Proで無制限に保存できます` })
+          : undefined
 
     showToast(tr({ en: 'Bookmark added', ja: 'ブックマークを追加しました' }))
     setTimeout(() => {
-      navigation.goBack()
       void useSettingsStore.getState().recordSaveForReview()
       // If notifications are enabled, reschedule with the unread count
       const { settings: s } = useSettingsStore.getState()
@@ -247,6 +227,12 @@ export function AddBookmarkScreen() {
         const allBookmarks = useBookmarksStore.getState().bookmarks
         const unread = allBookmarks.filter((b) => !b.viewedAt).length + 1
         void scheduleWeeklyReminder(unread)
+      }
+      // At the limit/warning, replace the add screen with the upgrade page; otherwise just close.
+      if (limitHint) {
+        navigation.replace('ProUpgrade', { hint: limitHint })
+      } else {
+        navigation.goBack()
       }
     }, 500)
   }
@@ -458,7 +444,6 @@ export function AddBookmarkScreen() {
         </ScrollView>
 
         <Toast message={toastMsg} visible={toastVisible} onHide={() => setToastVisible(false)} />
-        <ProUpgradeModal visible={proModalVisible} onClose={handleProModalClose} hint={proModalHint} />
       </View>
     </KeyboardAvoidingView>
   )

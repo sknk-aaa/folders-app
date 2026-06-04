@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import {
   View,
   Text,
@@ -10,12 +9,13 @@ import {
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useNavigation } from '@react-navigation/native'
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { Ionicons } from '@expo/vector-icons'
 import { useSettingsStore } from '../../settings/store'
 import { useBackupStore } from '../store'
-import { ProUpgradeModal } from '../../pro/components/ProUpgradeModal'
 import { useThemedStyles, spacing, radius, type Palette } from '../../../shared/theme'
 import { tr } from '../../../shared/i18n'
+import type { RootStackParamList } from '../../../shared/types'
 
 function formatDate(ts: number | null): string {
   if (!ts) return tr({ en: 'Not backed up yet', ja: 'まだバックアップしていません' })
@@ -25,12 +25,11 @@ function formatDate(ts: number | null): string {
 }
 
 export function BackupScreen() {
-  const navigation = useNavigation()
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
   const insets = useSafeAreaInsets()
   const { settings } = useSettingsStore()
   const { state, backup, restore } = useBackupStore()
   const { c, styles } = useThemedStyles(makeStyles)
-  const [proModalVisible, setProModalVisible] = useState(false)
 
   const isPremium = settings.is_premium
   const busy = state !== 'idle'
@@ -86,7 +85,7 @@ export function BackupScreen() {
             <Text style={styles.lockDesc}>
               {tr({ en: 'Save your bookmarks and thumbnails to iCloud, so you can restore them even after switching devices or reinstalling the app.', ja: 'ブックマークとサムネイルをiCloudに保存し、機種変更やアプリの入れ直しでも元に戻せます。' })}
             </Text>
-            <TouchableOpacity style={styles.primaryBtn} onPress={() => setProModalVisible(true)}>
+            <TouchableOpacity style={styles.primaryBtn} onPress={() => navigation.navigate('ProUpgrade')}>
               <Text style={styles.primaryBtnText}>{tr({ en: 'Upgrade to Pro', ja: 'Proにアップグレード' })}</Text>
             </TouchableOpacity>
           </View>
@@ -130,8 +129,6 @@ export function BackupScreen() {
           </>
         )}
       </ScrollView>
-
-      <ProUpgradeModal visible={proModalVisible} onClose={() => setProModalVisible(false)} />
     </View>
   )
 }

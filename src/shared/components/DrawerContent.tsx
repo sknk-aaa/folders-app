@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert, Linking, Image } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { DrawerActions, useNavigation } from '@react-navigation/native'
@@ -7,7 +6,6 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import type { RootStackParamList, ThemeMode } from '../types'
 import { useSettingsStore } from '../../features/settings/store'
 import { useFoldersStore } from '../../features/folders/store'
-import { ProUpgradeModal } from '../../features/pro/components/ProUpgradeModal'
 import { useThemedStyles, darkColors, spacing, type Palette } from '../theme'
 import { requestNotificationPermission, scheduleWeeklyReminder, cancelWeeklyReminder } from '../../features/notifications/engine'
 import { useBookmarksStore } from '../../features/bookmarks/store'
@@ -27,7 +25,6 @@ export function DrawerContent() {
   const { settings, set } = useSettingsStore()
   const { folders } = useFoldersStore()
   const { c, styles } = useThemedStyles(makeStyles)
-  const [proModalVisible, setProModalVisible] = useState(false)
   const { bookmarks } = useBookmarksStore()
 
   const defaultFolderName =
@@ -62,7 +59,7 @@ export function DrawerContent() {
 
   const handlePro = () => {
     close()
-    setProModalVisible(true)
+    navigation.navigate('ProUpgrade')
   }
 
   const openTutorial = () => {
@@ -75,7 +72,7 @@ export function DrawerContent() {
     if (settings.is_premium) {
       navigation.navigate('Backup')
     } else {
-      setProModalVisible(true)
+      navigation.navigate('ProUpgrade')
     }
   }
 
@@ -217,7 +214,8 @@ export function DrawerContent() {
                 style={[styles.themeSegItem, on && styles.themeSegItemOn]}
                 onPress={() => {
                   if (!settings.is_premium) {
-                    setProModalVisible(true)
+                    close()
+                    navigation.navigate('ProUpgrade')
                     return
                   }
                   set('theme_mode', mode)
@@ -231,9 +229,8 @@ export function DrawerContent() {
         </View>
       </ScrollView>
       <View style={[styles.footer, { paddingBottom: insets.bottom + 12 }]}>
-        <Text style={styles.footerText}>v1.3.0</Text>
+        <Text style={styles.footerText}>v1.5.0</Text>
       </View>
-      <ProUpgradeModal visible={proModalVisible} onClose={() => setProModalVisible(false)} />
     </View>
   )
 }

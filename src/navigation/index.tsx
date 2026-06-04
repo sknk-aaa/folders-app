@@ -11,6 +11,7 @@ import { TrimScreen } from '../features/bookmarks/screens/TrimScreen'
 import { SearchScreen } from '../features/bookmarks/screens/SearchScreen'
 import { TutorialScreen } from '../features/tutorial/TutorialScreen'
 import { BackupScreen } from '../features/backup/screens/BackupScreen'
+import { ProUpgradeScreen } from '../features/pro/screens/ProUpgradeScreen'
 import { DrawerContent } from '../shared/components/DrawerContent'
 import type { RootStackParamList, DrawerParamList } from '../shared/types'
 
@@ -47,6 +48,11 @@ function MainStack({ initialRouteName }: MainStackProps) {
       />
       <Stack.Screen name="Search" component={SearchScreen} options={{ presentation: 'modal' }} />
       <Stack.Screen name="Backup" component={BackupScreen} options={{ presentation: 'modal' }} />
+      <Stack.Screen
+        name="ProUpgrade"
+        component={ProUpgradeScreen}
+        options={{ fullScreenGestureEnabled: true, gestureResponseDistance: { start: SCREEN_WIDTH } }}
+      />
       <Stack.Screen
         name="Tutorial"
         component={TutorialScreen}
