@@ -29,13 +29,15 @@ type Props = {
 const GOLD = '#C8960A'
 const GOLD_BRIGHT = '#FFD60A'
 
-type Feature = { image: ImageSourcePropType; ratio: number; narrow?: boolean; title: string; body: string }
+// All feature images share one height; width follows each image's own aspect ratio.
+const FEATURE_IMG_H = 224
+
+type Feature = { image: ImageSourcePropType; ratio: number; title: string; body: string }
 
 const FEATURES: Feature[] = [
   {
     image: require('../../../../assets/pro-feature_dark.png'),
     ratio: 828 / 1792,
-    narrow: true,
     title: tr({ en: 'Dark Mode', ja: 'ダークモード' }),
     body: tr({
       en: 'An easy-on-the-eyes dark theme — your own quiet study at night.',
@@ -246,7 +248,7 @@ export function ProUpgradeModal({ visible, onClose, hint }: Props) {
               <View key={f.title} style={styles.featureCard}>
                 <Image
                   source={f.image}
-                  style={[styles.featureImage, { aspectRatio: f.ratio, width: f.narrow ? '64%' : '100%' }]}
+                  style={[styles.featureImage, { height: FEATURE_IMG_H, aspectRatio: f.ratio }]}
                   resizeMode="cover"
                 />
                 <Text style={styles.featureTitle}>{f.title}</Text>
