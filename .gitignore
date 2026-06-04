@@ -34,3 +34,11 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+# Fastlane / CI build artifacts
+/build/
+/vendor/bundle/
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/test_output
+*.ipa
