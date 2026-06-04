@@ -19,7 +19,7 @@
       },
       "infoPlist": {
         "AppGroup": "group.com.sknk.foldersapp",
-        "NSPhotoLibraryUsageDescription": "フォルダのサムネイル画像を選ぶために、写真ライブラリへのアクセスを使います。"
+        "NSPhotoLibraryUsageDescription": "We use your photo library so you can choose thumbnail images for your folders."
       }
     },
     "android": {

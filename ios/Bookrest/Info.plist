@@ -61,7 +61,7 @@
     <key>LSRequiresIPhoneOS</key>
     <true/>
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>フォルダのサムネイル画像を選ぶために、写真ライブラリへのアクセスを使います。</string>
+    <string>We use your photo library so you can choose thumbnail images for your folders.</string>
     <key>NSAppTransportSecurity</key>
     <dict>
       <key>NSAllowsArbitraryLoads</key>

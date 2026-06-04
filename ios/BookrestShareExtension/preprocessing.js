@@ -88,7 +88,7 @@ class ShareExtensionPreprocessor {
         candidates: candidateUrls.slice(0, 12),
       })
     } catch (e) {
-      // 処理中にエラーが起きても最低限URLだけ返す
+      // Even if an error occurs during processing, return at least the URL
       args.completionFunction({
         url: fallbackUrl,
         title: '',
