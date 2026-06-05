@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   ScrollView,
   Image,
+  Linking,
   type ImageSourcePropType,
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
@@ -28,6 +29,10 @@ const GOLD = '#C8960A'
 const GOLD_BRIGHT = '#FFD60A'
 // Softer-than-black charcoal for the selected plan card and purchase button.
 const PLAN_DARK = '#3A3A3C'
+
+// Required by App Store Guideline 3.1.2 — functional links on the paywall.
+const PRIVACY_URL = 'https://sknk-aaa.github.io/folders-app/'
+const TERMS_URL = 'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/'
 
 const APP_ICON = require('../../../../assets/icon.png')
 
@@ -302,13 +307,29 @@ export function ProUpgradeScreen() {
               {plans('bottom')}
               <Text style={styles.trust}>
                 {tr({
-                  en: 'No ads · Data stays on your device · Cancel anytime · Billed via App Store',
-                  ja: '広告なし・データは端末内・解約自由・App Store決済',
+                  en: 'No ads · Data stays on your device · Billed via App Store',
+                  ja: '広告なし・データは端末内・App Store決済',
                 })}
               </Text>
-              <TouchableOpacity onPress={() => void handleRestore()} disabled={isLoading} style={styles.restoreBtn}>
-                <Text style={styles.restoreText}>{tr({ en: 'Restore Purchase', ja: '購入を復元' })}</Text>
-              </TouchableOpacity>
+              <Text style={styles.legalNote}>
+                {tr({
+                  en: 'The monthly plan auto-renews unless turned off at least 24 hours before the end of the period. Manage or cancel anytime in App Store Settings. The Lifetime plan is a one-time purchase.',
+                  ja: '月額プランは、期間終了の24時間前までにオフにしない限り自動更新されます。App Storeの「サブスクリプション」からいつでも管理・解約できます。買い切りは一度きりの購入です。',
+                })}
+              </Text>
+              <View style={styles.legalLinks}>
+                <TouchableOpacity onPress={() => void Linking.openURL(PRIVACY_URL)} hitSlop={8}>
+                  <Text style={styles.legalLink}>{tr({ en: 'Privacy Policy', ja: 'プライバシーポリシー' })}</Text>
+                </TouchableOpacity>
+                <Text style={styles.legalSep}>·</Text>
+                <TouchableOpacity onPress={() => void Linking.openURL(TERMS_URL)} hitSlop={8}>
+                  <Text style={styles.legalLink}>{tr({ en: 'Terms of Use (EULA)', ja: '利用規約（EULA）' })}</Text>
+                </TouchableOpacity>
+                <Text style={styles.legalSep}>·</Text>
+                <TouchableOpacity onPress={() => void handleRestore()} disabled={isLoading} hitSlop={8}>
+                  <Text style={styles.legalLink}>{tr({ en: 'Restore', ja: '復元' })}</Text>
+                </TouchableOpacity>
+              </View>
             </>
           ) : null}
         </ScrollView>
@@ -485,8 +506,23 @@ const makeStyles = (c: Palette) =>
       lineHeight: 17,
       marginTop: 16,
     },
-    restoreBtn: { paddingVertical: 12, marginTop: 4 },
-    restoreText: { fontSize: 13.5, color: c.textSecondary, textAlign: 'center' },
+    legalNote: {
+      fontSize: 11,
+      color: c.textTertiary,
+      textAlign: 'center',
+      lineHeight: 16,
+      marginTop: 10,
+    },
+    legalLinks: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexWrap: 'wrap',
+      gap: 7,
+      marginTop: 14,
+    },
+    legalLink: { fontSize: 12.5, color: c.textSecondary, textDecorationLine: 'underline' },
+    legalSep: { fontSize: 12, color: c.textTertiary },
 
     ownedBox: {
       width: '100%',
