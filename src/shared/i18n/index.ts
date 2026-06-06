@@ -22,7 +22,8 @@ function deviceLanguageFromRN(): string | null {
 //
 // expo-localization is a native module. On a dev client built before it was added,
 // requiring it throws ("Cannot find native module 'ExpoLocalization'"). In that case
-// we fall back to the device language via core RN, and finally to Japanese.
+// we fall back to the device language via core RN, and finally to English (the
+// app's primary language).
 function resolveLanguageCode(): string {
   try {
     const Localization = require('expo-localization') as {
@@ -33,7 +34,7 @@ function resolveLanguageCode(): string {
   } catch {
     // expo-localization unavailable (old dev client) — fall through.
   }
-  return deviceLanguageFromRN() ?? 'ja'
+  return deviceLanguageFromRN() ?? 'en'
 }
 
 const languageCode = resolveLanguageCode()

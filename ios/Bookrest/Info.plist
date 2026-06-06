@@ -21,9 +21,9 @@
     <key>CADisableMinimumFrameDurationOnPhone</key>
     <true/>
     <key>CFBundleDevelopmentRegion</key>
-    <string>ja</string>
+    <string>en</string>
     <key>CFBundleDisplayName</key>
-    <string>サムネブクマ</string>
+    <string>Bookrest</string>
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key>
@@ -35,7 +35,7 @@
     <key>CFBundlePackageType</key>
     <string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.5.0</string>
+    <string>1.5.1</string>
     <key>CFBundleSignature</key>
     <string>????</string>
     <key>CFBundleURLTypes</key>
@@ -61,7 +61,7 @@
     <key>LSRequiresIPhoneOS</key>
     <true/>
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>フォルダのサムネイル画像を選ぶために、写真ライブラリへのアクセスを使います。</string>
+    <string>We use your photo library so you can choose thumbnail images for your folders.</string>
     <key>NSAppTransportSecurity</key>
     <dict>
       <key>NSAllowsArbitraryLoads</key>
