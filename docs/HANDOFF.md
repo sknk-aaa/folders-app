@@ -1,12 +1,22 @@
-# サムネブクマ 現状・残タスク
+# サムネブクマ / Bookrest 現状・残タスク
 
-## 現在の状態
-
-**v1.5.0 を App Store Connect に提出済み（2026-06-04）。** 主要言語は日本語のまま提出。
-ビルドは GitHub Actions（push → fastlane → TestFlight）。build number は CI 自動採番（`GITHUB_RUN_NUMBER + 100`）。
+## 現在の状態（最終更新: 2026-06-06）
 
 - 公開中: v1.2.0（30件上限・ライトのみ・日本語のみ）
-- 提出済み: v1.5.0（下記の大型アップデート）
+- **v1.5.0 審査通過**（大型アップデート。日本語プライマリで通過）
+- **v1.5.1 審査待ち**：英語プライマリ化＋ガイドライン3.1.2対応の新ビルド。**承認待ち**。
+
+ビルドは GitHub Actions（push → fastlane → TestFlight）。build number は CI 自動採番（`GITHUB_RUN_NUMBER + 100`）。`CFBundleShortVersionString` は手動更新（OPERATIONS.md）。
+
+### v1.5.1 で入れた変更
+- **英語プライマリ化（バイナリ反転）**：既定 `CFBundleDisplayName`→Bookrest／写真許可文→英語／`CFBundleDevelopmentRegion`=en／pbxproj `developmentRegion`=en／app.json name→Bookrest。日本語は `ios/Bookrest/ja.lproj`（サムネブクマ/日本語許可文）で提供。i18n最終フォールバックも en。→ 英語端末/その他=英語、日本語端末=日本語。ASCの**主要言語をEnglishに変更して提出済み**。
+- **ガイドライン3.1.2対応**：購入画面に プライバシーポリシー / 利用規約(EULA: Apple標準) のタップ可能リンク＋自動更新の開示文を追加。説明文にも両リンクを追記（メタデータ側）。
+- **通知クラッシュ修正**：`expo-notifications`/`expo-task-manager` をSDK54非互換(v56)→正版(0.32/14)に。**新規ネイティブ依存は必ず `npx expo install`**。
+- **Share Extension キーボード**：`automaticallyAdjustKeyboardInsets` で入力欄が隠れない対応。
+- **CIビルド修正**：`Gemfile` に `multi_json` 追加（Gemfile.lock 未コミットのため gem 新リリースで `representable` 解決が壊れた）。
+
+### 主要言語の判断（記録）
+英語スクショ/名前/説明/キーワードを全部用意済みなら、海外露出分は「英語で一貫」した方がコンバージョンが高い（日本語が混ざると逆効果）。日本のCVは日本語ローカライズがあるので不変。よって英語プライマリ化を実行。詳細はメモリ `english-primary-after-approval`。
 
 ---
 
@@ -30,18 +40,17 @@
 
 ---
 
-## 残タスク
+## 次のセッションでやること（優先順）
 
-### 🔴 審査通過後にやる
-
-| タスク | 詳細 |
-|---|---|
-| 英語プライマリへ切替 | **1.5.0 審査通過後**、App Store Connect の主要言語を英語に。併せてバイナリ既定も反転（base `CFBundleDisplayName`→Bookrest、許可文→英語、`CFBundleDevelopmentRegion`→en、日本語を `ja.lproj` へ）。海外展開の増幅装置。それまでは日本語プライマリ維持（海外露出を抑える方針） |
+1. **v1.5.1 の審査結果を確認**（英語プライマリ＋3.1.2対応）。承認されたらリリース。落ちたら指摘に対応。
+2. **本番監視**：App Store Connect → クラッシュ（通知クラッシュが本番で消えたか）、課金/サブスク売上、レビュー・評価。
+3. 英語プライマリ化＝コード反転済み・ASC主要言語=English に変更済み。**追加コード作業は無し**（結果確認のみ）。
 
 ### 🟡 任意・様子見
 
 | タスク | 詳細 |
 |---|---|
+| Gemfile.lock コミット | 未コミットのためビルドが gem 新リリースで突然壊れる。macOS CI上で生成した lock をコミットすると再発防止 |
 | 依存の版ズレ | `npx expo install --check` で `react-native-view-shot`（5.1.0 vs 推奨4.0.3）等。サムネ保存に問題が出たら揃える |
 | AdMob広告 | 現状ペンディング（無料版バナー構想。未実装） |
 
